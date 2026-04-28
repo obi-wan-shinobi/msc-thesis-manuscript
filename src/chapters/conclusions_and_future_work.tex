@@ -1,24 +1,64 @@
-\chapter{\label{cha:conc}Conclusions and Future 
-Work}
+\chapter{\label{cha:conclusion}Conclusion and future work}
 
-This chapter gives an overview of the project's contributions. After
-this overview, we will reflect on the results and draw some
-conclusions. Finally, some ideas for future work will be discussed.
+\section{Conclusion}
+\label{sec:conclusion}
 
-\section{Contributions}
+This thesis studied spectral bias in an exactly solvable NTK setting: a
+two-layer ReLU network on the unit circle \(S^1\). In the continuum
+infinite-width limit with the uniform measure, the NTK is rotation-invariant and
+therefore diagonal in the Fourier basis. This gives an explicit fixed-kernel
+description of training: each Fourier component of the residual decays
+independently, at a rate determined by the corresponding kernel eigenvalue.
 
-\lipsum{3} % add some pseudo content
+The main contribution is to analyze how this ideal Fourier picture changes when
+the two idealizations are relaxed. For Q1, finite sampling replaces exact
+Fourier diagonalization by approximate diagonalization on fixed low-frequency
+blocks. The sampled Fourier Gram matrix, the compressed sampled operator, and
+the sampled eigen-action error all concentrate as the sample size increases.
+This explains why the finite-sample corrected eigenvalues predict the dominant
+early residual dynamics, and why the theory-based preconditioner removes most
+of the observed low-frequency rate separation.
 
+For Q2, the thesis establishes the corresponding frozen finite-width baseline.
+On each fixed low-frequency block, the finite-width tangent operator at
+initialization is centered at the continuum Fourier block and concentrates
+around it as the width increases. Thus finite width acts, at initialization, as
+a random perturbation of the continuum NTK spectrum. The thesis does not yet
+prove the analogous statement for the evolving tangent kernel during training.
 
-\section{Conclusions}
-
-\lipsum{3} % add some pseudo content
-
-\section{Discussion/Reflection}
-
-\lipsum{4} % add some pseudo content
+The central lesson is that high-frequency modes are fragile in two related
+ways. In the continuum model they are learned slowly because their eigenvalues
+are small. Under finite sampling or finite width, the same small eigenvalues and
+small eigengaps make high-frequency blocks more sensitive to perturbations.
+Thus the thesis refines the spectral-bias picture in this model: high
+frequencies are not only slower to learn, but also less stable under the
+perturbations introduced by sampling and finite width.
 
 \section{Future work}
+\label{sec:future-work}
 
-\lipsum{2} % add some pseudo content
+The first priority is to complete the finite-width part of the story. The next
+step is to compare the frozen tangent block \(B_m^{(K)}\) with the evolving
+block \(C_t^{(K)}\) during training. This would separate finite-width effects
+caused by random initialization from effects caused by feature learning or
+kernel evolution.
 
+A second direction is to prove a joint perturbation result that includes finite
+sampling, finite width, and training time in one statement. The present thesis
+studies these effects separately. In actual finite-width experiments, however,
+the sampled operator, the random initialization of the tangent kernel, and the
+time-dependence of the kernel all interact.
+
+A third direction is to sharpen the concentration theory. The current bounds
+use entrywise concentration, coarse tail estimates, and union bounds. They prove
+the correct qualitative behaviour but are too conservative as numerical
+predictions. Direct operator-norm bounds, variance-sensitive estimates, or
+concentration tools for U- and V-statistics may give bounds closer to the
+observed errors.
+
+Finally, the analysis should be extended beyond the uniform circle model.
+Non-uniform input densities, higher-dimensional spheres, other activations, and
+different parameterizations all change the relevant kernel spectrum. Studying
+these settings would clarify which conclusions are specific to the exactly
+diagonal Fourier model on \(S^1\), and which reflect a more general mechanism
+behind spectral bias.
