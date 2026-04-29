@@ -1492,101 +1492,101 @@ and let
 \section{Proof of the corollary on the restricted sampled operator}
 \label{sec:app-corollary-proof}
 
-\begin{proof}[Proof of Corollary~\ref{cor:results-restricted-operator}]
-	Recall that
-	\[
-		C:=G^{-1}H.
-	\]
-	We work on the event of Corollary~\ref{cor:results-simultaneous-control}, namely
-	\[
-		\|G-I_d\|_{\max}\le \alpha_{n,d,\delta},
-		\qquad
-		\|H-\Lambda^{(n)}\|_{\max}\le \beta_{n,d,\delta}.
-	\]
-
-	Passing from the entrywise max norm to the induced \(\ell^\infty\)-operator norm, we use
-	\[
-		\|M\|_\infty\le d\,\|M\|_{\max}
-	\]
-	for every \(d\times d\) matrix \(M\). Hence
-	\begin{equation}
-		\|G-I_d\|_\infty\le d\,\alpha_{n,d,\delta},
-		\qquad
-		\|H-\Lambda^{(n)}\|_\infty\le d\,\beta_{n,d,\delta}.
-		\label{eq:app-norm-conversion}
-	\end{equation}
-
-	If \(d\,\alpha_{n,d,\delta}<1\), then \(G\) is invertible. Indeed,
-	\[
-		G = I_d - (I_d-G),
-	\]
-	and since \(\|I_d-G\|_\infty<1\), the Neumann-series argument gives
-	\begin{equation}
-		\|G^{-1}\|_\infty
-		\le
-		\frac{1}{1-\|I_d-G\|_\infty}
-		\le
-		\frac{1}{1-d\,\alpha_{n,d,\delta}}.
-		\label{eq:app-G-inverse-bound}
-	\end{equation}
-
-	Using
-	\begin{equation}
-		C-\Lambda^{(n)}
-		=
-		G^{-1}H-\Lambda^{(n)}
-		=
-		G^{-1}\bigl(H-G\Lambda^{(n)}\bigr)
-		=
-		G^{-1}\bigl((H-\Lambda^{(n)})-(G-I_d)\Lambda^{(n)}\bigr),
-		\label{eq:app-C-minus-Lambda}
-	\end{equation}
-	we obtain
-	\[
-		\|C-\Lambda^{(n)}\|_\infty
-		\le
-		\|G^{-1}\|_\infty
-		\left(
-		\|H-\Lambda^{(n)}\|_\infty
-		+
-		\|G-I_d\|_\infty\,\|\Lambda^{(n)}\|_\infty
-		\right).
-	\]
-
-	It remains to bound \(\|\Lambda^{(n)}\|_\infty\). Since \(\Lambda^{(n)}\) is diagonal,
-	\[
-		\|\Lambda^{(n)}\|_\infty
-		=
-		\max_p |\lambda_p^{(n)}|.
-	\]
-	Now
-	\[
-		\lambda_p^{(n)}
-		=
-		\left(1-\frac1n\right)\lambda_p+\frac1n\Theta(0),
-	\]
-	and both \(|\lambda_p|\le \kappa\) and \(|\Theta(0)|\le \kappa\). Therefore
-	\[
-		|\lambda_p^{(n)}|
-		\le
-		\left(1-\frac1n\right)\kappa+\frac1n\kappa
-		=
-		\kappa,
-	\]
-	so
-	\[
-		\|\Lambda^{(n)}\|_\infty\le \kappa.
-	\]
-
-	Substituting \eqref{eq:app-norm-conversion} and \eqref{eq:app-G-inverse-bound} gives
-	\[
-		\|C-\Lambda^{(n)}\|_\infty
-		\le
-		\frac{d\,\beta_{n,d,\delta}+d\,\kappa\,\alpha_{n,d,\delta}}
-		{1-d\,\alpha_{n,d,\delta}},
-	\]
-	which is exactly \eqref{eq:results-restricted-operator-bound}.
-\end{proof}
+% \begin{proof}[Proof of Corollary~\ref{cor:results-restricted-operator}]
+% 	Recall that
+% 	\[
+% 		C:=G^{-1}H.
+% 	\]
+% 	We work on the event of Corollary~\ref{cor:results-simultaneous-control}, namely
+% 	\[
+% 		\|G-I_d\|_{\max}\le \alpha_{n,d,\delta},
+% 		\qquad
+% 		\|H-\Lambda^{(n)}\|_{\max}\le \beta_{n,d,\delta}.
+% 	\]
+%
+% 	Passing from the entrywise max norm to the induced \(\ell^\infty\)-operator norm, we use
+% 	\[
+% 		\|M\|_\infty\le d\,\|M\|_{\max}
+% 	\]
+% 	for every \(d\times d\) matrix \(M\). Hence
+% 	\begin{equation}
+% 		\|G-I_d\|_\infty\le d\,\alpha_{n,d,\delta},
+% 		\qquad
+% 		\|H-\Lambda^{(n)}\|_\infty\le d\,\beta_{n,d,\delta}.
+% 		\label{eq:app-norm-conversion}
+% 	\end{equation}
+%
+% 	If \(d\,\alpha_{n,d,\delta}<1\), then \(G\) is invertible. Indeed,
+% 	\[
+% 		G = I_d - (I_d-G),
+% 	\]
+% 	and since \(\|I_d-G\|_\infty<1\), the Neumann-series argument gives
+% 	\begin{equation}
+% 		\|G^{-1}\|_\infty
+% 		\le
+% 		\frac{1}{1-\|I_d-G\|_\infty}
+% 		\le
+% 		\frac{1}{1-d\,\alpha_{n,d,\delta}}.
+% 		\label{eq:app-G-inverse-bound}
+% 	\end{equation}
+%
+% 	Using
+% 	\begin{equation}
+% 		C-\Lambda^{(n)}
+% 		=
+% 		G^{-1}H-\Lambda^{(n)}
+% 		=
+% 		G^{-1}\bigl(H-G\Lambda^{(n)}\bigr)
+% 		=
+% 		G^{-1}\bigl((H-\Lambda^{(n)})-(G-I_d)\Lambda^{(n)}\bigr),
+% 		\label{eq:app-C-minus-Lambda}
+% 	\end{equation}
+% 	we obtain
+% 	\[
+% 		\|C-\Lambda^{(n)}\|_\infty
+% 		\le
+% 		\|G^{-1}\|_\infty
+% 		\left(
+% 		\|H-\Lambda^{(n)}\|_\infty
+% 		+
+% 		\|G-I_d\|_\infty\,\|\Lambda^{(n)}\|_\infty
+% 		\right).
+% 	\]
+%
+% 	It remains to bound \(\|\Lambda^{(n)}\|_\infty\). Since \(\Lambda^{(n)}\) is diagonal,
+% 	\[
+% 		\|\Lambda^{(n)}\|_\infty
+% 		=
+% 		\max_p |\lambda_p^{(n)}|.
+% 	\]
+% 	Now
+% 	\[
+% 		\lambda_p^{(n)}
+% 		=
+% 		\left(1-\frac1n\right)\lambda_p+\frac1n\Theta(0),
+% 	\]
+% 	and both \(|\lambda_p|\le \kappa\) and \(|\Theta(0)|\le \kappa\). Therefore
+% 	\[
+% 		|\lambda_p^{(n)}|
+% 		\le
+% 		\left(1-\frac1n\right)\kappa+\frac1n\kappa
+% 		=
+% 		\kappa,
+% 	\]
+% 	so
+% 	\[
+% 		\|\Lambda^{(n)}\|_\infty\le \kappa.
+% 	\]
+%
+% 	Substituting \eqref{eq:app-norm-conversion} and \eqref{eq:app-G-inverse-bound} gives
+% 	\[
+% 		\|C-\Lambda^{(n)}\|_\infty
+% 		\le
+% 		\frac{d\,\beta_{n,d,\delta}+d\,\kappa\,\alpha_{n,d,\delta}}
+% 		{1-d\,\alpha_{n,d,\delta}},
+% 	\]
+% 	which is exactly \eqref{eq:results-restricted-operator-bound}.
+% \end{proof}
 
 \chapter{Proofs of the finite-width frozen-kernel estimates}
 \label{app:finite-width-frozen-proofs}
@@ -2051,48 +2051,48 @@ Using \(|\mathbb E[\xi_{r,pq}]|\le \mathbb E|\xi_{r,pq}|\) and
 	Since \(d=2K+1\), this proves \eqref{eq:results-finite-width-max-bound}.
 \end{proof}
 
-\section{Operator-norm bound}
-\label{sec:app-finite-width-op-proof}
-
-\begin{proof}[Proof of \eqref{eq:results-finite-width-op-bound}]
-	For every \(d\times d\) matrix \(M\),
-	\[
-		\|M\|_{\mathrm{op}}\le d\|M\|_{\max}.
-	\]
-	Therefore, if
-	\[
-		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta,
-	\]
-	then
-	\[
-		\|B_m^{(K)}-\Lambda_K\|_{\max}\ge \frac{\delta}{d}.
-	\]
-	Hence
-	\[
-		\mathbb P\!\left(
-		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta
-		\right)
-		\le
-		\mathbb P\!\left(
-		\|B_m^{(K)}-\Lambda_K\|_{\max}\ge \frac{\delta}{d}
-		\right).
-	\]
-	Applying \eqref{eq:results-finite-width-max-bound} with \(\varepsilon=\delta/d\) yields
-	\[
-		\mathbb P\!\left(
-		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta
-		\right)
-		\le
-		2d^2
-		\exp\!\left(
-		-cm\min\!\left(
-			\frac{\delta^2}{32^2d^2},
-			\frac{\delta}{32d}
-			\right)
-		\right).
-	\]
-	which proves \eqref{eq:results-finite-width-op-bound}.
-\end{proof}
+% \section{Operator-norm bound}
+% \label{sec:app-finite-width-op-proof}
+%
+% \begin{proof}[Proof of \eqref{eq:results-finite-width-op-bound}]
+% 	For every \(d\times d\) matrix \(M\),
+% 	\[
+% 		\|M\|_{\mathrm{op}}\le d\|M\|_{\max}.
+% 	\]
+% 	Therefore, if
+% 	\[
+% 		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta,
+% 	\]
+% 	then
+% 	\[
+% 		\|B_m^{(K)}-\Lambda_K\|_{\max}\ge \frac{\delta}{d}.
+% 	\]
+% 	Hence
+% 	\[
+% 		\mathbb P\!\left(
+% 		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta
+% 		\right)
+% 		\le
+% 		\mathbb P\!\left(
+% 		\|B_m^{(K)}-\Lambda_K\|_{\max}\ge \frac{\delta}{d}
+% 		\right).
+% 	\]
+% 	Applying \eqref{eq:results-finite-width-max-bound} with \(\varepsilon=\delta/d\) yields
+% 	\[
+% 		\mathbb P\!\left(
+% 		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta
+% 		\right)
+% 		\le
+% 		2d^2
+% 		\exp\!\left(
+% 		-cm\min\!\left(
+% 			\frac{\delta^2}{32^2d^2},
+% 			\frac{\delta}{32d}
+% 			\right)
+% 		\right).
+% 	\]
+% 	which proves \eqref{eq:results-finite-width-op-bound}.
+% \end{proof}
 % \chapter{\label{cha:glossary}Glossary}
 %
 % In this appendix we give an overview of frequently used terms and
