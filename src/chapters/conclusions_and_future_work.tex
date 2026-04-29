@@ -3,62 +3,78 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-This thesis studied spectral bias in an exactly solvable NTK setting: a
-two-layer ReLU network on the unit circle \(S^1\). In the continuum
-infinite-width limit with the uniform measure, the NTK is rotation-invariant and
-therefore diagonal in the Fourier basis. This gives an explicit fixed-kernel
-description of training: each Fourier component of the residual decays
-independently, at a rate determined by the corresponding kernel eigenvalue.
+This thesis studied spectral bias in a controlled NTK setting: a two-layer ReLU
+network on the unit circle \(S^1\). In the continuum infinite-width limit with
+the uniform measure, the limiting NTK is rotation-invariant. The corresponding
+operator is therefore a convolution operator, and the Fourier basis diagonalizes
+it exactly. This gives an explicit fixed-kernel description of training: each
+Fourier component of the residual decays independently at a rate determined by
+the corresponding kernel eigenvalue.
 
-The main contribution is to analyze how this ideal Fourier picture changes when
-the two idealizations are relaxed. For Q1, finite sampling replaces exact
-Fourier diagonalization by approximate diagonalization on fixed low-frequency
-blocks. The sampled Fourier Gram matrix, the compressed sampled operator, and
-the sampled eigen-action error all concentrate as the sample size increases.
+The first part of the thesis studied what changes after replacing the continuum
+measure by finitely many sampled points. Exact Fourier diagonalization is lost,
+but the Fourier description remains accurate on fixed low-frequency blocks. The
+sampled Fourier Gram matrix \(G\), the matrix \(H\) describing the sampled
+operator on the retained Fourier coordinates, and the difference
+\(A\Phi-\Phi\Lambda^{(n)}\) all become smaller as the sample size increases.
 This explains why the finite-sample corrected eigenvalues predict the dominant
-early residual dynamics, and why the theory-based preconditioner removes most
-of the observed low-frequency rate separation.
+early-time residual dynamics. The preconditioning experiment supports the same
+interpretation: using only the diagonal eigenvalue prediction removes most of
+the observed rate separation on the retained block.
 
-For Q2, the thesis establishes the corresponding frozen finite-width baseline.
-On each fixed low-frequency block, the finite-width tangent operator at
-initialization is centered at the continuum Fourier block and concentrates
-around it as the width increases. Thus finite width acts, at initialization, as
-a random perturbation of the continuum NTK spectrum. The thesis does not yet
-prove the analogous statement for the evolving tangent kernel during training.
+The second part of the thesis studied finite width in the frozen-kernel setting.
+For each fixed Fourier block, the frozen finite-width tangent operator at
+initialization has expectation equal to the continuum Fourier block and
+concentrates around it as the width increases. The numerical experiments show
+the same trend both at the matrix level and at the eigenspace level: the matched
+empirical eigenspaces become more aligned with the corresponding Fourier
+frequency subspaces as width increases.
 
-The central lesson is that high-frequency modes are fragile in two related
-ways. In the continuum model they are learned slowly because their eigenvalues
-are small. Under finite sampling or finite width, the same small eigenvalues and
-small eigengaps make high-frequency blocks more sensitive to perturbations.
-Thus the thesis refines the spectral-bias picture in this model: high
-frequencies are not only slower to learn, but also less stable under the
-perturbations introduced by sampling and finite width.
+The main conclusion is that the Fourier picture is robust, but only in a
+qualified sense. It is exact for the continuum infinite-width operator. It
+remains accurate after finite sampling on fixed low-frequency blocks. It also
+remains accurate for the frozen finite-width tangent operator when the width is
+large. The thesis does not prove the corresponding statement for the evolving
+finite-width tangent kernel during training.
+
+A recurring theme is that high-frequency modes are more sensitive to
+perturbations. In the continuum model, high frequencies are learned slowly
+because their eigenvalues are small. Under finite sampling or finite width, the
+same small eigenvalues make high-frequency components more affected by small
+changes in the operator. Thus, in this model, high frequencies are not only
+slower to learn; their Fourier structure is also less stable under sampling and
+finite-width perturbations.
 
 \section{Future work}
 \label{sec:future-work}
 
-The first priority is to complete the finite-width part of the story. The next
-step is to compare the frozen tangent block \(B_m^{(K)}\) with the evolving
-block \(C_t^{(K)}\) during training. This would separate finite-width effects
-caused by random initialization from effects caused by feature learning or
-kernel evolution.
+The most direct next step is to complete the finite-width part of the thesis by
+comparing frozen and evolving tangent-kernel dynamics. This would separate the
+effect of random initialization of the finite-width kernel from the effect of
+kernel evolution during training.
 
 A second direction is to prove a joint perturbation result that includes finite
-sampling, finite width, and training time in one statement. The present thesis
-studies these effects separately. In actual finite-width experiments, however,
-the sampled operator, the random initialization of the tangent kernel, and the
-time-dependence of the kernel all interact.
+sampling, finite width, and training time. The present thesis studies the
+infinite-width sampled operator and the continuum frozen finite-width operator
+separately. In real-life experiments, these effects occur together.
 
-A third direction is to sharpen the concentration theory. The current bounds
-use entrywise concentration, coarse tail estimates, and union bounds. They prove
-the correct qualitative behaviour but are too conservative as numerical
-predictions. Direct operator-norm bounds, variance-sensitive estimates, or
-concentration tools for U- and V-statistics may give bounds closer to the
-observed errors.
+A third direction is to sharpen the concentration bounds. The current proofs use
+entrywise concentration, coarse tail bounds, and union bounds. These arguments
+are sufficient to prove the correct decreasing trends, but they are conservative
+as numerical estimates. Direct operator-norm bounds, variance-sensitive
+estimates, or concentration inequalities for U- and V-statistics may give bounds
+closer to the observed errors.
 
-Finally, the analysis should be extended beyond the uniform circle model.
+A fourth direction is to study the alignment diagnostics more directly. The
+projector-error and principal-angle plots suggest that different Fourier
+subspaces can have different finite-width stability. A more detailed analysis
+could measure which Fourier blocks are most strongly mixed by the finite-width
+operator and how this depends on the eigenvalues and gaps of the continuum
+operator.
+
+Finally, the analysis should be extended beyond the uniform circle setting.
 Non-uniform input densities, higher-dimensional spheres, other activations, and
-different parameterizations all change the relevant kernel spectrum. Studying
-these settings would clarify which conclusions are specific to the exactly
-diagonal Fourier model on \(S^1\), and which reflect a more general mechanism
+different parameterizations all change the relevant kernel operator and its
+spectrum. Studying these cases would clarify which conclusions are special to
+the explicit Fourier model on \(S^1\), and which reflect a broader mechanism
 behind spectral bias.
