@@ -94,11 +94,16 @@ and the corresponding integral operator \(T_t^{(m)}:L^2(\mu)\to L^2(\mu)\) is
 	\int_0^{2\pi}\Theta_t^{(m)}(\varphi,\psi)f(\psi)\,d\mu(\psi).
 	\label{eq:method-time-dependent-kernel-operator}
 \end{equation}
-Under gradient flow, the residual satisfies the exact evolution equation
+Consequently, the loss evolves as
 \begin{equation}
-	\partial_t r_t=-T_t^{(m)}r_t.
-	\label{eq:method-exact-residual-flow}
+	\frac{d}{dt}\frac12\|r_t\|_{L^2(\mu)}^2
+	=
+	-\langle r_t,T_t^{(m)}r_t\rangle_{L^2(\mu)}.
+	\label{eq:method-loss-decay-identity}
 \end{equation}
+This identity is useful for interpreting the evolving-kernel experiments: loss
+decay depends not only on the eigenspaces of \(T_t^{(m)}\), but also on how
+strongly the operator acts on the directions where the residual has mass.
 
 This equation contains both the frozen and evolving regimes. In the frozen regime,
 \(T_t^{(m)}\) is replaced by its initial value
@@ -499,7 +504,7 @@ Equivalently,
 so that \(B_m^{(K)}\) is an empirical average of i.i.d.\ one-neuron matrices. This is the
 basic structural fact underlying the finite-width frozen concentration theorem.
 
-\subsection{Projection-based Fourier-plane alignment}
+\subsection{Fourier-plane alignment diagnostics}
 \label{subsec:method-projector-error}
 
 The continuum operator is diagonal in the Fourier basis. For each frequency
@@ -519,11 +524,12 @@ constant mode, we set
 \]
 Thus \(d_0=1\) and \(d_k=2\) for \(k\ge 1\).
 
-To test whether the frozen finite-width operator preserves this Fourier
-structure, we compare each Fourier subspace \(\mathcal F_k\) with a matched
-eigenspace of the frozen finite-width operator. The operator is defined on the
-continuum \(S^1\), but in the numerical implementation we represent functions
-on a uniform grid
+We use subspace-alignment diagnostics to compare these reference Fourier
+subspaces with matched eigenspaces of the finite-width tangent operator. In the
+frozen case this operator is \(T_0^{(m)}\). In the evolving case it is the
+time-dependent operator \(T_t^{(m)}\).
+
+In the numerical implementation, functions are represented on a uniform grid
 \[
 	\theta_j=\frac{2\pi j}{N},
 	\qquad j=0,\dots,N-1.
@@ -533,54 +539,59 @@ representations of continuum functions on this grid.
 
 Let \(U_k\in\mathbb R^{N\times d_k}\) be an orthonormal basis for the grid
 representation of \(\mathcal F_k\), and define the corresponding orthogonal
-projection
+projector
 \begin{equation}
 	P_k := U_kU_k^\top .
 	\label{eq:method-fourier-projector}
 \end{equation}
 
-From the eigendecomposition of the frozen finite-width NTK, we
-build a matched empirical subspace \(\widehat{\mathcal F}_k\) of the same
-dimension \(d_k\). We select the \(d_k\) empirical eigenvectors with largest
-overlap with \(\mathcal F_k\). If \(v_j\) is an empirical eigenvector, its
-overlap with \(\mathcal F_k\) is measured by
+At each training time \(t\), we compute an eigendecomposition of the grid
+representation of the tangent operator. We then build a matched empirical
+subspace \(\widehat{\mathcal F}_k(t)\) of dimension \(d_k\) by selecting the
+\(d_k\) empirical eigenvectors with largest overlap with \(\mathcal F_k\). If
+\(v_j(t)\) is an empirical eigenvector at time \(t\), its overlap with
+\(\mathcal F_k\) is measured by
 \[
-	\|U_k^\top v_j\|_2^2.
+	\|U_k^\top v_j(t)\|_2^2.
 \]
-If \(\widehat U_k\in\mathbb R^{N\times d_k}\) is an orthonormal basis of the
-selected empirical subspace \(\widehat{\mathcal F}_k\), define
+If \(\widehat U_k(t)\in\mathbb R^{N\times d_k}\) is an orthonormal basis of the
+selected empirical subspace \(\widehat{\mathcal F}_k(t)\), define
 \begin{equation}
-	\widehat P_k := \widehat U_k\widehat U_k^\top .
+	\widehat P_k(t)
+	:=
+	\widehat U_k(t)\widehat U_k(t)^\top .
 	\label{eq:method-empirical-projector}
 \end{equation}
 
-We measure the mismatch between the Fourier subspace and the matched empirical
-subspace using the projector distance
+The projection error is
 \begin{equation}
-	\varepsilon_{k,F}^{(m)}
+	\varepsilon_{k,F}^{(m)}(t)
 	:=
-	\|\widehat P_k-P_k\|_F .
+	\|\widehat P_k(t)-P_k\|_F .
 	\label{eq:method-projector-errors}
 \end{equation}
-This quantity is invariant to sign changes of eigenvectors and to changes of
-orthonormal basis inside the subspace. This is necessary for the
-two-dimensional frequency pairs \(k\ge 1\), where rotating the cosine-sine basis
-inside \(\mathcal F_k\) should not count as an error.
+This quantity measures how far the matched eigenspace of the finite-width
+operator is from the reference Fourier subspace. It is invariant to sign changes
+of eigenvectors and to rotations of the basis inside a two-dimensional Fourier
+plane. For the frozen operator, we write
+\[
+	\varepsilon_{k,F}^{(m)}:=\varepsilon_{k,F}^{(m)}(0).
+\]
 
 We also report principal angles between
-\(\widehat{\mathcal F}_k\) and \(\mathcal F_k\). Principal angles are a standard
-way to compare finite-dimensional subspaces
-\citep{bjorck1973numerical}. If \(U_k\) and \(\widehat U_k\) are orthonormal
+\(\widehat{\mathcal F}_k(t)\) and \(\mathcal F_k\). Principal angles are a
+standard way to compare finite-dimensional subspaces
+\citep{bjorck1973numerical}. If \(U_k\) and \(\widehat U_k(t)\) are orthonormal
 bases for the two subspaces, then the cosines of the principal angles are the
-singular values of \(U_k^\top \widehat U_k\). We therefore define
+singular values of \(U_k^\top \widehat U_k(t)\). We define
 \[
-	0\le \theta_{k,1}\le \cdots \le \theta_{k,d_k}\le \frac{\pi}{2}
+	0\le \theta_{k,1}(t)\le \cdots \le \theta_{k,d_k}(t)\le \frac{\pi}{2}
 \]
 by
 \begin{equation}
-	\cos\theta_{k,i}
+	\cos\theta_{k,i}(t)
 	=
-	s_i(U_k^\top \widehat U_k),
+	s_i(U_k^\top \widehat U_k(t)),
 	\qquad i=1,\dots,d_k,
 	\label{eq:method-principal-angles}
 \end{equation}
@@ -593,16 +604,34 @@ between the two planes. The second angle measures the remaining independent
 direction. Both angles must be small for the full Fourier plane to be well
 aligned with the matched empirical eigenspace.
 
-The projector distance and the principal angles are related by
+For the evolving-kernel experiments, we also summarize the principal angles by
+the subspace cosine similarity
 \begin{equation}
-	\|\widehat P_k-P_k\|_F^2
+	s_k^{\mathrm{cos}}(t)
+	:=
+	\left(
+	\frac{1}{d_k}
+	\sum_{i=1}^{d_k}\cos^2\theta_{k,i}(t)
+	\right)^{1/2}.
+	\label{eq:method-subspace-cosine-similarity}
+\end{equation}
+This quantity is the root-mean-square of the cosines of the principal angles.
+We use this aggregation to summarize one-dimensional and two-dimensional Fourier
+subspaces with a single score per frequency. The score lies between \(0\) and
+\(1\), with larger values indicating better alignment. It equals \(1\) exactly
+when the matched empirical subspace is the same as the reference Fourier
+subspace.
+
+The projection distance and the principal angles are related by
+\begin{equation}
+	\|\widehat P_k(t)-P_k\|_F^2
 	=
-	2\sum_{i=1}^{d_k}\sin^2\theta_{k,i}.
+	2\sum_{i=1}^{d_k}\sin^2\theta_{k,i}(t).
 	\label{eq:method-projector-angle-identity}
 \end{equation}
-Thus the principal angles give direction-wise information about the alignment,
-while \(\varepsilon_{k,F}^{(m)}\) gives one scalar summary of the same subspace
-mismatch.
+Thus the projection error gives one scalar measure of subspace mismatch, while
+the principal angles and subspace cosine similarity give more detailed views of
+the same alignment.
 
 \section{Finite-width evolving-kernel methodology}
 
@@ -614,6 +643,17 @@ operator \(T_t^{(m)}\). Its low-frequency block is
 	C_t^{(K)}:=P_KT_t^{(m)}P_K.
 	\label{eq:method-evolving-block}
 \end{equation}
+In the ordered Fourier basis of \(\mathcal H_K\), this block has entries
+\begin{equation}
+	(C_t^{(K)})_{pq}
+	=
+	\langle \phi_p,T_t^{(m)}\phi_q\rangle_{L^2(\mu)}.
+	\label{eq:method-evolving-block-entry}
+\end{equation}
+At initialization,
+\[
+	C_0^{(K)}=B_m^{(K)}.
+\]
 If \(b_t=(I-P_K)r_t\) is the residual component outside the retained Fourier
 block, then \(T_t^{(m)}b_t\) need not remain outside that block. Its projection
 back into \(\mathcal H_K\) is
@@ -680,9 +720,69 @@ which separates three effects:
 	\item the time-dependent kernel drift \(C_t^{(K)}-C_0^{(K)}\).
 \end{enumerate}
 
-The frozen-kernel theory studies the second term. The comparison between frozen
-and evolving training then studies the third term, namely how much the tangent
-operator changes during training which is largely believed to be the driving factor for feature learning.
+The frozen-kernel theory studies the second term. The evolving-kernel
+experiments study the third term empirically: how much the tangent operator
+changes during training, and how these changes affect the Fourier-block
+structure.
+
+\subsection{Frequency-wise spectral strength}
+\label{subsec:method-spectral-strength}
+
+The subspace-alignment diagnostics measure whether the eigenspaces of the
+finite-width tangent operator remain close to the Fourier subspaces. They do
+not, however, measure how strongly the operator acts on those subspaces.
+For the residual dynamics, this distinction matters because the loss decay is
+controlled by \(\langle r_t,T_t^{(m)}r_t\rangle_{L^2(\mu)}\), as shown in
+\eqref{eq:method-loss-decay-identity}. Thus the loss decay depends not only on
+the orientation of the eigenspaces, but also on the magnitude of the operator in
+directions where the residual has mass.
+For each Fourier frequency subspace \(\mathcal F_k\), with orthogonal projector
+\(P_k\) and dimension \(d_k\), we define the average spectral strength
+\begin{equation}
+	\mu_{\mathcal F_k}(t)
+	:=
+	\frac{1}{d_k}
+	\operatorname{tr}\!\left(P_k T_t^{(m)} P_k\right).
+	\label{eq:method-frequency-spectral-strength}
+\end{equation}
+Equivalently, if \(U_k\) is an orthonormal basis for \(\mathcal F_k\), then
+\begin{equation}
+	\mu_{\mathcal F_k}(t)
+	=
+	\frac{1}{d_k}
+	\operatorname{tr}\!\left(U_k^\top T_t^{(m)} U_k\right).
+	\label{eq:method-frequency-spectral-strength-basis}
+\end{equation}
+This quantity is basis-invariant within \(\mathcal F_k\). If \(\mathcal F_k\)
+is an invariant eigenspace of the operator, then
+\(\mu_{\mathcal F_k}(t)\) equals the corresponding eigenvalue. In general, it
+should instead be interpreted as the average kernel strength inside that
+Fourier block.
+
+For \(k\le K\), the same quantity can be read directly from the low-frequency
+block \(C_t^{(K)}\). It is the average trace of the diagonal block corresponding
+to \(\mathcal F_k\):
+\begin{equation}
+	\mu_{\mathcal F_k}(t)
+	=
+	\frac{1}{d_k}
+	\operatorname{tr}\!\left((C_t^{(K)})_{\mathcal F_k,\mathcal F_k}\right).
+	\label{eq:method-frequency-spectral-strength-block}
+\end{equation}
+
+We also use the cumulative low-frequency strength
+\begin{equation}
+	\mu_{\le K}(t)
+	:=
+	\frac{1}{2K+1}
+	\operatorname{tr}\!\left(P_KT_t^{(m)}P_K\right)
+	=
+	\frac{1}{2K+1}
+	\sum_{k=0}^K d_k\,\mu_{\mathcal F_k}(t).
+	\label{eq:method-cumulative-spectral-strength}
+\end{equation}
+This summarizes the average tangent-kernel strength over the retained
+low-frequency block.
 
 \section{Summary of the methodology}
 
@@ -706,7 +806,13 @@ operator is replaced by the tangent operator of a finite-width network. The
 frozen analysis focuses on \(B_m^{(K)}=P_KT_0^{(m)}P_K\), the low-frequency block
 of the tangent operator at initialization. The evolving analysis tracks the
 time-dependent block \(C_t^{(K)}=P_KT_t^{(m)}P_K\) and the high-to-low coupling
-\(L_t^{(K)}=P_KT_t^{(m)}(I-P_K)\). The projector-error and principal-angle
-diagnostics compare the Fourier frequency subspaces with the matched
-eigenspaces of the frozen finite-width operator. Together, these objects set up
-the finite-width part of Q2.
+\(L_t^{(K)}=P_KT_t^{(m)}(I-P_K)\).
+
+For the evolving experiments, we use two complementary kinds of diagnostics.
+Projection error, principal angles, and subspace cosine similarity measure
+whether the eigenspaces of the tangent operator remain close to the Fourier
+subspaces.
+Frequency-wise spectral strength measures how strongly the tangent operator
+acts on each Fourier block. Together, these diagnostics separate changes in
+Fourier geometry from changes in the magnitude of the kernel on the retained
+frequency blocks.
