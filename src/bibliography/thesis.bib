@@ -1,20 +1,3 @@
-@article{CC90,
-  author        = "E. J. Chikofsky and J. H. Cross",
-  title         = "Reverse Engineering and Design Recovery: A Taxonomy",
-  journal       = "IEEE Software",
-  year          = 1990,
-  volume        = 7,
-  number        = 1,
-  pages         = "13--17",
-  publisher     = "IEEE Computer Society Press"
-}
-@book{Whe95,
-  author        = "Colin Wheildon",
-  title         = "Type \& Layout",
-  publisher     = "Strathmore Press",
-  note          = "(ISBN 0 9624891 5 8)",
-  year          = 1995
-}
 % ------------------------------------------------------
 @misc{jacot2018ntk,
   title         = {Neural Tangent Kernel: Convergence and Generalization in Neural Networks},
@@ -346,14 +329,20 @@
   volume        = {32},
   year          = {2019}
 }
-@misc{basri2020frequencybiasneuralnetworks,
+@inproceedings{basri2020frequencybiasneuralnetworks,
   title         = {Frequency Bias in Neural Networks for Input of Non-Uniform Density},
-  author        = {Ronen Basri and Meirav Galun and Amnon Geifman and David Jacobs and Yoni Kasten and Shira Kritchman},
+  author        = {Basri, Ronen and Galun, Meirav and Geifman, Amnon and Jacobs, David and Kasten, Yoni and Kritchman, Shira},
+  booktitle     = {Proceedings of the 37th International Conference on Machine Learning},
+  pages         = {685--694},
   year          = {2020},
-  eprint        = {2003.04560},
-  archiveprefix = {arXiv},
-  primaryclass  = {cs.LG},
-  url           = {https://arxiv.org/abs/2003.04560}
+  editor        = {III, Hal Daum\'{e} and Singh, Aarti},
+  volume        = {119},
+  series        = {Proceedings of Machine Learning Research},
+  month         = {13--18 Jul},
+  publisher     = {PMLR},
+  pdf           = {http://proceedings.mlr.press/v119/basri20a/basri20a.pdf},
+  url           = {https://proceedings.mlr.press/v119/basri20a.html},
+  abstract      = {Recent works have partly attributed the generalization ability of over-parameterized neural networks to frequency bias – networks trained with gradient descent on data drawn from a uniform distribution find a low frequency fit before high frequency ones. As realistic training sets are not drawn from a uniform distribution, we here use the Neural Tangent Kernel (NTK) model to explore the effect of variable density on training dynamics. Our results, which combine analytic and empirical observations, show that when learning a pure harmonic function of frequency $\kappa$, convergence at a point $x \in \S^{d-1}$ occurs in time $O(\kappa^d/p(x))$ where $p(x)$ denotes the local density at $x$. Specifically, for data in $\S^1$ we analytically derive the eigenfunctions of the kernel associated with the NTK for two-layer networks. We further prove convergence results for deep, fully connected networks with respect to the spectral decomposition of the NTK. Our empirical study highlights similarities and differences between deep and shallow networks in this model.}
 }
 -----------------------------------------------------------------------------------------------------------------------------------------
 @inbook{Vershynin_2018a,
@@ -386,4 +375,62 @@
   number        = {123},
   pages         = {579--594},
   year          = {1973}
+}
+@inproceedings{du2019gradient,
+  title         = {Gradient descent finds global minima of deep neural networks},
+  author        = {Du, Simon and Lee, Jason and Li, Haochuan and Wang, Liwei and Zhai, Xiyu},
+  booktitle     = {International conference on machine learning},
+  pages         = {1675--1685},
+  year          = {2019},
+  organization  = {PMLR}
+}
+@inproceedings{allen2019convergence,
+  title         = {A convergence theory for deep learning via over-parameterization},
+  author        = {Allen-Zhu, Zeyuan and Li, Yuanzhi and Song, Zhao},
+  booktitle     = {International conference on machine learning},
+  pages         = {242--252},
+  year          = {2019},
+  organization  = {PMLR}
+}
+@inproceedings{xu2019training,
+  title         = {Training behavior of deep neural network in frequency domain},
+  author        = {Xu, Zhi-Qin John and Zhang, Yaoyu and Xiao, Yanyang},
+  booktitle     = {International Conference on Neural Information Processing},
+  pages         = {264--274},
+  year          = {2019},
+  organization  = {Springer}
+}
+@article{zhi2020frequency,
+  title         = {Frequency principle: Fourier analysis sheds light on deep neural networks},
+  author        = {Zhi-Qin, John and Xu, John and Tao, Luo and Yanyang, Xiao and Zheng, Ma},
+  journal       = {Communications in Computational Physics},
+  volume        = {28},
+  number        = {5},
+  pages         = {1746--1767},
+  year          = {2020},
+  publisher     = {Global Science Press}
+}
+@article{fridovich2022spectral,
+  title         = {Spectral bias in practice: The role of function frequency in generalization},
+  author        = {Fridovich-Keil, Sara and Gontijo Lopes, Raphael and Roelofs, Rebecca},
+  journal       = {Advances in Neural Information Processing Systems},
+  volume        = {35},
+  pages         = {7368--7382},
+  year          = {2022}
+}
+@article{fefferman2016testing,
+  title         = {Testing the manifold hypothesis},
+  author        = {Fefferman, Charles and Mitter, Sanjoy and Narayanan, Hariharan},
+  journal       = {Journal of the American Mathematical Society},
+  volume        = {29},
+  number        = {4},
+  pages         = {983--1049},
+  year          = {2016}
+}
+@article{mikolov2013distributed,
+  title         = {Distributed representations of words and phrases and their compositionality},
+  author        = {Mikolov, Tomas and Sutskever, Ilya and Chen, Kai and Corrado, Greg S and Dean, Jeff},
+  journal       = {Advances in neural information processing systems},
+  volume        = {26},
+  year          = {2013}
 }

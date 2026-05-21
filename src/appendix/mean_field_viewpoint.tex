@@ -1,0 +1,397 @@
+\chapter{Mean-Field Viewpoint}
+\label{cha:mean-field-appendix}
+
+The main text uses the NTK viewpoint as its main analytical framework because
+it gives a fixed operator on functions. On \(S^1\), this operator can be
+diagonalized in the Fourier basis, which makes it possible to discuss
+frequency-dependent learning in terms of eigenvalues and eigenspaces.
+
+The mean-field viewpoint gives another way to take a large-width limit. It is
+not used in the main finite-sample or finite-width analysis, but it is useful
+context because it describes a different aspect of wide-network training. In
+the mean-field scaling, one does not primarily track a fixed tangent kernel at
+initialization. Instead, one tracks how the hidden neurons are distributed in
+parameter space, and how this distribution changes during training.
+
+This appendix records the corresponding derivation for a two-layer network. The
+purpose is to keep the comparison available without interrupting the main line
+of the thesis.
+
+\section{\label{app:mf-overview}Overview and relation to the NTK viewpoint}
+
+Consider a two-layer network with the mean-field scaling
+\begin{equation}
+	f_\theta(x)
+	=
+	\frac{1}{m}
+	\sum_{\alpha=1}^m
+	v_\alpha\,\varphi(w_\alpha^\top x).
+	\label{eq:app-mf-network-overview}
+\end{equation}
+Here each neuron has parameters
+\[
+	\theta_\alpha=(v_\alpha,w_\alpha)
+	\in
+	\Omega:=\mathbb R\times\mathbb R^d .
+\]
+The key observation is that the network output depends on the collection of
+neurons only through their empirical distribution,
+\[
+	\mu_m
+	:=
+	\frac{1}{m}
+	\sum_{\alpha=1}^m \delta_{\theta_\alpha}.
+\]
+Indeed,
+\[
+	f_\theta(x)
+	=
+	\int_\Omega v\,\varphi(w^\top x)\,d\mu_m(v,w).
+\]
+Thus the state of the network can be described by a probability measure over
+neuron parameters.
+
+In suitable large-width limits, the empirical measure \(\mu_m\) converges to a
+deterministic time-dependent measure \(\mu_t\). Training is then described by
+the evolution of this measure. This viewpoint was developed for two-layer
+networks by \citet{Mei2018meanfieldview}, and related interacting-particle
+descriptions were studied by \citet{Rotskoff_2022}. From an optimization
+perspective, \citet{chizat2018globalconvergencegradientdescent} studied the
+corresponding many-particle limit using tools from optimal transport.
+Extensions and rigorous frameworks for deeper networks have also been studied
+\citep{nguyen2019meanfieldlimitlearning,araujo2019meanfieldlimitcertaindeep,
+	sirignano2019meanfieldanalysisneural,nguyen2023rigorousframeworkmeanfield}.
+
+This viewpoint is useful because it can describe feature movement in the
+large-width limit. In contrast, the strict NTK limit freezes the tangent kernel:
+the features defined by the gradients at initialization remain fixed in the
+limit. For the spectral question studied in this thesis, however, the NTK
+viewpoint is more directly useful. The main object here is an operator on
+functions whose eigenvalues and eigenspaces can be compared with Fourier modes
+on \(S^1\). The mean-field viewpoint instead describes the evolution of a
+probability measure over parameters, so it does not give a single fixed
+Fourier-diagonal operator in the same way.
+
+\section{\label{app:mf-detailed}Detailed derivation of the mean-field representation}
+
+\section{\label{app:mf-detailed}Detailed derivation of the mean-field representation}
+
+\subsection{\label{app:mf-empirical-measure}Parameter space and empirical measure}
+
+Let $\Omega := \mathbb{R} \times \mathbb{R}^d$
+denote the parameter space, and let $\mathcal{F}$ be its Borel $\sigma$-algebra.
+For each neuron $\alpha$, define the Dirac measure $\delta_{\theta_\alpha}$ on
+$(\Omega,\mathcal{F})$, i.e. if $A \in \mathcal{F}$ then,
+\[
+	\delta_{\theta_\alpha}(A)
+	=
+	\begin{cases}
+		1, & \theta_\alpha \in A, \\
+		0, & \text{otherwise}.
+	\end{cases}
+\]
+Define the empirical neuronal measure
+\begin{equation}
+	\mu_m := \frac{1}{m}\sum_{\alpha=1}^m \delta_{\theta_\alpha}.
+	\label{eq:app-empirical-measure}
+\end{equation}
+By construction, $\mu_m \ge 0$ and  $\mu_m(\Omega)=1$, hence $\mu_m \in
+	\mathcal P(\Omega)$ where $\mathcal P(\Omega)$ is the space of Borel
+probability measures on $\Omega$.
+
+\paragraph{Integration against Dirac measures.}
+Let $\chi_A$ denote the indicator function of a measurable set $A \subset \Omega$.
+Then, for any $\theta_\alpha \in \Omega$,
+\[
+	\int_\Omega \chi_A(\theta)\,d\delta_{\theta_\alpha}(\theta)
+	=
+	\delta_{\theta_\alpha}(A)
+	=
+	\chi_A(\theta_\alpha).
+\]
+More generally, if $s(\theta) = \sum_{k=1}^r c_k \chi_{A_k}(\theta)$ is a simple
+function, then
+\[
+	\int_\Omega s(\theta)\,d\delta_{\theta_\alpha}(\theta)
+	=
+	\sum_{k=1}^r c_k \chi_{A_k}(\theta_\alpha)
+	=
+	s(\theta_\alpha).
+\]
+Any nonnegative measurable function $g : \Omega \to \mathbb{R}$ can be approximated by
+a sequence of simple functions, $\{s_n\}_{n\ge 0}$. If $s_n \uparrow g$ and each $s_n \ge 0$ then
+by the Monotone Convergence Theorem,
+\begin{equation}
+	\int_\Omega g\,d\delta_{\theta_\alpha}
+	= \int_\Omega \lim_{n \to \infty} s_n\,d\delta_{\theta_\alpha}
+	=  \lim_{n \to \infty} \int_\Omega s_n\,d\delta_{\theta_\alpha}
+	=  \lim_{n \to \infty} s_n(\theta_\alpha)
+	= g(\theta_\alpha).
+	\label{eq:dirac-integration}
+\end{equation}
+
+\paragraph{Integral representation of the network.}
+Consider now the integral of $g$ with respect to the empirical measure $\mu_m$:
+\[
+	\int_\Omega g\,d\mu_m
+	=
+	\int_\Omega g\,d\left(\frac{1}{m}\sum_{\alpha=1}^m \delta_{\theta_\alpha}\right)
+	=
+	\frac{1}{m}\sum_{\alpha=1}^m g(\theta_\alpha).
+\]
+Define
+\[
+	g(\theta_\alpha) = g(v_\alpha,w_\alpha) := v_\alpha\,\varphi(w_\alpha^\top x).
+\]
+Then
+\begin{equation}
+	\int_\Omega g\,d\mu_m
+	=
+	\frac{1}{m}\sum_{\alpha=1}^m v_\alpha\,\varphi(w_\alpha^\top x)
+	=
+	f_\theta(x),
+	\label{eq:app-mf-integral-form}
+\end{equation}
+recovering the finite-width network.
+
+\subsection{\label{app:mf-weak-convergence}Initialization and weak convergence}
+
+Assume that the parameters $\{\theta_\alpha(0)\}_{\alpha=1}^m$ are initialized
+i.i.d.\ according to a probability measure $\mu_0$ on $\Omega$.
+Define the empirical measure at initialization
+\[
+	\mu_{m,0}
+	:=
+	\frac1m\sum_{\alpha=1}^m \delta_{\theta_\alpha(0)} .
+\]
+Then $\mu_{m,0}$ converges weakly to $\mu_0$ almost surely as $m\to\infty$.
+Indeed, for any bounded continuous test function $\psi:\Omega\to\mathbb R$,
+\[
+	\int_\Omega \psi\,d\mu_{m,0}
+	=
+	\frac1m\sum_{\alpha=1}^m \psi(\theta_\alpha(0))
+	\;\xrightarrow[m \to \infty]{\text{a.s.}}\;
+	\mathbb E_{\theta\sim\mu_0}[\psi(\theta)]
+	=
+	\int_\Omega \psi\,d\mu_0,
+\]
+where the convergence follows from the strong law of large numbers applied to
+the i.i.d.\ random variables $\psi(\theta_\alpha(0))$.
+Since this holds for all bounded continuous $\psi$, we conclude that
+$\mu_{m,0} \to \mu_0$ \citep{vadaranjan1958convergenceofprobabilitydistribution}.
+As a consequence, the network output at initialization converges pointwise to
+the deterministic limit
+\[
+	f_{\mu_0}(x)
+	:=
+	\int_\Omega v\,\varphi(w^\top x)\,d\mu_0(v,w).
+\]
+For instance, under i.i.d.\ Gaussian initialization of the parameters, i.e.
+$v_0 \sim \mathcal{N}(0,I_m)\; W_0 \sim \mathcal{N}(0, I_m \otimes I_d)$, the
+limiting initial measure $\mu_0 = \mathcal{N}(0, I_{d+1})$ is a Gaussian
+measure on a $d+1$-dimensional space.
+
+\subsection{\label{app:mf-particle-dynamics}Training dynamics and evolution of the empirical measure}
+
+Let $X=(x_1,\dots,x_n)\in\mathbb R^{d\times n}$ and
+$y=(y_1,\ldots,y_n)\in\mathbb R^n$ denote the training set, and consider the
+squared loss
+\[
+	L(v,W)
+	=
+	\frac12\sum_{i=1}^n\bigl(f_{v,W}(x_i)-y_i\bigr)^2
+	=
+	\frac12\|f_{v,W}(X)-y\|_2^2,
+\]
+where $f_{v,W}(X):=(f_{v,W}(x_i))_{i=1}^n$.
+
+We study continuous-time gradient flow for a finite-width network with $m$
+neurons and learning rate $\eta>0$,
+\[
+	\dot v_{t,\alpha}
+	=
+	-\eta\,\nabla_{v_\alpha}L(v_t,W_t),
+	\qquad
+	\dot w_{t,\alpha}
+	=
+	-\eta\,\nabla_{w_\alpha}L(v_t,W_t),
+	\qquad
+	\alpha\in\{1,\dots,m\}.
+\]
+
+A direct computation yields, for each $\alpha$,
+\begin{align}
+	\dot v_{t, \alpha}
+	 & =
+	\frac{\eta}{m}\,
+	\varphi(X^\top w_{t,\alpha})^\top
+	\bigl(y-f_{v_t,W_t}(X)\bigr),
+	\label{eq:mf-ode-v-app} \\
+	\dot w_{t,\alpha}
+	 & =
+	\frac{\eta}{m}\,
+	X\Bigl(
+	\varphi'(X^\top w_{t,\alpha})
+	\odot
+	\bigl(y-f_{v_t,W_t}(X)\bigr)
+	\Bigr)v_{t,\alpha},
+	\label{eq:mf-ode-w-app}
+\end{align}
+where $\odot$ denotes elementwise (Hadamard) multiplication.
+
+As seen in \eqref{eq:mf-ode-v-app}--\eqref{eq:mf-ode-w-app}, evolution of
+each neuron depends on the parameters only through the current empirical
+measure $\mu_{m,t}$ via $f_{v_t,W_t}(X)$. Thus, the particle system
+\eqref{eq:mf-ode-v-app}--\eqref{eq:mf-ode-w-app} induces an evolution of the
+empirical measure in parameter space \citep{Mei2018meanfieldview,Rotskoff_2022}.
+
+Hence, the particle system \eqref{eq:mf-ode-v-app}--\eqref{eq:mf-ode-w-app}
+can be viewed as an interacting particle system driven by a measure-dependent
+velocity field. For any $\theta=(v,w)\in\Omega$ and any $\mu\in\mathcal
+	P(\Omega)$, define
+\[
+	b((v,w);\mu)
+	:=
+	\begin{pmatrix}
+		\varphi(X^\top w)^\top\bigl(y-f_\mu(X)\bigr) \\[2mm]
+		X\Bigl(\varphi'(X^\top w)\odot\bigl(y-f_\mu(X)\bigr)\Bigr)\,v
+	\end{pmatrix},
+\]
+where
+\[
+	f_\mu(x):=\int_\Omega v\,\varphi(w^\top x)\,d\mu(v,w),
+	\qquad
+	f_\mu(X):=\bigl(f_\mu(x_i)\bigr)_{i=1}^n.
+\]
+Then the gradient-flow dynamics can be written compactly as
+\[
+	\dot\theta_{t,\alpha}
+	=
+	\frac{\eta}{m}\,b(\theta_{t,\alpha};\mu_{m,t}),
+	\qquad \alpha=1,\dots,m.
+\]
+In particular, each particle interacts with the rest of the system only through the
+current empirical measure $\mu_{m,t}$ (via $f_{\mu_{m,t}}(X)$).
+
+\subsection{\label{app:mf-continuity-equation}Continuity equation and push-forward formulation}
+
+Equivalently, $\mu_{m,t}$ solves the continuity equation
+\begin{equation}
+	\partial_t\mu_{m,t}
+	+
+	\nabla_\theta\!\cdot\!\Bigl(\mu_{m,t}\,\frac{\eta}{m}\,b(\cdot;\mu_{m,t})\Bigr)
+	=
+	0,
+	\label{eq:mf-continuity-compact-app}
+\end{equation}
+in the sense of distributions, i.e.\ for every test function
+$\psi\in C_c^\infty(\Omega)$,
+\[
+	\frac{d}{dt}\int_\Omega \psi(\theta)\,d\mu_{m,t}(\theta)
+	=
+	\frac{\eta}{m}\int_\Omega \nabla_\theta\psi(\theta)\cdot b(\theta;\mu_{m,t})\,d\mu_{m,t}(\theta).
+\]
+
+Choosing the mean-field scaling $\eta=m$ yields a nontrivial $\mathcal O(1)$
+evolution in time and, as $m\to\infty$, one expects $\mu_{m,t} \to \mu_t$,
+where the limit $\mu_t$ satisfies
+\begin{equation}
+	\partial_t\mu_t+\nabla_\theta\!\cdot\bigl(\mu_t\,b(\cdot;\mu_t)\bigr)=0,
+	\qquad \mu_0=\mathcal N (0,I_{d+1}).
+	\label{eq:mf-continuity-with-initial-conditions-app}
+\end{equation}
+
+\paragraph{Push-forward formulation.}
+Recall that if $g:\mathcal X\to\mathcal Z$ is measurable and $\mu\in\mathcal P(\mathcal X)$, then the
+\emph{push-forward} of $\mu$ by $g$ is the measure $g_*\mu\in\mathcal P(\mathcal Z)$ defined by
+\[
+	(g_*\mu)(A):=\mu\bigl(g^{-1}(A)\bigr),
+	\qquad A\subset\mathcal Z \text{ measurable}.
+\]
+Let $\Phi_t:\Omega\to\Omega$ denote the flow map associated with the velocity field
+$\frac{\eta}{m}\,b(\cdot;\mu_{m,t})$. Then the empirical measure is transported by this flow:
+\[
+	\mu_{m,t} = (\Phi_t)_*\mu_{m,0}.
+\]
+In particular, for any measurable observable $h:\Omega\to\mathbb R$,
+\[
+	\int_\Omega h(\theta)\,d\mu_{m,t}(\theta)
+	=
+	\int_\Omega h\!\left(\Phi_t(\theta)\right)\,d\mu_{m,0}(\theta),
+\]
+so evaluating the network at time $t$ is obtained by taking
+$h_x(\theta):=v\,\varphi(w^\top x)$ and writing
+\[
+	f_{\mu_{m,t}}(x)
+	=
+	\int_\Omega v\,\varphi(w^\top x)\,d\mu_{m,t}(v,w)
+	=
+	\int_\Omega v\,\varphi(w^\top x)\,d\bigl((\Phi_t)_*\mu_{m,0}\bigr)(v,w).
+\]
+
+\section{\label{app:mf-comparison-ntk}Comparison with the NTK scaling}
+
+The distinction between the mean-field and NTK viewpoints can also be seen from
+the tangent kernel. Recall that, in the NTK parameterization used in the main
+text, the two-layer network is scaled by \(1/\sqrt m\). This scaling gives a
+nontrivial limiting tangent kernel at initialization, and in the infinite-width
+NTK regime this kernel remains fixed during training.
+
+In the mean-field parameterization,
+\[
+	f_\theta(x)
+	=
+	\frac1m
+	\sum_{\alpha=1}^m
+	v_\alpha\varphi(w_\alpha^\top x),
+\]
+the empirical tangent kernel is instead
+\begin{equation}
+	\Theta^{(m)}_t(x,x')
+	=
+	\frac{1}{m^2}\sum_{\alpha=1}^m
+	\Bigl(
+	\varphi(w_{t,\alpha}^\top x)\,\varphi(w_{t,\alpha}^\top x')
+	+
+	v_{t,\alpha}^2
+	\varphi'(w_{t,\alpha}^\top x)
+	\varphi'(w_{t,\alpha}^\top x')
+	x^\top x'
+	\Bigr).
+	\label{eq:app-mf-ntk-equation}
+\end{equation}
+This kernel is of order \(m^{-1}\). Under the mean-field time scaling, the
+effective kernel driving the output dynamics is the scaled quantity
+\(m\Theta^{(m)}_t\). As \(m\to\infty\), this has the formal limit
+\[
+	\lim_{m\to\infty}m\Theta^{(m)}_t(x,x')
+	=
+	\int_\Omega
+	\Bigl(
+	\varphi(w^\top x)\varphi(w^\top x')
+	+
+	v^2\varphi'(w^\top x)\varphi'(w^\top x')x^\top x'
+	\Bigr)
+	\,d\mu_t(v,w).
+\]
+Because the measure \(\mu_t\) changes with time, this limiting kernel also
+changes with time. This is the sense in which the mean-field viewpoint can
+retain feature movement in the large-width limit.
+
+This is useful for studying representation change, but it is less convenient
+for the spectral analysis in the main text. There, the central object is a
+fixed operator on \(L^2(S^1)\), whose eigenfunctions and eigenvalues can be
+compared with Fourier modes. In the mean-field viewpoint, the limiting object is
+the evolving measure \(\mu_t\), and the associated kernel changes with time.
+Thus the same fixed Fourier-diagonal picture is not available directly.
+
+There are also technical limitations. The long-time behavior of the limiting
+measure-valued dynamics is generally harder to characterize: one may need to
+ask whether \(\mu_t\) converges as \(t\to\infty\), and which limiting measure is
+selected. Moreover, the simple empirical-measure description above is most
+natural for two-layer networks. For deeper architectures, one needs more
+careful mean-field constructions, as studied for example by
+\citet{nguyen2019meanfieldlimitlearning},
+\citet{araujo2019meanfieldlimitcertaindeep},
+\citet{sirignano2019meanfieldanalysisneural}, and
+\citet{nguyen2023rigorousframeworkmeanfield}.

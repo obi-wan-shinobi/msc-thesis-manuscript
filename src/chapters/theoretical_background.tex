@@ -1,0 +1,501 @@
+\chapter{Theoretical Background}\label{cha:background}
+
+\section{Neural Tangent Kernel}\label{sec:ntk}
+
+As discussed in Chapter~\ref{cha:intro}, for nonlinear neural networks the
+gradient flow dynamics are parameter-dependent and do not admit a simple
+closed-form description. One approach to recovering a tractable analytical
+framework is to consider regimes in which the network behaves approximately
+linearly around its random initialization. The \emph{Neural Tangent Kernel}
+(NTK), introduced by \citet{jacot2018ntk}, formalizes this idea by studying
+training dynamics through a first-order linearization in parameter space,
+leading to a kernel-based description of learning in wide neural networks.
+
+\paragraph{Linearization around initialization}
+
+Let $f(x;\theta)$ denote a neural network with parameters
+$\theta \in \mathbb{R}^p$, initialized at $\theta_0$. A first-order Taylor
+expansion around $\theta_0$ yields
+\begin{equation}
+	f(x;\theta)
+	\;\approx\;
+	f(x;\theta_0)
+	+
+	\nabla_\theta f(x;\theta_0)^\top (\theta - \theta_0),
+	\label{eq:ntk-linearization}
+\end{equation}
+where $f(x;\theta_0)$ is the network output at initialization and
+\[
+	\phi(x) := \nabla_\theta f(x;\theta_0)
+\]
+defines the tangent feature map. Locally around initialization, the network
+thus behaves as a linear model in parameter space,
+\begin{equation}
+	f(x;\theta) \approx f(x;\theta_0) + \phi(x)^\top (\theta - \theta_0).
+	\label{eq:ntk-linear-model}
+\end{equation}
+
+\begin{definition}[Neural Tangent Kernel \citep{jacot2018ntk}]
+	Given an initialization $\theta_0$, the neural tangent kernel is defined as
+	\[
+		\Theta_0(x,x')
+		:= \nabla_\theta f(x;\theta_0)^\top
+		\nabla_\theta f(x';\theta_0).
+	\]
+\end{definition}
+
+The NTK measures how infinitesimal parameter updates couple the network outputs
+at different inputs and plays the role of an empirical covariance operator in
+the tangent feature space.
+
+\paragraph{Training dynamics induced by the NTK}
+
+We consider training with the squared loss using gradient descent with step size $\eta>0$,
+\[
+	L(\theta) = \frac{1}{2}\sum_{i=1}^n \bigl(f(x_i;\theta) - y_i\bigr)^2,
+	\qquad \theta_{t+1} = \theta_t - \eta \nabla_\theta L(\theta_t),
+	\qquad t = 0,1,2,\dots
+\]
+Define $f_t(x) := f(x;\theta_t)$. The gradient of the loss is
+\[
+	\nabla_\theta L(\theta_t)
+	=
+	\sum_{j=1}^n \bigl(f_t(x_j)-y_j\bigr)\,\nabla_\theta f(x_j;\theta_t).
+\]
+Applying a first-order Taylor expansion of $f(\cdot;\theta)$ around $\theta_t$
+gives
+\[
+	f_{t+1}(x_i)
+	\approx
+	f_t(x_i)
+	+
+	\nabla_\theta f(x_i;\theta_t)^\top(\theta_{t+1}-\theta_t).
+\]
+Substituting the gradient descent update
+$\theta_{t+1}-\theta_t = -\eta \nabla_\theta L(\theta_t)$
+yields
+\[
+	f_{t+1}(x_i)
+	=
+	f_t(x_i)
+	-
+	\eta
+	\sum_{j=1}^n
+	\nabla_\theta f(x_i;\theta_t)^\top
+	\nabla_\theta f(x_j;\theta_t)\,
+	\bigl(f_t(x_j)-y_j\bigr),
+\]
+which can be written compactly as
+\begin{equation}
+	f_{t+1}(x_i)
+	=
+	f_t(x_i)
+	-
+	\eta
+	\sum_{j=1}^n
+	\Theta_t(x_i,x_j)\bigl(f_t(x_j)-y_j\bigr),
+	\label{eq:ntk-prediction-dynamics}
+\end{equation}
+where the iteration-dependent NTK is
+\[
+	\Theta_t(x_i,x_j)
+	:=
+	\nabla_\theta f(x_i;\theta_t)^\top
+	\nabla_\theta f(x_j;\theta_t).
+\]
+If we stack predictions into
+$f_t := (f_t(x_1),\dots,f_t(x_n))^T \in \mathbb{R}^n$, in vector form, the dynamics read
+\begin{equation}
+	f_{t+1} = f_t - \eta\,\Theta_t (f_t - y).
+	\label{eq:ntk-vector-dynamics}
+\end{equation}
+where $
+	\bar\Theta
+	=
+	\bigl(\bar\Theta(x_i,x_j)\bigr)_{i,j=1}^n
+	\in \mathbb{R}^{n\times n}$ is the kernel gram matrix.
+In general, $\Theta_t$ evolves during training, reflecting changes in the
+network’s tangent features.
+
+\paragraph{One-hidden-layer NTK and infinite-width limit}
+
+To make the NTK explicit, consider a two-layer network of width $m$,
+\begin{equation}
+	f(x)
+	=
+	\frac{1}{\sqrt{m}}
+	\sum_{\alpha=1}^m
+	v_\alpha\,\varphi(w_\alpha^\top x),
+	\qquad
+	v_\alpha \in \mathbb{R}, \quad w_\alpha, x \in \mathbb{R}^d.
+	\label{eq:1hl-network}
+\end{equation}
+Each neuron is parameterized by $\theta_\alpha = (v_\alpha,w_\alpha)$ and
+randomly initialized as
+\[
+	v_\alpha \sim \mathcal{N}(0,\sigma_v^2),
+	\qquad
+	w_\alpha \sim \mathcal{N}\!\left(0,\sigma_w^2I_d\right),
+\]
+independently across $\alpha = 1,\dots,m$. $\varphi: \mathbb{R} \to \mathbb{R}$ is a non-linear activation function.
+
+\paragraph{Finite-width NTK at initialization.}
+By direct computation,
+\begin{align}
+	\nabla_{v_\alpha} f(x)
+	 & = \frac{1}{\sqrt{m}}\varphi(w_\alpha^\top x),                 \\
+	\nabla_{w_\alpha} f(x)
+	 & = \frac{1}{\sqrt{m}}\,v_\alpha\,\varphi'(w_\alpha^\top x)\,x.
+\end{align}
+Substituting into the definition of the NTK yields the empirical kernel
+\begin{equation}
+	\Theta_0^{(m)}(x,x')
+	=
+	\frac{1}{m}\sum_{\alpha=1}^m
+	\varphi(w_\alpha^\top x)\,\varphi(w_\alpha^\top x')
+	+
+	\frac{1}{m}\sum_{\alpha=1}^m
+	v_\alpha^2\,
+	\varphi'(w_\alpha^\top x)\,
+	\varphi'(w_\alpha^\top x')\,
+	x^\top x'.
+	\label{eq:ntk-1hl-finite}
+\end{equation}
+
+\paragraph{Infinite-width limit.}
+Each sum in \eqref{eq:ntk-1hl-finite} is an empirical average of i.i.d.\ terms.
+By the strong law of large numbers,
+\[
+	\Theta_0^{(m)}(x,x')
+	\;\xrightarrow{\text{a.s.}}\;
+	\bar\Theta(x,x')
+	\qquad \text{as } m \to \infty,
+\]
+where the limiting NTK is deterministic and given by
+\begin{equation}
+	\bar\Theta(x,x')
+	=
+	\mathbb{E}_{w}\!\big[\varphi(w^\top x)\,\varphi(w^\top x')\big]
+	+
+	\sigma_v^2\,x^\top x'\,
+	\mathbb{E}_{w}\!\big[\varphi'(w^\top x)\,\varphi'(w^\top x')\big].
+	\label{eq:ntk-1hl-infinite}
+\end{equation}
+This argument extends to deep fully connected networks, where both the forward
+covariance kernel and the NTK satisfy recursive layerwise equations in the
+infinite-width limit \citep{jacot2018ntk, lee2020wide}.
+
+\subsection{Constant-kernel regime and spectral dynamics}\label{sec:ntk-spectral-dynamics}
+
+In the infinite-width limit, the NTK remains constant throughout training,
+$\Theta_t \equiv \bar\Theta$. Equation~\eqref{eq:ntk-vector-dynamics} then reduces
+to the linear iteration
+\begin{equation}
+	f_{t+1} = f_t - \eta\,\bar\Theta (f_t - y).
+	\label{eq:ntk-constant-kernel}
+\end{equation}
+Letting $r_t := f_t - y$, we obtain
+\[
+	r_{t+1} = (I - \eta \bar\Theta)\,r_t.
+\]
+Assuming $\eta < 2/\lambda_{\max}(\bar\Theta)$, the residual admits the closed
+form
+\begin{equation}
+	r_t = (I - \eta \bar\Theta)^t r_0,
+	\qquad
+	f_t = y + (I - \eta \bar\Theta)^t (f_0 - y).
+	\label{eq:ntk-solution}
+\end{equation}
+As in the linear setting of Chapter~\ref{cha:intro}, convergence occurs
+independently along the eigenvectors of $\bar\Theta$, with geometric rates
+determined by the corresponding eigenvalues.
+
+\paragraph{NTK dynamics, solution structure, and implicit bias}
+
+In the constant-kernel (infinite-width) regime, the NTK prediction dynamics
+reduce to a linear iteration in prediction space. Eq \ref{eq:ntk-constant-kernel},
+admits fixed points $f^\star$ satisfying
+\begin{equation}
+	\bar\Theta\,(f^\star - y) = 0.
+	\label{eq:ntk-fixed-point}
+\end{equation}
+Equation~\eqref{eq:ntk-fixed-point} characterizes the set of global minimizers of
+the squared loss in the NTK regime. As in linear least squares, the structure of
+this solution set depends on the rank of the operator $\bar\Theta$.
+
+If $\bar\Theta$ is strictly positive definite on the training set, the solution
+is unique and satisfies $f^\star = y$. When $\bar\Theta$ is singular, the loss
+admits infinitely many interpolating solutions in prediction space, differing
+by elements of $\ker(\bar\Theta)$. In this case, gradient descent converges to a
+particular fixed point determined by the initialization.
+
+\paragraph{Tangent features and operator factorization.}
+To formulate the NTK in a way that remains meaningful in the infinite-width
+limit, it is convenient to view parameter perturbations as elements of a
+Hilbert space $\mathcal{H}_\theta$ equipped with an inner product
+$\langle\cdot,\cdot\rangle$. In the finite-dimensional case,
+$\mathcal{H}_\theta=\mathbb{R}^p$ with the Euclidean inner product; in the
+infinite-width limit, $\mathcal{H}_\theta$ denotes the corresponding limit
+space of parameter perturbations, often referred to as the tangent parameter
+space \citep{jacot2018ntk, lee2020wide}.
+
+In this setting, the limiting NTK Gram matrix on the training set can be
+expressed as
+\begin{equation}
+	\bar\Theta = J_0 J_0^\ast,
+\end{equation}
+where $J_0 : \mathcal{H}_\theta \to \mathbb{R}^n$ denotes the Jacobian of the
+network outputs with respect to parameters at initialization, viewed as a
+linear operator,
+\[
+	(J_0 h)_i = \langle \nabla_\theta f(x_i;\theta_0),\,h\rangle,
+\]
+and $J_0^\ast$ is its adjoint. This representation makes explicit that
+$\bar\Theta$ is symmetric and positive semidefinite, and that it acts as an
+empirical covariance operator for the tangent features induced by the network
+at initialization \citep{jacot2018ntk}.
+
+\paragraph{Implicit bias and representer viewpoint.}
+When $\bar\Theta$ is singular, the Moore--Penrose pseudoinverse $\bar\Theta^+$
+acts as the inverse on $\mathrm{range}(\bar\Theta)$ and annihilates
+$\ker(\bar\Theta)$. Consequently, constant-kernel NTK training eliminates only
+the residual component lying in $\mathrm{range}(\bar\Theta)$ while preserving
+the component in $\ker(\bar\Theta)$. This behavior reflects an implicit
+regularization effect analogous to linear least squares and can be interpreted
+as convergence to a minimum-norm solution in the reproducing kernel space
+associated with $\bar\Theta$, as formalized by representer-theorem results
+\citep{bietti2019inductivebiasneuraltangent,
+	bartolucci2021understandingneuralnetworksreproducing}.
+
+\paragraph{Limitations of stable kernels and feature learning.}
+Although the NTK framework provides a clean and tractable description of
+training dynamics, the stability of the kernel also introduces inherent
+limitations. When the kernel does not change during training, learning is
+effectively confined to a fixed feature space. Indeed, any positive
+semidefinite kernel admits a representation
+$K(x,x')=\langle \Phi(x),\Phi(x')\rangle_{\mathcal H}$, so that optimization in
+the NTK regime corresponds to fitting a linear model in the associated
+reproducing kernel Hilbert space $\mathcal H$.
+
+In contrast, for finite-width networks the NTK typically evolves during
+training, implying that the tangent features
+$\Phi_t(x)=\nabla_\theta f(x;\theta_t)$ also change over time. This evolution
+allows the network to adapt its representation to the data, a phenomenon
+commonly referred to as \emph{feature learning}. Such effects are absent in a
+strictly stable-kernel regime, where only the coefficients of fixed features
+are adjusted.
+
+The importance of feature learning is already visible in simplified settings.
+Even purely linear networks exhibit nontrivial training dynamics due to the
+coupling of parameters across layers, leading to implicit biases that cannot
+be captured by a fixed kernel model
+\citep{saxe2014exactsolutionsnonlineardynamics, tu2024mixeddynamicslinearnetworks}.
+From this viewpoint, the NTK regime can be seen as a useful but restrictive
+approximation, which motivates studying regimes where kernel evolution and
+feature learning play an explicit role.
+
+
+\section{Spectral dynamics on the circle}
+\label{sec:background-spectral-dynamics-circle}
+
+The constant-kernel NTK regime gives a linear description of training in
+function space. We now specialize this viewpoint to the setting used throughout
+the thesis: inputs on the unit circle \(S^1\). This gives a clean reference
+model in which the operator governing training is diagonalized by Fourier modes.
+
+Let \(S^1\) be parameterized by \(\theta \in [0,2\pi)\), with embedding
+\[
+	x(\theta) = (\cos\theta,\sin\theta) \in \mathbb R^2,
+\]
+and let \(\rho\) denote the uniform probability measure on \(S^1\),
+\(d\rho(\theta)=d\theta/(2\pi)\). Given a limiting NTK
+\(\bar\Theta(\theta,\theta')\), define the associated integral operator
+\begin{equation}
+	(T_{\bar\Theta}g)(\theta)
+	:=
+	\int_0^{2\pi}
+	\bar\Theta(\theta,\theta')g(\theta')
+	\,\frac{d\theta'}{2\pi}.
+	\label{eq:bg-ntk-integral-operator}
+\end{equation}
+In the continuum constant-kernel regime, the residual
+\(r_t(\theta)=f_t(\theta)-f^\star(\theta)\) evolves according to
+\begin{equation}
+	\partial_t r_t = -T_{\bar\Theta} r_t.
+	\label{eq:bg-continuum-residual-dynamics}
+\end{equation}
+If \(\{\psi_j\}_{j\ge 0}\) is an orthonormal eigenbasis of
+\(T_{\bar\Theta}\), with
+\[
+	T_{\bar\Theta}\psi_j=\lambda_j\psi_j,
+\]
+then the residual decomposes as
+\[
+	r_t = \sum_{j\ge 0} a_j(t)\psi_j,
+	\qquad
+	a_j(t)=\langle r_t,\psi_j\rangle_{L^2(\rho)}.
+\]
+Substituting this expansion into \eqref{eq:bg-continuum-residual-dynamics}
+gives
+\begin{equation}
+	a_j(t)=e^{-\lambda_j t}a_j(0).
+	\label{eq:bg-continuum-mode-decay}
+\end{equation}
+Thus each eigendirection is learned independently, and the decay rate is
+determined by the corresponding eigenvalue. Larger eigenvalues correspond to
+faster decay.
+
+This is the operator form of the NTK training dynamics introduced by
+\citet{jacot2018ntk}. In the context of spectral bias,
+\citet{cao2020understandingspectralbiasdeep} use this eigenfunction viewpoint
+to show that components aligned with larger NTK eigenvalues are learned faster.
+
+For the circle, the Fourier basis appears when the limiting kernel is
+rotation-invariant. This is the same symmetry principle used in analyses of NTK
+spectra on the circle and sphere, where uniform input distributions lead to
+Fourier modes on \(S^1\) and spherical harmonics on \(S^{d-1}\)
+\citep{basri2019convergence,bietti2019inductivebiasneuraltangent,
+	cao2020understandingspectralbiasdeep}. Under isotropic initialization, the distribution of \(w\)
+is invariant under rotations. Using the infinite-width expression
+\eqref{eq:ntk-1hl-infinite}, this implies
+\[
+	\bar\Theta(Rx,Rx')=\bar\Theta(x,x')
+\]
+for every rotation \(R\). Since
+\(x(\theta+\alpha)=R_\alpha x(\theta)\), the kernel depends only on the angular
+difference:
+\begin{equation}
+	\bar\Theta(\theta,\theta')
+	=
+	\kappa(\theta-\theta')
+	\label{eq:bg-translation-invariant-kernel}
+\end{equation}
+for some \(2\pi\)-periodic function \(\kappa\).
+
+With the uniform measure, \eqref{eq:bg-ntk-integral-operator} becomes a circular
+convolution:
+\begin{equation}
+	(T_{\bar\Theta}g)(\theta)
+	=
+	\int_0^{2\pi}
+	\kappa(\theta-\theta')g(\theta')
+	\,\frac{d\theta'}{2\pi}
+	=
+	(\kappa*g)(\theta).
+	\label{eq:bg-convolution-operator}
+\end{equation}
+Therefore the complex Fourier modes
+\[
+	\phi_q(\theta)=e^{iq\theta}, \qquad q\in\mathbb Z,
+\]
+are eigenfunctions of \(T_{\bar\Theta}\). Indeed,
+\begin{align}
+	(T_{\bar\Theta}\phi_q)(\theta)
+	 & =
+	\int_0^{2\pi}
+	\kappa(u)e^{iq(\theta-u)}
+	\,\frac{du}{2\pi} \\
+	 & =
+	e^{iq\theta}
+	\int_0^{2\pi}
+	\kappa(u)e^{-iqu}
+	\,\frac{du}{2\pi}
+	=
+	\lambda_q \phi_q(\theta),
+\end{align}
+where
+\begin{equation}
+	\lambda_q
+	=
+	\int_0^{2\pi}
+	\kappa(u)e^{-iqu}
+	\,\frac{du}{2\pi}.
+	\label{eq:bg-fourier-eigenvalues}
+\end{equation}
+When the kernel is real and even, one may equivalently use the real Fourier
+basis
+\[
+	1,\qquad
+	\sqrt{2}\cos(k\theta),\qquad
+	\sqrt{2}\sin(k\theta),\qquad k\ge 1.
+\]
+In this basis, each Fourier frequency subspace evolves independently under the
+continuum infinite-width operator.
+
+This gives the basic spectral picture behind the NTK explanation of
+frequency-dependent learning. In the idealized continuum infinite-width
+setting, the Fourier modes are exact eigenfunctions of the training operator,
+and their learning rates are determined by the corresponding eigenvalues
+\(\lambda_q\). The next section briefly contrasts this fixed-operator view with
+another large-width limit, before the thesis returns to the NTK framework.
+
+\section{Another large-width viewpoint: mean-field}
+\label{sec:background-mean-field-brief}
+
+The previous section explains why the NTK viewpoint is useful for this thesis.
+In the constant-kernel regime, training is described by a fixed operator on
+functions. On \(S^1\), this operator is diagonal in the Fourier basis, so each
+Fourier mode has a well-defined learning rate. This is the structure needed for
+a mode-by-mode analysis of spectral bias.
+
+There is another important large-width viewpoint, usually called the
+\emph{mean-field} viewpoint. It starts from a different scaling of a two-layer
+network,
+\[
+	f_\theta(x)
+	=
+	\frac{1}{m}
+	\sum_{\alpha=1}^m
+	v_\alpha\,\varphi(w_\alpha^\top x).
+\]
+Here each neuron has parameters
+\[
+	\theta_\alpha=(v_\alpha,w_\alpha)
+	\in
+	\Omega:=\mathbb R\times\mathbb R^d .
+\]
+Instead of following the \(m\) neurons one by one, the mean-field viewpoint
+tracks how the neurons are distributed in parameter space. This is done through
+the empirical measure
+\[
+	\mu_m
+	:=
+	\frac{1}{m}
+	\sum_{\alpha=1}^m \delta_{\theta_\alpha},
+\]
+where \(\delta_{\theta_\alpha}\) places one unit of mass at the parameter value
+\(\theta_\alpha\). With this notation, the network output can be written as
+\[
+	f_\theta(x)
+	=
+	\int_\Omega v\,\varphi(w^\top x)\,d\mu_m(v,w).
+\]
+Thus the network is represented by the distribution of its hidden units. During
+training, this distribution moves through parameter space.
+
+This gives a different limiting description from the NTK regime. In suitable
+large-width limits, the empirical measure \(\mu_m\) converges to a limiting
+time-dependent measure \(\mu_t\), and training is described by an evolution
+equation for \(\mu_t\). This perspective was developed for two-layer networks
+by \citet{Mei2018meanfieldview}, and related interacting-particle descriptions
+were studied by \citet{Rotskoff_2022}. From an optimization viewpoint,
+\citet{chizat2018globalconvergencegradientdescent} studied the corresponding
+many-particle limit using tools from optimal transport. Extensions and rigorous
+frameworks for deeper networks have also been studied
+\citep{nguyen2019meanfieldlimitlearning,araujo2019meanfieldlimitcertaindeep,
+	sirignano2019meanfieldanalysisneural,nguyen2023rigorousframeworkmeanfield}.
+
+The reason we do not use this viewpoint as the main framework is not that it is
+unrelated to neural-network training. It answers a different kind of question.
+Mean-field limits are useful for describing how the hidden units move and how
+the representation changes during training. In contrast, the spectral-bias
+question studied here requires an operator acting on functions: we want to ask
+which Fourier modes are eigenfunctions, what their eigenvalues are, and how the
+corresponding eigenspaces behave. The NTK viewpoint gives such an operator
+directly. The mean-field viewpoint describes the evolution of a parameter
+distribution, so the same fixed Fourier-mode picture is not available in the
+same direct form.
+
+For this reason, the rest of the thesis uses the NTK formulation as the main
+analytical framework. The mean-field derivation and its comparison with the NTK
+scaling are given in Appendix~\ref{cha:mean-field-appendix}.

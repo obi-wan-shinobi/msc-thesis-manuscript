@@ -69,7 +69,7 @@ $f: \mathcal{X} \to \mathcal{Y}$, that minimizes the expected risk (or populatio
 	\mathcal{L}_{\rho}(f) = \mathbb{E}_{\rho}\ell(f(x),y)
 	\label{eq:pop-risk}
 \end{equation}
-where $\ell: \mathcal{Y} \times \mathcal{Y} \to [0, \infty]$ is a loss function quantifying
+where $x \in \mathcal X$, $y \in \mathcal Y$ and $\ell: \mathcal{Y} \times \mathcal{Y} \to [0, \infty]$ is a loss function quantifying
 the discrepancy between the prediction and the true target.
 In practice, two fundamental constraints prevent the direct minimization of the
 equation \eqref{eq:pop-risk}. First, searching over the space of all possible
@@ -298,14 +298,15 @@ This motivates the study of analytical regimes in which the dynamics become
 tractable. Although such regimes necessarily involve simplifications like
 taking large-width limits, they can still provide useful insight into mechanisms that
 are otherwise difficult to access in the full non-linear parameter dynamics.
-Two prominent examples of such approaches are the neural tangent kernel and mean-field
+Two prominent examples of such approaches are the Neural Tangent Kernel (NTK) and mean-field
 formulations, which offer complementary perspectives on the behavior of wide
 neural networks during training.
 
 In this thesis, that regime is a single-hidden-layer ReLU network with inputs
-on the unit circle \(S^1\). In the infinite-width limit, the NTK defines a
-deterministic integral operator. For the uniform distribution on the circle,
-this operator is diagonalized by the Fourier basis. This gives a clean
-reference picture for spectral bias: each Fourier mode has its own learning
-rate. The rest of the thesis studies how this picture changes at finite sample
-size and finite width.
+on the unit circle (1-sphere \(S^1\)). In the infinite-width limit, the NTK
+defines a deterministic integral operator. For the uniform distribution on the
+circle, this operator is diagonalized by the Fourier basis (the orthonormal
+basis of trigonometric functions: $\sin(k\theta), \cos(k\theta)$). This gives a
+clean reference picture for spectral bias: each Fourier mode (specific
+harmonic i.e. frequency $k$) has its own learning rate. The rest of the thesis
+studies how this picture changes at finite sample size and finite width.

@@ -1,0 +1,774 @@
+\chapter{Proofs of the finite-sample estimates}
+\label{app:finite-sample-proofs}
+
+This appendix proves the finite-sample results from
+Section~\ref{sec:results-finite-sample}. We work with the truncated Fourier subspace
+\(H_K\), the feature matrix \(\Phi\), the sampled kernel matrix \(A\), the Gram matrix
+\(G\), and the matrix \(H\) defined in
+\eqref{eq:method-feature-matrix}--\eqref{eq:method-compressed-operator}.
+
+\section{Preliminaries}
+\label{sec:app-preliminaries}
+
+For each basis function in
+\eqref{eq:method-fourier-basis-phi0}--\eqref{eq:method-fourier-basis-modes},
+\begin{equation}
+	|\phi_p(\varphi)|\le \sqrt2
+	\qquad
+	\text{for all }\varphi\in[0,2\pi),\quad 1\le p\le d.
+	\label{eq:app-basis-bound}
+\end{equation}
+We also write
+\begin{equation}
+	\kappa:=\sup_{\theta\in[0,2\pi)}|\Theta(\theta)|<\infty.
+	\label{eq:app-kappa}
+\end{equation}
+
+For each basis index \(p\), let \(\lambda_p\) denote the eigenvalue of the operator \(T\)
+associated with \(\phi_p\), so that
+\[
+	T\phi_p=\lambda_p \phi_p.
+\]
+Define the finite-sample corrected eigenvalues by
+\begin{equation}
+	\lambda_p^{(n)}
+	=
+	\left(1-\frac{1}{n}\right)\lambda_p+\frac{\Theta(0)}{n},
+	\label{eq:app-finite-sample-corrected-eigs}
+\end{equation}
+and let
+\[
+	\Lambda^{(n)}=\operatorname{diag}(\lambda_p^{(n)}).
+\]
+
+\section{Expectation of \(H\)}
+\label{sec:app-expected-H}
+
+\begin{proof}[Proof of Proposition~\ref{prop:results-expectation-H}]
+	By definition,
+	\begin{equation}
+		H_{pq}
+		=
+		\frac{1}{n^2}\sum_{i=1}^n\sum_{j=1}^n
+		\phi_p(\varphi_i)\Theta(\varphi_i-\varphi_j)\phi_q(\varphi_j).
+		\label{eq:app-H-entry}
+	\end{equation}
+	Split the sum into the cases \(i\neq j\) and \(i=j\):
+	\[
+		H_{pq}
+		=
+		\frac{1}{n^2}\sum_{i\neq j}
+		\phi_p(\varphi_i)\Theta(\varphi_i-\varphi_j)\phi_q(\varphi_j)
+		+
+		\frac{1}{n^2}\sum_{i=1}^n
+		\phi_p(\varphi_i)\Theta(0)\phi_q(\varphi_i).
+	\]
+
+	For the diagonal terms,
+	\[
+		\mathbb E\!\left[
+			\frac{1}{n^2}\sum_{i=1}^n
+			\phi_p(\varphi_i)\Theta(0)\phi_q(\varphi_i)
+			\right]
+		=
+		\frac{\Theta(0)}{n}\delta_{pq}.
+	\]
+
+	For the off-diagonal terms, independence of \(\varphi_i\) and \(\varphi_j\) gives
+	\begin{align*}
+		\mathbb E\!\left[
+			\phi_p(\varphi_i)\Theta(\varphi_i-\varphi_j)\phi_q(\varphi_j)
+			\right]
+		 & =
+		\int_0^{2\pi}\phi_p(\varphi)
+		\left(
+		\int_0^{2\pi}\Theta(\varphi-\psi)\phi_q(\psi)\,d\mu(\psi)
+		\right)
+		d\mu(\varphi) \\
+		 & =
+		\int_0^{2\pi}\phi_p(\varphi)(T\phi_q)(\varphi)\,d\mu(\varphi)
+		=
+		\lambda_q\delta_{pq}.
+	\end{align*}
+	Since there are \(n(n-1)\) off-diagonal pairs, we conclude that
+	\[
+		\mathbb E[H_{pq}]
+		=
+		\left(1-\frac{1}{n}\right)\lambda_q\delta_{pq}
+		+
+		\frac{\Theta(0)}{n}\delta_{pq}
+		=
+		\lambda_q^{(n)}\delta_{pq}.
+	\]
+	Therefore \(\mathbb E[H]=\Lambda^{(n)}\).
+\end{proof}
+
+\section{Concentration of the Gram matrix}
+\label{sec:app-gram-proof}
+
+\begin{proof}[Proof of \eqref{eq:results-gram-concentration}]
+	For fixed \(p,q\),
+	\[
+		G_{pq}
+		=
+		\frac{1}{n}\sum_{i=1}^n Z_i,
+		\qquad
+		Z_i:=\phi_p(\varphi_i)\phi_q(\varphi_i).
+	\]
+	The variables \(Z_i\) are independent and identically distributed, with
+	\[
+		\mathbb E[Z_i]=\delta_{pq}
+	\]
+	by orthonormality of the Fourier basis.
+
+	Set
+	\[
+		Y_i:=Z_i-\delta_{pq}.
+	\]
+	Then \(\mathbb E[Y_i]=0\) and
+	\[
+		G_{pq}-\delta_{pq}=\frac{1}{n}\sum_{i=1}^n Y_i.
+	\]
+
+	By \eqref{eq:app-basis-bound},
+	\[
+		|Z_i|\le 2.
+	\]
+	If \(p\neq q\), then \(\delta_{pq}=0\), so \(|Y_i|=|Z_i|\le 2\). If \(p=q\), then
+	\[
+		Y_i=\phi_p(\varphi_i)^2-1,
+	\]
+	and since \(0\le \phi_p(\varphi_i)^2\le 2\), we have \(|Y_i|\le 1\le 2\). Thus
+	\[
+		|Y_i|\le 2
+	\]
+	for all \(i\).
+
+	Next,
+	\[
+		\mathrm{Var}(Y_i)\le \mathbb E[Y_i^2]\le \mathbb E[Z_i^2].
+	\]
+	Using again \eqref{eq:app-basis-bound},
+	\[
+		Z_i^2=\phi_p(\varphi_i)^2\phi_q(\varphi_i)^2\le 2\,\phi_p(\varphi_i)^2.
+	\]
+	Taking expectations and using orthonormality gives
+	\[
+		\mathbb E[Z_i^2]\le 2\int \phi_p(\varphi)^2\,d\mu(\varphi)=2.
+	\]
+	Hence
+	\[
+		\mathrm{Var}(Y_i)\le 2.
+	\]
+
+	We now apply Bernstein's inequality \cite{Vershynin_2018a} in the following form: if \(Y_1,\dots,Y_n\) are independent,
+	centered random variables such that
+	\[
+		|Y_i|\le M,
+		\qquad
+		\mathrm{Var}(Y_i)\le \sigma^2
+	\]
+	for every \(i\), then for every \(\varepsilon>0\),
+	\[
+		\mathbb P\!\left(
+		\left|\frac{1}{n}\sum_{i=1}^n Y_i\right|
+		\ge \varepsilon
+		\right)
+		\le
+		2\exp\!\left(
+		-\frac{n\varepsilon^2}{2\sigma^2+\frac{2}{3}M\varepsilon}
+		\right).
+	\]
+
+	In our case, we have already shown that \(\mathbb E[Y_i]=0\), \(|Y_i|\le 2\), and
+	\(\mathrm{Var}(Y_i)\le 2\). Thus we may take
+	\[
+		M=2,
+		\qquad
+		\sigma^2=2.
+	\]
+	Since
+	\[
+		G_{pq}-\delta_{pq}=\frac{1}{n}\sum_{i=1}^n Y_i,
+	\]
+
+	Bernstein's inequality for the sample mean yields
+	\[
+		\mathbb P\!\left(|G_{pq}-\delta_{pq}|\ge \varepsilon\right)
+		\le
+		2\exp\!\left(
+		-\frac{n\varepsilon^2}{4+\frac43\varepsilon}
+		\right).
+	\]
+
+	Since \(G-I_d\) is symmetric, it suffices to union bound over the \(d(d+1)/2\) entries in
+	the upper triangle. Therefore
+	\[
+		\mathbb P\!\left(\|G-I_d\|_{\max}\ge \varepsilon\right)
+		\le
+		d(d+1)\exp\!\left(
+		-\frac{n\varepsilon^2}{4+\frac43\varepsilon}
+		\right),
+	\]
+	which proves \eqref{eq:results-gram-concentration}.
+\end{proof}
+
+\section{Concentration of \(H\)}
+\label{sec:app-H-proof}
+
+\begin{proof}[Proof of \eqref{eq:results-H-concentration}]
+	Fix \(p,q\), and write \(H_{pq}=F(\varphi_1,\dots,\varphi_n)\), where
+	\[
+		F(\varphi_1,\dots,\varphi_n)
+		=
+		\frac{1}{n^2}\sum_{i=1}^n\sum_{j=1}^n
+		\phi_p(\varphi_i)\Theta(\varphi_i-\varphi_j)\phi_q(\varphi_j).
+	\]
+
+	We apply McDiarmid's inequality \citep{Vershynin_2018b} in the following form: if
+	\(X_1,\dots,X_n\) are independent and
+	\(F(X_1,\dots,X_n)\) satisfies the bounded-differences condition
+	\[
+		|F(x_1,\dots,x_s,\dots,x_n)-F(x_1,\dots,x_s',\dots,x_n)|\le c_s
+	\]
+	for each \(s\), then for every \(\varepsilon>0\),
+	\[
+		\mathbb P\!\left(|F-\mathbb EF|\ge \varepsilon\right)
+		\le
+		2\exp\!\left(-\frac{2\varepsilon^2}{\sum_{s=1}^n c_s^2}\right).
+	\]
+
+	It therefore remains to estimate the effect of changing a single sample point, say
+	\(\varphi_s\mapsto \varphi_s'\), while keeping all others fixed.
+	Only those summands in the double sum with \(i=s\) or \(j=s\) can change. There are at most
+	\(2n\) such summands.
+
+	By \eqref{eq:app-basis-bound} and \eqref{eq:app-kappa}, each summand satisfies
+	\[
+		|\phi_p(\cdot)\Theta(\cdot)\phi_q(\cdot)|
+		\le
+		\sqrt2\,\kappa\,\sqrt2
+		=
+		2\kappa.
+	\]
+	Hence, when \(\varphi_s\) is replaced by \(\varphi_s'\), a single summand can change by at most \(4\kappa\).
+
+	Because at most \(2n\) summands are affected, the total change in the double sum is bounded by
+	\[
+		(2n)\cdot (4\kappa)=8\kappa n.
+	\]
+	Finally, since \(F\) contains the prefactor \(1/n^2\), the change in \(F\) itself is bounded by
+	\[
+		\frac{8\kappa n}{n^2}=\frac{8\kappa}{n}.
+	\]
+	Thus we may take
+	\[
+		c_s=\frac{8\kappa}{n}
+		\qquad\text{for all } s=1,\dots,n.
+	\]
+
+	Therefore
+	\[
+		\sum_{s=1}^n c_s^2
+		=
+		n\left(\frac{8\kappa}{n}\right)^2
+		=
+		\frac{64\kappa^2}{n}.
+	\]
+	McDiarmid's inequality yields
+	\[
+		\mathbb P\!\left(|H_{pq}-\mathbb E[H_{pq}]|\ge \varepsilon\right)
+		\le
+		2\exp\!\left(
+		-\frac{2\varepsilon^2}{64\kappa^2/n}
+		\right)
+		=
+		2\exp\!\left(-\frac{n\varepsilon^2}{32\kappa^2}\right).
+	\]
+
+	A union bound over all \(d^2\) entries gives
+	\[
+		\mathbb P\!\left(\|H-\Lambda^{(n)}\|_{\max}\ge \varepsilon\right)
+		\le
+		2d^2\exp\!\left(-\frac{n\varepsilon^2}{32\kappa^2}\right),
+	\]
+	as claimed.
+\end{proof}
+\begin{remark}
+	The entry \(H_{pq}\) is a bounded second-order V-statistic, so Bernstein-type refinements are
+	in principle available through concentration inequalities for bounded U/V-statistics. Since the
+	McDiarmid bound already captures the correct \(n^{-1/2}\) concentration scale and is sufficient
+	for the results in this thesis, we do not pursue this refinement here.
+\end{remark}
+
+\section{Control of the difference \(A\Phi-\Phi\Lambda^{(n)}\)}
+\label{sec:app-APhi-proof}
+
+\begin{proof}[Proof of \eqref{eq:results-APhi-concentration}]
+	Fix \(i,p\). By definition,
+	\[
+		(A\Phi)_{i,p}
+		=
+		\frac{1}{n}\sum_{j=1}^n \Theta(\varphi_i-\varphi_j)\phi_p(\varphi_j).
+	\]
+	Split off the diagonal term \(j=i\):
+	\[
+		(A\Phi)_{i,p}
+		=
+		\frac{\Theta(0)}{n}\phi_p(\varphi_i)
+		+
+		\frac{1}{n}\sum_{j\neq i}\Theta(\varphi_i-\varphi_j)\phi_p(\varphi_j).
+	\]
+
+	Condition on \(\varphi_i\). For \(j\neq i\), define
+	\[
+		X_j:=\Theta(\varphi_i-\varphi_j)\phi_p(\varphi_j).
+	\]
+	Then \(\{X_j\}_{j\neq i}\) are conditionally independent and identically distributed.
+
+	Their conditional mean is
+	\[
+		\mathbb E[X_j\mid \varphi_i]
+		=
+		\int_0^{2\pi}\Theta(\varphi_i-\psi)\phi_p(\psi)\,d\mu(\psi)
+		=
+		(T\phi_p)(\varphi_i)
+		=
+		\lambda_p\phi_p(\varphi_i).
+	\]
+	Therefore
+	\[
+		\mathbb E[(A\Phi)_{i,p}\mid \varphi_i]
+		=
+		\frac{\Theta(0)}{n}\phi_p(\varphi_i)
+		+
+		\frac{n-1}{n}\lambda_p\phi_p(\varphi_i)
+		=
+		\lambda_p^{(n)}\phi_p(\varphi_i).
+	\]
+
+	Now set
+	\[
+		Y_j:=X_j-\mathbb E[X_j\mid \varphi_i].
+	\]
+	Conditional on \(\varphi_i\), the variables \(\{Y_j\}_{j\neq i}\) are independent,
+	centered, and identically distributed.
+
+	We apply Bernstein's inequality \citep{Vershynin_2018a} in the following form: if \(Y_1,\dots,Y_m\) are independent,
+	centered random variables such that
+	\[
+		|Y_j|\le M,
+		\qquad
+		\mathrm{Var}(Y_j)\le \sigma^2
+	\]
+	for all \(j\), then for every \(\eta>0\),
+	\[
+		\mathbb P\!\left(
+		\left|
+		\frac1m\sum_{j=1}^m Y_j
+		\right|
+		\ge \eta
+		\right)
+		\le
+		2\exp\!\left(
+		-\frac{m\eta^2}{2\sigma^2+\frac23 M\eta}
+		\right).
+	\]
+
+	We now verify the assumptions conditionally on \(\varphi_i\).
+
+	First, by \eqref{eq:app-basis-bound} and \eqref{eq:app-kappa},
+	\[
+		|X_j|
+		\le
+		\kappa \sqrt2
+		\le
+		2\kappa.
+	\]
+	Also,
+	\[
+		|\mathbb E[X_j\mid \varphi_i]|
+		=
+		\left|
+		\int_0^{2\pi}\Theta(\varphi_i-\psi)\phi_p(\psi)\,d\mu(\psi)
+		\right|
+		\le
+		\kappa \int_0^{2\pi}|\phi_p(\psi)|\,d\mu(\psi)
+		\le
+		\kappa \|\phi_p\|_{L^2(\mu)}
+		=
+		\kappa.
+	\]
+	Hence
+	\[
+		|Y_j|
+		=
+		|X_j-\mathbb E[X_j\mid \varphi_i]|
+		\le
+		2\kappa+\kappa
+		=
+		3\kappa.
+	\]
+
+	Next,
+	\[
+		\mathrm{Var}(Y_j\mid \varphi_i)
+		=
+		\mathrm{Var}(X_j\mid \varphi_i)
+		\le
+		\mathbb E[X_j^2\mid \varphi_i].
+	\]
+	Using again \eqref{eq:app-basis-bound} and \eqref{eq:app-kappa},
+	\[
+		\mathbb E[X_j^2\mid \varphi_i]
+		=
+		\int_0^{2\pi}\Theta(\varphi_i-\psi)^2\phi_p(\psi)^2\,d\mu(\psi)
+		\le
+		\kappa^2 \int_0^{2\pi}\phi_p(\psi)^2\,d\mu(\psi)
+		=
+		\kappa^2.
+	\]
+	Thus, conditionally on \(\varphi_i\), Bernstein's inequality applies with
+	\[
+		M=3\kappa,
+		\qquad
+		\sigma^2=\kappa^2.
+	\]
+
+	Let \(m:=n-1\). Applying Bernstein to the conditional sample mean
+	\[
+		\frac1m\sum_{j\neq i}Y_j
+		=
+		\frac1m\sum_{j\neq i}X_j-\lambda_p\phi_p(\varphi_i),
+	\]
+	we obtain
+	\[
+		\mathbb P\!\left(
+		\left|
+		\frac1m\sum_{j\neq i}X_j-\lambda_p\phi_p(\varphi_i)
+		\right|
+		\ge \eta
+		\;\middle|\;
+		\varphi_i
+		\right)
+		\le
+		2\exp\!\left(
+		-\frac{m\eta^2}{2\kappa^2+2\kappa\eta}
+		\right).
+	\]
+
+	Now
+	\[
+		(A\Phi)_{i,p}-\lambda_p^{(n)}\phi_p(\varphi_i)
+		=
+		\frac{m}{n}
+		\left(
+		\frac1m\sum_{j\neq i}X_j-\lambda_p\phi_p(\varphi_i)
+		\right).
+	\]
+	Thus the event
+	\[
+		\left|
+		(A\Phi)_{i,p}-\lambda_p^{(n)}\phi_p(\varphi_i)
+		\right|
+		\ge \varepsilon
+	\]
+	implies
+	\[
+		\left|
+		\frac1m\sum_{j\neq i}X_j-\lambda_p\phi_p(\varphi_i)
+		\right|
+		\ge \frac{n}{m}\varepsilon.
+	\]
+	Hence
+	\[
+		\mathbb P\!\left(
+		\left|
+		(A\Phi)_{i,p}-\lambda_p^{(n)}\phi_p(\varphi_i)
+		\right|
+		\ge \varepsilon
+		\;\middle|\;
+		\varphi_i
+		\right)
+		\le
+		2\exp\!\left(
+		-\frac{m\left(\frac{n}{m}\varepsilon\right)^2}
+		{2\kappa^2+2\kappa\left(\frac{n}{m}\varepsilon\right)}
+		\right).
+	\]
+	Removing the conditioning and simplifying gives
+	\[
+		\mathbb P\!\left(
+		\left|
+		(A\Phi)_{i,p}-\lambda_p^{(n)}\phi_p(\varphi_i)
+		\right|
+		\ge \varepsilon
+		\right)
+		\le
+		2\exp\!\left(
+		-\frac{n^2\varepsilon^2}{2\kappa^2(n-1)+2\kappa n\varepsilon}
+		\right).
+	\]
+	Since \(n-1\le n\), we obtain
+	\[
+		\mathbb P\!\left(
+		\left|
+		(A\Phi)_{i,p}-\lambda_p^{(n)}\phi_p(\varphi_i)
+		\right|
+		\ge \varepsilon
+		\right)
+		\le
+		2\exp\!\left(
+		-\frac{n\varepsilon^2}{2\kappa^2+2\kappa\varepsilon}
+		\right).
+	\]
+
+	Finally, taking a union bound over all \(nd\) pairs \((i,p)\) yields
+	\[
+		\mathbb P\!\left(\|A\Phi-\Phi\Lambda^{(n)}\|_{\max}\ge \varepsilon\right)
+		\le
+		2nd\exp\!\left(-\frac{n\varepsilon^2}{2\kappa^2+2\kappa\varepsilon}\right),
+	\]
+	which proves \eqref{eq:results-APhi-concentration}.
+\end{proof}
+
+\section{Proof of the simultaneous high-probability bound}
+\label{sec:app-simultaneous-proof}
+
+\begin{proof}[Proof of Corollary~\ref{cor:results-simultaneous-control}]
+	Set
+	\[
+		u_{n,d,\delta}^{(G)}
+		=
+		\log\!\left(\frac{3d(d+1)}{\delta}\right),
+		\qquad
+		u_{n,d,\delta}^{(H)}
+		=
+		\log\!\left(\frac{6d^2}{\delta}\right),
+		\qquad
+		u_{n,d,\delta}^{(A)}
+		=
+		\log\!\left(\frac{6nd}{\delta}\right).
+	\]
+	Define
+	\[
+		\alpha_{n,d,\delta}
+		=
+		2\sqrt{\frac{u_{n,d,\delta}^{(G)}}{n}}
+		+
+		\frac{2}{3}\frac{u_{n,d,\delta}^{(G)}}{n},
+	\]
+	\[
+		\beta_{n,d,\delta}
+		=
+		\kappa\sqrt{\frac{32}{n}u_{n,d,\delta}^{(H)}},
+		\qquad
+		\gamma_{n,d,\delta}
+		=
+		\kappa\sqrt{\frac{2}{n}u_{n,d,\delta}^{(A)}}
+		+
+		\kappa\frac{u_{n,d,\delta}^{(A)}}{n}.
+	\]
+
+	We first recall the standard Bernstein inversion: if
+	\[
+		\mathbb P\!\left(\left|\frac{1}{n}\sum_{i=1}^n Y_i\right|\ge t\right)
+		\le
+		2\exp\!\left(
+		-\frac{nt^2}{2\sigma^2+\frac{2}{3}Mt}
+		\right),
+	\]
+	then choosing
+	\[
+		t=\sqrt{\frac{2\sigma^2 u}{n}}+\frac{Mu}{3n}
+	\]
+	ensures
+	\[
+		\mathbb P\!\left(\left|\frac{1}{n}\sum_{i=1}^n Y_i\right|\ge t\right)\le 2e^{-u}.
+	\]
+
+	For the Gram matrix bound \eqref{eq:results-gram-concentration}, the Bernstein proof used
+	\[
+		\sigma^2=2,
+		\qquad
+		M=2.
+	\]
+	Thus, with
+	\[
+		u=u_{n,d,\delta}^{(G)},
+	\]
+	the choice
+	\[
+		\alpha_{n,d,\delta}
+		=
+		\sqrt{\frac{2\cdot 2\,u}{n}}+\frac{2u}{3n}
+		=
+		2\sqrt{\frac{u}{n}}+\frac{2u}{3n}
+	\]
+	yields
+	\[
+		\mathbb P\!\left(\|G-I_d\|_{\max}\ge \alpha_{n,d,\delta}\right)
+		\le
+		d(d+1)e^{-u_{n,d,\delta}^{(G)}}
+		=
+		\frac{\delta}{3}.
+	\]
+
+	For the compressed operator, the McDiarmid estimate \eqref{eq:results-H-concentration} gives
+	\[
+		\mathbb P\!\left(\|H-\Lambda^{(n)}\|_{\max}\ge \varepsilon\right)
+		\le
+		2d^2\exp\!\left(-\frac{n\varepsilon^2}{32\kappa^2}\right).
+	\]
+	Substituting \(\varepsilon=\beta_{n,d,\delta}\) gives
+	\[
+		\frac{n\beta_{n,d,\delta}^2}{32\kappa^2}
+		=
+		u_{n,d,\delta}^{(H)},
+	\]
+	and therefore
+	\[
+		\mathbb P\!\left(\|H-\Lambda^{(n)}\|_{\max}\ge \beta_{n,d,\delta}\right)
+		\le
+		2d^2e^{-u_{n,d,\delta}^{(H)}}
+		=
+		\frac{\delta}{3}.
+	\]
+
+	For the approximate eigen-action bound \eqref{eq:results-APhi-concentration}, the Bernstein proof
+	used
+	\[
+		\sigma^2=\kappa^2,
+		\qquad
+		M=3\kappa.
+	\]
+	Hence, with
+	\[
+		u=u_{n,d,\delta}^{(A)},
+	\]
+	the standard Bernstein inversion gives the threshold
+	\[
+		\sqrt{\frac{2\kappa^2 u}{n}}+\frac{3\kappa u}{3n}
+		=
+		\kappa\sqrt{\frac{2u}{n}}+\kappa\frac{u}{n},
+	\]
+	which is precisely \(\gamma_{n,d,\delta}\). Therefore
+	\[
+		\mathbb P\!\left(\|A\Phi-\Phi\Lambda^{(n)}\|_{\max}\ge \gamma_{n,d,\delta}\right)
+		\le
+		2nd\,e^{-u_{n,d,\delta}^{(A)}}
+		=
+		\frac{\delta}{3}.
+	\]
+
+	A final union bound gives
+	\[
+		\mathbb P\!\left(
+		\|G-I_d\|_{\max}\le \alpha_{n,d,\delta},\;
+		\|H-\Lambda^{(n)}\|_{\max}\le \beta_{n,d,\delta},\;
+		\|A\Phi-\Phi\Lambda^{(n)}\|_{\max}\le \gamma_{n,d,\delta}
+		\right)
+		\ge
+		1-\delta,
+	\]
+	which is exactly \eqref{eq:results-simultaneous-bounds}.
+\end{proof}
+
+\section{Proof of the corollary on the restricted sampled operator}
+\label{sec:app-corollary-proof}
+
+% \begin{proof}[Proof of Corollary~\ref{cor:results-restricted-operator}]
+% 	Recall that
+% 	\[
+% 		C:=G^{-1}H.
+% 	\]
+% 	We work on the event of Corollary~\ref{cor:results-simultaneous-control}, namely
+% 	\[
+% 		\|G-I_d\|_{\max}\le \alpha_{n,d,\delta},
+% 		\qquad
+% 		\|H-\Lambda^{(n)}\|_{\max}\le \beta_{n,d,\delta}.
+% 	\]
+%
+% 	Passing from the entrywise max norm to the induced \(\ell^\infty\)-operator norm, we use
+% 	\[
+% 		\|M\|_\infty\le d\,\|M\|_{\max}
+% 	\]
+% 	for every \(d\times d\) matrix \(M\). Hence
+% 	\begin{equation}
+% 		\|G-I_d\|_\infty\le d\,\alpha_{n,d,\delta},
+% 		\qquad
+% 		\|H-\Lambda^{(n)}\|_\infty\le d\,\beta_{n,d,\delta}.
+% 		\label{eq:app-norm-conversion}
+% 	\end{equation}
+%
+% 	If \(d\,\alpha_{n,d,\delta}<1\), then \(G\) is invertible. Indeed,
+% 	\[
+% 		G = I_d - (I_d-G),
+% 	\]
+% 	and since \(\|I_d-G\|_\infty<1\), the Neumann-series argument gives
+% 	\begin{equation}
+% 		\|G^{-1}\|_\infty
+% 		\le
+% 		\frac{1}{1-\|I_d-G\|_\infty}
+% 		\le
+% 		\frac{1}{1-d\,\alpha_{n,d,\delta}}.
+% 		\label{eq:app-G-inverse-bound}
+% 	\end{equation}
+%
+% 	Using
+% 	\begin{equation}
+% 		C-\Lambda^{(n)}
+% 		=
+% 		G^{-1}H-\Lambda^{(n)}
+% 		=
+% 		G^{-1}\bigl(H-G\Lambda^{(n)}\bigr)
+% 		=
+% 		G^{-1}\bigl((H-\Lambda^{(n)})-(G-I_d)\Lambda^{(n)}\bigr),
+% 		\label{eq:app-C-minus-Lambda}
+% 	\end{equation}
+% 	we obtain
+% 	\[
+% 		\|C-\Lambda^{(n)}\|_\infty
+% 		\le
+% 		\|G^{-1}\|_\infty
+% 		\left(
+% 		\|H-\Lambda^{(n)}\|_\infty
+% 		+
+% 		\|G-I_d\|_\infty\,\|\Lambda^{(n)}\|_\infty
+% 		\right).
+% 	\]
+%
+% 	It remains to bound \(\|\Lambda^{(n)}\|_\infty\). Since \(\Lambda^{(n)}\) is diagonal,
+% 	\[
+% 		\|\Lambda^{(n)}\|_\infty
+% 		=
+% 		\max_p |\lambda_p^{(n)}|.
+% 	\]
+% 	Now
+% 	\[
+% 		\lambda_p^{(n)}
+% 		=
+% 		\left(1-\frac1n\right)\lambda_p+\frac1n\Theta(0),
+% 	\]
+% 	and both \(|\lambda_p|\le \kappa\) and \(|\Theta(0)|\le \kappa\). Therefore
+% 	\[
+% 		|\lambda_p^{(n)}|
+% 		\le
+% 		\left(1-\frac1n\right)\kappa+\frac1n\kappa
+% 		=
+% 		\kappa,
+% 	\]
+% 	so
+% 	\[
+% 		\|\Lambda^{(n)}\|_\infty\le \kappa.
+% 	\]
+%
+% 	Substituting \eqref{eq:app-norm-conversion} and \eqref{eq:app-G-inverse-bound} gives
+% 	\[
+% 		\|C-\Lambda^{(n)}\|_\infty
+% 		\le
+% 		\frac{d\,\beta_{n,d,\delta}+d\,\kappa\,\alpha_{n,d,\delta}}
+% 		{1-d\,\alpha_{n,d,\delta}},
+% 	\]
+% 	which is exactly \eqref{eq:results-restricted-operator-bound}.
+% \end{proof}

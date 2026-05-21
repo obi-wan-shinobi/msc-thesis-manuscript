@@ -54,6 +54,14 @@
 % Used in the bibliography to enable \citeauthor{citation}
 \usepackage[round]{natbib}
 
+% Add for highlighting changes
+\newenvironment{revblock}{\begingroup\color{blue}}{\endgroup}
+\newcommand{\rev}[1]{{\color{blue}#1}}
+
+% Change the above to this to remove highlighting
+% \newenvironment{revblock}{}{}
+% \newcommand{\rev}[1]{#1}
+
 % Ensure that urls longer than the page width are broken up
 % Based on the answer of StackOverflow user "xamde":
 % https://tex.stackexchange.com/a/10401/155506
@@ -129,15 +137,17 @@
 \include{frontmatter/preface}
 
 \cleardoublepage\tableofcontents
-\cleardoublepage\listoffigures
+% \cleardoublepage\listoffigures
 \cleardoublepage\mainmatter
 
 \include{chapters/introduction}
+\include{chapters/theoretical_background}
 \include{chapters/related_work}
 \include{chapters/methodology}
 \include{chapters/results}
 \include{chapters/discussion}
 \include{chapters/conclusions_and_future_work}
+% \include{chapters/discussion_and_conclusion}
 % \include{chapters/preliminary_experiments}
 % \include{chapters/conclusions_and_future_work}
 

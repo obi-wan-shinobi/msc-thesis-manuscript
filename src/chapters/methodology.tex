@@ -94,6 +94,11 @@ and the corresponding integral operator \(T_t^{(m)}:L^2(\mu)\to L^2(\mu)\) is
 	\int_0^{2\pi}\Theta_t^{(m)}(\varphi,\psi)f(\psi)\,d\mu(\psi).
 	\label{eq:method-time-dependent-kernel-operator}
 \end{equation}
+Under gradient flow, the residual evolves according to
+\begin{equation}
+	\partial_t r_t=-T_t^{(m)}r_t.
+	\label{eq:method-exact-residual-flow}
+\end{equation}
 Consequently, the loss evolves as
 \begin{equation}
 	\frac{d}{dt}\frac12\|r_t\|_{L^2(\mu)}^2
@@ -181,6 +186,7 @@ finite-dimensional low-frequency block that can be compared across the continuum
 frozen finite-width, and evolving finite-width settings.
 
 \section{Finite-sample methodology}
+\label{sec:finite-sample-methodology}
 
 \subsection{Finite-sample question}
 
@@ -634,7 +640,7 @@ the principal angles and subspace cosine similarity give more detailed views of
 the same alignment.
 
 \section{Finite-width evolving-kernel methodology}
-
+\label{sec:finite-width-evolving-kernel-methodology}
 \subsection{Projected evolving operator}
 
 To study the actual training dynamics, we retain the time dependence of the empirical tangent

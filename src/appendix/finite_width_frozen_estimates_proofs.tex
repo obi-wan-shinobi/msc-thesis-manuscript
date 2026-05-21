@@ -1,0 +1,515 @@
+\chapter{Proofs of the finite-width frozen-kernel estimates}
+\label{app:finite-width-frozen-proofs}
+
+This appendix proves the finite-width frozen-kernel results stated in
+Section~\ref{sec:results-finite-width-frozen}. We use the notation introduced in
+Chapter~\ref{cha:methodology}. In particular, \(T_0^{(m)}\) denotes the frozen finite-width
+tangent operator at initialization, \(T_\infty\) the infinite-width limiting operator,
+\(\mathcal H_K\) the truncated Fourier subspace, \(P_K\) the orthogonal projection onto
+\(\mathcal H_K\), and
+\[
+	B_m^{(K)}=P_KT_0^{(m)}P_K,
+	\qquad
+	\Lambda_K=P_KT_\infty P_K.
+\]
+Since the input space is the continuum \(S^1\), there is no sampling randomness in this
+appendix. The only randomness comes from the finite number of initialized neurons.
+
+\section{One-neuron tangent feature and kernel}
+\label{sec:app-finite-width-one-neuron}
+
+Fix one neuron \(r\), and write
+\[
+	u_r(\theta):=w_r^\top x(\theta)+b_r.
+\]
+At initialization, \(b_r=0\), so \(u_r(\theta)=w_r^\top x(\theta)\).
+
+We compute the tangent feature of the \(r\)-th neuron contribution
+\[
+	a_r\sigma(u_r(\theta))
+\]
+with respect to the parameter block \((a_r,w_r,b_r)\). First,
+\[
+	\partial_{a_r}\bigl(a_r\sigma(u_r(\theta))\bigr)
+	=
+	\sigma(u_r(\theta)).
+\]
+Next, by the chain rule,
+\[
+	\nabla_{w_r}\bigl(a_r\sigma(u_r(\theta))\bigr)
+	=
+	a_r\sigma'(u_r(\theta))\nabla_{w_r}u_r(\theta).
+\]
+Since
+\[
+	u_r(\theta)=w_r^\top x(\theta)+b_r,
+\]
+we have
+\[
+	\nabla_{w_r}u_r(\theta)=x(\theta).
+\]
+For ReLU,
+\[
+	\sigma'(z)=\mathbf 1_{\{z>0\}}
+\]
+away from \(z=0\), which is sufficient almost surely under the Gaussian initialization.
+Hence
+\[
+	\nabla_{w_r}\bigl(a_r\sigma(u_r(\theta))\bigr)
+	=
+	a_r\mathbf 1_{\{u_r(\theta)>0\}}x(\theta).
+\]
+Similarly,
+\[
+	\partial_{b_r}\bigl(a_r\sigma(u_r(\theta))\bigr)
+	=
+	a_r\sigma'(u_r(\theta))\partial_{b_r}u_r(\theta)
+	=
+	a_r\mathbf 1_{\{u_r(\theta)>0\}}.
+\]
+
+Thus the one-neuron tangent feature is
+\begin{equation}
+	\psi_r(\theta)
+	=
+	\begin{pmatrix}
+		\sigma(u_r(\theta))                        \\
+		a_r\mathbf 1_{\{u_r(\theta)>0\}}\cos\theta \\
+		a_r\mathbf 1_{\{u_r(\theta)>0\}}\sin\theta \\
+		a_r\mathbf 1_{\{u_r(\theta)>0\}}
+	\end{pmatrix}
+	\in\mathbb R^4.
+	\label{eq:app-finite-width-tangent-feature}
+\end{equation}
+
+The corresponding one-neuron kernel is
+\begin{equation}
+	\Theta^{(r)}(\theta,\eta)
+	=
+	\psi_r(\theta)^\top \psi_r(\eta).
+	\label{eq:app-finite-width-one-neuron-kernel}
+\end{equation}
+Substituting \eqref{eq:app-finite-width-tangent-feature} gives
+\begin{align}
+	\Theta^{(r)}(\theta,\eta)
+	 & =
+	\sigma(u_r(\theta))\sigma(u_r(\eta)) \notag \\
+	 & \quad
+	+
+	a_r^2
+	\mathbf 1_{\{u_r(\theta)>0\}}
+	\mathbf 1_{\{u_r(\eta)>0\}}
+	\bigl(
+	\cos\theta\cos\eta+\sin\theta\sin\eta+1
+	\bigr).
+	\label{eq:app-finite-width-kernel-expanded}
+\end{align}
+Using
+\[
+	\cos\theta\cos\eta+\sin\theta\sin\eta=\cos(\theta-\eta),
+\]
+we obtain
+\begin{equation}
+	\Theta^{(r)}(\theta,\eta)
+	=
+	\sigma(u_r(\theta))\sigma(u_r(\eta))
+	+
+	a_r^2
+	\mathbf 1_{\{u_r(\theta)>0\}}
+	\mathbf 1_{\{u_r(\eta)>0\}}
+	\bigl(\cos(\theta-\eta)+1\bigr).
+	\label{eq:app-finite-width-kernel-final}
+\end{equation}
+
+Let \(T^{(r)}\) denote the associated one-neuron integral operator,
+\begin{equation}
+	(T^{(r)}g)(\theta)
+	:=
+	\int_0^{2\pi}\Theta^{(r)}(\theta,\eta)g(\eta)\,d\mu(\eta).
+	\label{eq:app-finite-width-one-neuron-operator}
+\end{equation}
+Then, by \eqref{eq:method-finite-width-frozen-average},
+\[
+	T_0^{(m)}=\frac1m\sum_{r=1}^m T^{(r)}.
+\]
+
+\section{Projected one-neuron matrices}
+\label{sec:app-finite-width-projected-matrices}
+
+Using the ordered basis
+\[
+	(\phi_0,\phi_{1,c},\phi_{1,s},\dots,\phi_{K,c},\phi_{K,s})
+\]
+of \(\mathcal H_K\), the entries of \(B_m^{(K)}\) are
+\begin{equation}
+	(B_m^{(K)})_{pq}
+	=
+	\langle \phi_p,T_0^{(m)}\phi_q\rangle_{L^2(\mu)}.
+	\label{eq:app-finite-width-B-entry}
+\end{equation}
+Since \(T_0^{(m)}=\frac1m\sum_{r=1}^m T^{(r)}\),
+\[
+	(B_m^{(K)})_{pq}
+	=
+	\frac1m\sum_{r=1}^m
+	\langle \phi_p,T^{(r)}\phi_q\rangle.
+\]
+Define
+\begin{equation}
+	\xi_{r,pq}:=\langle \phi_p,T^{(r)}\phi_q\rangle.
+	\label{eq:app-finite-width-xi}
+\end{equation}
+Then
+\begin{equation}
+	(B_m^{(K)})_{pq}
+	=
+	\frac1m\sum_{r=1}^m \xi_{r,pq}.
+	\label{eq:app-finite-width-B-average-entry}
+\end{equation}
+
+Equivalently, if \(Z_r\) denotes the \(d\times d\) random matrix defined by
+\[
+	(Z_r)_{pq}:=\xi_{r,pq},
+\]
+then
+\begin{equation}
+	B_m^{(K)}
+	=
+	\frac1m\sum_{r=1}^m Z_r.
+	\label{eq:app-finite-width-B-average}
+\end{equation}
+Since the neurons are initialized independently and identically, the matrices
+\(Z_1,\dots,Z_m\) are i.i.d.
+
+\section{Expectation of the projected operator}
+\label{sec:app-finite-width-expectation}
+
+\begin{proof}[Proof of \eqref{eq:results-finite-width-mean}]
+	From \eqref{eq:app-finite-width-B-average},
+	\[
+		\mathbb E[B_m^{(K)}]
+		=
+		\frac1m\sum_{r=1}^m \mathbb E[Z_r]
+		=
+		\mathbb E[Z_1].
+	\]
+	The \((p,q)\)-entry is
+	\[
+		\mathbb E[(Z_1)_{pq}]
+		=
+		\mathbb E[\xi_{1,pq}]
+		=
+		\mathbb E[\langle \phi_p,T^{(1)}\phi_q\rangle].
+	\]
+	By linearity of expectation,
+	\[
+		\mathbb E[\xi_{1,pq}]
+		=
+		\langle \phi_p,\mathbb E[T^{(1)}]\phi_q\rangle
+		=
+		\langle \phi_p,T_\infty\phi_q\rangle.
+	\]
+	Since \(T_\infty\) is diagonal in the Fourier basis,
+	\[
+		\langle \phi_p,T_\infty\phi_q\rangle
+		=
+		\lambda_q\delta_{pq}.
+	\]
+	Therefore
+	\[
+		\mathbb E[B_m^{(K)}]=\Lambda_K.
+	\]
+\end{proof}
+
+\section{Sub-exponential bound for one projected entry}
+\label{sec:app-finite-width-subexp}
+
+We next control \(\xi_{r,pq}\). By definition,
+\begin{equation}
+	\xi_{r,pq}
+	=
+	\int_0^{2\pi}\int_0^{2\pi}
+	\phi_p(\theta)
+	\Theta^{(r)}(\theta,\eta)
+	\phi_q(\eta)
+	\,d\mu(\eta)\,d\mu(\theta).
+	\label{eq:app-finite-width-xi-integral}
+\end{equation}
+Taking absolute values gives
+\[
+	|\xi_{r,pq}|
+	\le
+	\int_0^{2\pi}\int_0^{2\pi}
+	|\phi_p(\theta)|
+	|\Theta^{(r)}(\theta,\eta)|
+	|\phi_q(\eta)|
+	\,d\mu(\eta)\,d\mu(\theta).
+\]
+Since every retained Fourier basis function satisfies
+\[
+	\|\phi_p\|_\infty\le \sqrt2,
+\]
+we obtain
+\[
+	|\xi_{r,pq}|
+	\le
+	2
+	\int_0^{2\pi}\int_0^{2\pi}
+	|\Theta^{(r)}(\theta,\eta)|
+	\,d\mu(\eta)\,d\mu(\theta).
+\]
+
+We now bound the kernel. Since
+\[
+	u_r(\theta)=w_r^\top x(\theta),
+	\qquad
+	\|x(\theta)\|=1,
+\]
+Cauchy--Schwarz gives
+\[
+	|u_r(\theta)|\le \|w_r\|.
+\]
+Therefore
+\[
+	0\le \sigma(u_r(\theta))\le |u_r(\theta)|\le \|w_r\|,
+\]
+and hence
+\[
+	0\le \sigma(u_r(\theta))\sigma(u_r(\eta))\le \|w_r\|^2.
+\]
+For the derivative and bias term, we use
+\[
+	\mathbf 1_{\{u_r(\theta)>0\}}\mathbf 1_{\{u_r(\eta)>0\}}\le 1
+\]
+and
+\[
+	0\le \cos(\theta-\eta)+1\le 2.
+\]
+Thus
+\[
+	a_r^2
+	\mathbf 1_{\{u_r(\theta)>0\}}
+	\mathbf 1_{\{u_r(\eta)>0\}}
+	(\cos(\theta-\eta)+1)
+	\le
+	2a_r^2.
+\]
+Using \eqref{eq:app-finite-width-kernel-final}, we conclude that
+\[
+	|\Theta^{(r)}(\theta,\eta)|
+	\le
+	\|w_r\|^2+2a_r^2.
+\]
+Since \(\mu\) is a probability measure,
+\[
+	\int\!\!\int
+	(\|w_r\|^2+2a_r^2)\,d\mu(\eta)d\mu(\theta)
+	=
+	\|w_r\|^2+2a_r^2.
+\]
+Therefore
+\begin{equation}
+	|\xi_{r,pq}|
+	\le
+	2\|w_r\|^2+4a_r^2.
+	\label{eq:app-finite-width-xi-bound}
+\end{equation}
+
+Define
+\[
+	Y_r:=2\|w_r\|^2+4a_r^2.
+\]
+Then
+\[
+	|\xi_{r,pq}|\le Y_r
+	\qquad\text{for all }p,q.
+\]
+
+We now show that \(Y_r\) is sub-exponential with an explicit parameter. Since
+\(w_r\sim \mathcal N(0,I_2)\), its squared Euclidean norm is the sum of two independent
+standard Gaussian squares, and therefore \(w_r\) follows a chi-squared distribution
+with two degrees of freedom \(\|w_r\|^2\sim \chi^2_2\).
+
+Similarly, since \(a_r\sim \mathcal N(0,1)\), its square follows a chi-squared distribution
+with one degree of freedom \(a_r^2\sim \chi^2_1\) and these variables are independent, for \(t<1/8\),
+\[
+	\mathbb E[e^{tY_r}]
+	=
+	\mathbb E[e^{2t\|w_r\|^2}]
+	\mathbb E[e^{4ta_r^2}].
+\]
+If \(X\sim\chi^2_\nu\), then
+\[
+	\mathbb E[e^{sX}]=(1-2s)^{-\nu/2},
+	\qquad s<1/2.
+\]
+Hence
+\[
+	\mathbb E[e^{2t\|w_r\|^2}]=(1-4t)^{-1},
+	\qquad
+	\mathbb E[e^{4ta_r^2}]=(1-8t)^{-1/2}.
+\]
+Thus
+\begin{equation}
+	\mathbb E[e^{tY_r}]
+	=
+	(1-4t)^{-1}(1-8t)^{-1/2},
+	\qquad t<1/8.
+	\label{eq:app-finite-width-Y-mgf}
+\end{equation}
+
+Choosing \(t=1/16\), we obtain
+\[
+	\mathbb E[e^{Y_r/16}]
+	=
+	\left(\frac34\right)^{-1}
+	\left(\frac12\right)^{-1/2}
+	=
+	\frac43\sqrt2
+	<2.
+\]
+Therefore, by the standard definition of the \(\psi_1\)-norm,
+\begin{equation}
+	\|Y_r\|_{\psi_1}\le 16.
+	\label{eq:app-finite-width-Y-psi1}
+\end{equation}
+Since \(|\xi_{r,pq}|\le Y_r\),
+\[
+	\|\xi_{r,pq}\|_{\psi_1}\le 16.
+\]
+Finally,
+\[
+	\|\xi_{r,pq}-\mathbb E[\xi_{r,pq}]\|_{\psi_1}
+	\le
+	\|\xi_{r,pq}\|_{\psi_1}+|\mathbb E[\xi_{r,pq}]|.
+\]
+Using \(|\mathbb E[\xi_{r,pq}]|\le \mathbb E|\xi_{r,pq}|\) and
+\(\mathbb E|X|\le \|X\|_{\psi_1}\), we obtain
+\begin{equation}
+	\|\xi_{r,pq}-\mathbb E[\xi_{r,pq}]\|_{\psi_1}\le 32.
+	\label{eq:app-finite-width-centered-psi1}
+\end{equation}
+
+\section{Entrywise and blockwise concentration}
+\label{sec:app-finite-width-concentration}
+
+\begin{proof}[Proof of \eqref{eq:results-finite-width-max-bound}]
+	Fix \(p,q\), and define
+	\[
+		X_{r,pq}:=\xi_{r,pq}-\mathbb E[\xi_{r,pq}].
+	\]
+	Then \(X_{1,pq},\dots,X_{m,pq}\) are i.i.d., centered, and by
+	\eqref{eq:app-finite-width-centered-psi1},
+	\[
+		\|X_{r,pq}\|_{\psi_1}\le 32.
+	\]
+	Moreover,
+	\[
+		(B_m^{(K)})_{pq}-(\Lambda_K)_{pq}
+		=
+		\frac1m\sum_{r=1}^m X_{r,pq}.
+	\]
+
+	We apply the standard Bernstein inequality for centered i.i.d. sub-exponential random
+	variables: if \(X_1,\dots,X_m\) satisfy \(\|X_i\|_{\psi_1}\le L\), then there exists a
+	universal constant \(c>0\) such that
+	\[
+		\mathbb P\!\left(
+		\left|\frac1m\sum_{r=1}^m X_r\right|\ge \varepsilon
+		\right)
+		\le
+		2\exp\!\left(
+		-cm\min\!\left(\frac{\varepsilon^2}{L^2},\frac{\varepsilon}{L}\right)
+		\right).
+	\]
+	Applying this with \(L=32\), we obtain
+	\begin{equation}
+		\mathbb P\!\left(
+		\left|(B_m^{(K)})_{pq}-(\Lambda_K)_{pq}\right|
+		\ge \varepsilon
+		\right)
+		\le
+		2\exp\!\left(
+		-cm\min\!\left(\frac{\varepsilon^2}{32^2},\frac{\varepsilon}{32}\right)
+		\right).
+		\label{eq:app-finite-width-entry-concentration}
+	\end{equation}
+
+	There are \(d^2=(2K+1)^2\) entries. By the union bound,
+	\[
+		\mathbb P\!\left(
+		\|B_m^{(K)}-\Lambda_K\|_{\max}\ge \varepsilon
+		\right)
+		\le
+		\sum_{p,q=1}^d
+		\mathbb P\!\left(
+		\left|(B_m^{(K)})_{pq}-(\Lambda_K)_{pq}\right|
+		\ge \varepsilon
+		\right).
+	\]
+	Using \eqref{eq:app-finite-width-entry-concentration},
+	\[
+		\mathbb P\!\left(
+		\|B_m^{(K)}-\Lambda_K\|_{\max}\ge \varepsilon
+		\right)
+		\le
+		2d^2
+		\exp\!\left(
+		-cm\min\!\left(\frac{\varepsilon^2}{32^2},\frac{\varepsilon}{32}\right)
+		\right).
+	\]
+	Since \(d=2K+1\), this proves \eqref{eq:results-finite-width-max-bound}.
+\end{proof}
+
+% \section{Operator-norm bound}
+% \label{sec:app-finite-width-op-proof}
+%
+% \begin{proof}[Proof of \eqref{eq:results-finite-width-op-bound}]
+% 	For every \(d\times d\) matrix \(M\),
+% 	\[
+% 		\|M\|_{\mathrm{op}}\le d\|M\|_{\max}.
+% 	\]
+% 	Therefore, if
+% 	\[
+% 		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta,
+% 	\]
+% 	then
+% 	\[
+% 		\|B_m^{(K)}-\Lambda_K\|_{\max}\ge \frac{\delta}{d}.
+% 	\]
+% 	Hence
+% 	\[
+% 		\mathbb P\!\left(
+% 		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta
+% 		\right)
+% 		\le
+% 		\mathbb P\!\left(
+% 		\|B_m^{(K)}-\Lambda_K\|_{\max}\ge \frac{\delta}{d}
+% 		\right).
+% 	\]
+% 	Applying \eqref{eq:results-finite-width-max-bound} with \(\varepsilon=\delta/d\) yields
+% 	\[
+% 		\mathbb P\!\left(
+% 		\|B_m^{(K)}-\Lambda_K\|_{\mathrm{op}}\ge \delta
+% 		\right)
+% 		\le
+% 		2d^2
+% 		\exp\!\left(
+% 		-cm\min\!\left(
+% 			\frac{\delta^2}{32^2d^2},
+% 			\frac{\delta}{32d}
+% 			\right)
+% 		\right).
+% 	\]
+% 	which proves \eqref{eq:results-finite-width-op-bound}.
+% \end{proof}
+% \chapter{\label{cha:glossary}Glossary}
+%
+% In this appendix we give an overview of frequently used terms and
+% abbreviations.
+%
+% \begin{description}
+% 	\item[foo:] \ldots
+% 	\item [bar:] \ldots
+% \end{description}
+%

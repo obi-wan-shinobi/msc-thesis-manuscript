@@ -1,4 +1,5 @@
-\chapter{\label{cha:results}Results}
+\chapter{Results}
+\label{cha:results}
 
 \section{Continuum kernel on \(S^1\)}
 
@@ -351,13 +352,7 @@ envelopes are conservative, but they have the same decreasing trend.
 
 	\caption{Finite-sample diagnostics for the sampled Fourier approximation.
 		The three plotted errors decrease with \(n\). The theoretical envelopes are
-		conservative, but they show the same decreasing trend.
-		\textcolor{red}{[Draft note for David \& Alexander: I was trying to use
-					Bernstein's inequality and I managed to improve the bounds slightly, still not as
-					tight but they seem to be better in the first and the third plot than the previous
-					bound I had derived (the green line is the previous bound I came up with
-					and the red is the new one).]}
-	}
+		conservative, but they show the same decreasing trend.}
 	\label{fig:results-finite-sample-diagnostics}
 \end{figure}
 
@@ -667,7 +662,7 @@ This gives one scalar mismatch measure for each frequency subspace. By
 principal angles between \(\mathcal F_k\) and \(\widehat{\mathcal F}_k\).
 
 Figure~\ref{fig:results-finite-width-projector-error} shows the mean and
-standard deviation of \(\|\widehat P_k-P_k\|_F\) across random initializations.
+standard deviation of \(\varepsilon_{k,F}\) across random initializations.
 For all displayed frequencies, the projector error decreases as the width
 increases. Higher frequencies generally have larger projector error at a fixed
 width. One exception in this experiment is \(k=2\), which has the smallest
@@ -770,9 +765,7 @@ evolving comparison in more detail.
 	\caption{Cross-width comparison of the least-squares objective
 		\(L(t)=\frac{1}{2}\|r_t\|_2^2\) under frozen and evolving tangent-kernel
 		dynamics. In the frozen regime, larger width gives consistently better
-		residual decay. In the evolving regime, the curves are much closer across
-		widths, suggesting that kernel evolution partly compensates for finite-width
-		error.}
+		residual decay. In the evolving regime, the curves are closer across widths.}
 	\label{fig:evolving-cross-width-loss}
 \end{figure}
 
@@ -811,14 +804,11 @@ evolving comparison in more detail.
 	\label{fig:evolving-loss-by-width}
 \end{figure}
 
-The basic pattern is a width-dependent crossover. In the frozen regime, the
-optimization improves steadily with width. In the evolving regime, the curves
-are more tightly clustered across widths, indicating that kernel evolution
-partly compensates for finite-width error. At widths \(128\) and \(256\), the
-evolving kernel clearly outperforms the frozen baseline. At width \(512\), the
-advantage is smaller but still present in the final objective. By width
-\(1024\), this advantage disappears, and the frozen kernel reaches the lower
-final loss.
+In the frozen regime, the objective decreases more quickly as the width
+increases. In the evolving regime, the curves are more tightly clustered across
+widths. At widths \(128\) and \(256\), the evolving kernel reaches a lower final
+objective than the frozen baseline. At width \(512\), the difference is smaller.
+At width \(1024\), the frozen kernel reaches the lower final objective.
 
 This raises the main question for the rest of the section: what changes in the
 evolving tangent kernel allow it to help at small width, but not at large
@@ -828,14 +818,13 @@ width?
 \label{subsec:results-evolving-joint}
 
 To understand the loss comparison above, we next examine three diagnostics
-together. The mode-wise residual plots show which target-present modes are
+together. The mode-wise residual plots show which modes present in the target are
 actually being removed faster. The subspace cosine similarity plots measure how closely
 the evolving tangent-kernel eigenspaces remain aligned with the Fourier
-subspaces. The spectral-strength plots measure the average operator strength
-inside each Fourier block.
+subspaces. The spectral-strength plots measure the average eigenvalue
+inside each Fourier block, equivalently measuring the operator strength in that Fourier subspace.
 
-These diagnostics should be read jointly. If the evolving kernel helps because
-it preserves Fourier geometry better, then one would expect improved alignment.
+If the evolving kernel helps because it preserves Fourier geometry better, then one would expect improved alignment.
 If instead it helps by redistributing operator strength, then one should expect
 improved decay of the low-frequency residual modes together with increased
 low-frequency spectral strength, even if the Fourier alignment worsens.
@@ -964,31 +953,20 @@ low-frequency spectral strength, even if the Fourier alignment worsens.
 \end{figure}
 
 Figures~\ref{fig:evolving-joint-w128}--\ref{fig:evolving-joint-w1024}
-show a consistent pattern. First, the mode-wise residual plots show that the
-evolving kernel mainly improves the decay of the low-frequency target modes at
-small width. This is most visible at widths \(128\) and \(256\), which are also
-the widths where the evolving dynamics gives the clearest improvement in the
-overall least-squares objective. At width \(512\), the effect is weaker. By
-width \(1024\), the frozen dynamics is competitive or better on the modes that
-dominate the final loss.
+show three recurring trends. First, the mode-wise residual plots show that the evolving dynamics gives
+smaller residuals for several low-frequency target modes at widths \(128\) and
+\(256\). At width \(512\), this difference is smaller. At width \(1024\), the
+frozen dynamics is comparable or better on the modes that dominate the final
+loss.
 
-Second, the subspace cosine similarity plots show that the evolving kernel does not help
-by becoming more Fourier-aligned. Several higher-frequency subspaces lose
-alignment during training. Thus the improvement at small width cannot be
-explained by better preservation of the Fourier eigenspaces.
+Second, the subspace cosine similarity plots show that kernel evolution does
+not increase alignment with the Fourier subspaces. Several higher-frequency
+subspaces lose alignment during training.
 
-Third, the spectral-strength plots show a different effect. The evolving kernel
-increases the average operator strength in the lowest Fourier blocks, especially
-\(k=0\) and \(k=1\), with a smaller increase for \(k=2\). The higher-frequency
-blocks remain much weaker. This matches the mode-wise residual plots: the
-components that benefit most from the evolving dynamics are the low-frequency
-components whose spectral strength is amplified.
-
-Taken together, these diagnostics suggest that the evolving kernel helps at
-small width mainly through spectral reweighting rather than through improved
-Fourier geometry. Kernel evolution increases low-frequency strength, but it also
-moves some subspaces away from the Fourier reference. The balance between these
-two effects changes with width.
+Third, the spectral-strength plots show that the evolving kernel increases the
+average operator strength in the lowest Fourier blocks, especially \(k=0\) and
+\(k=1\), with a smaller increase for \(k=2\). The higher-frequency blocks remain
+weaker in comparison.
 
 \subsection{Width dependence of tangent-kernel drift}
 \label{subsec:results-evolving-block-drift}
@@ -1020,20 +998,16 @@ moves far from its initial value during training. At width \(256\), the drift is
 smaller but still substantial. At widths \(512\) and \(1024\), the drift is much
 more limited.
 
-This supports the interpretation from the previous subsection. At small width,
-the evolving dynamics substantially modifies the tangent kernel, and this can
-increase low-frequency spectral strength enough to improve the loss. At larger
-width, the tangent kernel changes less, while the frozen kernel already starts
-closer to the continuum reference. The benefit of kernel evolution therefore
-shrinks with width and eventually disappears in the experiments above.
+Thus, in these experiments, the evolving tangent kernel changes more at small
+width than at large width. This is consistent with the stronger difference
+between frozen and evolving loss curves at widths \(128\) and \(256\).
 
 The drift norm should not be interpreted by itself as an improvement or a
 deterioration. It only measures how much the low-frequency block changes from
 initialization. The joint diagnostics in
-Figures~\ref{fig:evolving-joint-w128}--\ref{fig:evolving-joint-w1024} explain
-what this drift does in these experiments: it increases low-frequency spectral
-strength, while also moving some Fourier subspaces away from the Fourier
-reference.
+Figures~\ref{fig:evolving-joint-w128}--\ref{fig:evolving-joint-w1024} show that
+this drift is accompanied by two visible changes: increased low-frequency
+spectral strength and reduced alignment for some Fourier subspaces.
 
 \subsection{Effect of target amplitudes on spectral strength}
 \label{subsec:results-evolving-amplitude-variants}
@@ -1139,26 +1113,7 @@ strength on the retained low-frequency block relative to the frozen baseline.
 This increase is largest for the equal-amplitude target, smaller but still clear
 for the reversed-amplitude target, and weakest for the original target.
 
-The ordering is useful to interpret carefully. The cumulative spectral strength
-does not measure the residual size or the quality of the final fit. It measures
-how much average tangent-kernel strength is placed on the retained Fourier
-block. The fact that the increase remains visible for the reversed-amplitude target
-suggests that the evolving kernel is not simply following the largest target
-coefficients. Even when the higher-frequency target components are made larger,
-the evolving kernel still increases low-frequency block strength.
-
-The effect also becomes smaller as the width increases. At width \(128\), the
-evolving kernel moves far above the frozen baseline. At width \(1024\), the same
-trend remains, but the total increase is much smaller. This is consistent with
-the width-dependent picture from the previous diagnostics: at small width, kernel
-evolution substantially changes the effective operator, while at larger width the
-frozen tangent kernel is already closer to its infinite-width reference and the
-additional change during training is more limited.
-
-Taken together, the amplitude-variant experiments support the interpretation
-that the evolving tangent kernel has a robust tendency to increase
-low-frequency spectral strength. This does not by itself prove that the evolving
-model always optimizes faster, because the loss also depends on the current
-residual and on the geometry of the learned subspaces. It does show, however,
-that the spectral-strength increase is not an artifact of the original amplitude
-choice.
+The effect also decreases with width. At width \(128\), the evolving curves move
+well above the frozen baseline. At width \(1024\), the same ordering is still
+visible, but the increase is smaller. These experiments show that the
+low-frequency strength increase persists across the three amplitude choices.

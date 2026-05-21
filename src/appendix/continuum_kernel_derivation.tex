@@ -1,0 +1,558 @@
+\chapter{Derivation of the limiting kernel on \(S^1\)}
+\label{app:continuum-kernel}
+
+This appendix derives the explicit form of the limiting neural tangent kernel on the circle
+for the model introduced in Chapter~\ref{cha:methodology}, and computes the corresponding
+Fourier eigenvalues of the integral operator \(T\). These derivations justify
+Proposition~\ref{prop:results-continuum-ntk} and
+Theorem~\ref{thm:results-continuum-spectrum}.
+
+\section{Decomposition of the empirical neural tangent kernel}
+\label{sec:app-ntk-decomposition}
+
+Recall the network
+\[
+	f(x;\theta)=\frac{1}{\sqrt m}\sum_{i=1}^m a_i \sigma(w_i^\top x+b_i),
+\]
+where \(x\in S^1\subset\mathbb R^2\), \(\sigma(t)=t_+\), and
+\(\theta=\{(a_i,w_i,b_i)\}_{i=1}^m\). For \(x,y\in S^1\), the empirical neural tangent kernel is
+\begin{equation}
+	\Theta_m(x,y)
+	=
+	\bigl\langle \nabla_\theta f(x;\theta),\nabla_\theta f(y;\theta)\bigr\rangle.
+	\label{eq:app-empirical-ntk}
+\end{equation}
+
+For each hidden unit \(i\), define
+\[
+	u_i:=w_i^\top x+b_i,
+	\qquad
+	v_i:=w_i^\top y+b_i.
+\]
+Then
+\[
+	\frac{\partial f(x;\theta)}{\partial a_i}
+	=
+	\frac{1}{\sqrt m}\sigma(u_i),
+	\qquad
+	\frac{\partial f(x;\theta)}{\partial w_i}
+	=
+	\frac{1}{\sqrt m}a_i\sigma'(u_i)\,x,
+	\qquad
+	\frac{\partial f(x;\theta)}{\partial b_i}
+	=
+	\frac{1}{\sqrt m}a_i\sigma'(u_i).
+\]
+Substituting into \eqref{eq:app-empirical-ntk} yields
+\begin{equation}
+	\Theta_m(x,y)
+	=
+	\Theta_m^{(a)}(x,y)+\Theta_m^{(w)}(x,y)+\Theta_m^{(b)}(x,y),
+	\label{eq:app-ntk-decomposition}
+\end{equation}
+where
+\begin{align*}
+	\Theta_m^{(a)}(x,y)
+	 & =
+	\frac1m\sum_{i=1}^m \sigma(u_i)\sigma(v_i),                   \\
+	\Theta_m^{(w)}(x,y)
+	 & =
+	\frac1m\sum_{i=1}^m a_i^2 \sigma'(u_i)\sigma'(v_i)\,x^\top y, \\
+	\Theta_m^{(b)}(x,y)
+	 & =
+	\frac1m\sum_{i=1}^m a_i^2 \sigma'(u_i)\sigma'(v_i).
+\end{align*}
+
+\section{Infinite-width limit}
+\label{sec:app-ntk-limit}
+
+At initialization, the parameters satisfy
+\[
+	a_i\sim \mathcal N(0,1),
+	\qquad
+	w_i\sim \mathcal N(0,I_2),
+	\qquad
+	b_i(0)=0,
+\]
+independently across \(i\). Since the hidden units are independent and identically distributed,
+the law of large numbers implies that \(\Theta_m(x,y)\) converges almost surely, as
+\(m\to\infty\), to a deterministic kernel \(\Theta(x,y)\).
+
+Because \(b_i(0)=0\), the limiting kernel is
+\begin{equation}
+	\Theta(x,y)
+	=
+	\mathbb E\bigl[\sigma(u)\sigma(v)\bigr]
+	+
+	\bigl(x^\top y+1\bigr)\mathbb E\bigl[\sigma'(u)\sigma'(v)\bigr],
+	\label{eq:app-limit-kernel-general}
+\end{equation}
+where
+\[
+	u=w^\top x,
+	\qquad
+	v=w^\top y,
+	\qquad
+	w\sim \mathcal N(0,I_2).
+\]
+We write
+\[
+	K_0(x,y):=\mathbb E\bigl[\sigma(u)\sigma(v)\bigr],
+	\qquad
+	K_1(x,y):=\mathbb E\bigl[\sigma'(u)\sigma'(v)\bigr],
+\]
+so that
+\[
+	\Theta(x,y)=K_0(x,y)+\bigl(x^\top y+1\bigr)K_1(x,y).
+\]
+
+\section{Restriction to the circle}
+\label{sec:app-kernel-on-circle}
+
+Write
+\[
+	x(\varphi)=(\cos\varphi,\sin\varphi),
+	\qquad
+	x(\psi)=(\cos\psi,\sin\psi),
+\]
+and let \(\delta\in[0,\pi]\) denote the angle between \(x(\varphi)\) and \(x(\psi)\), so that
+\[
+	x(\varphi)^\top x(\psi)=\cos\delta.
+\]
+By rotational invariance of the Gaussian measure, the kernel depends only on \(\delta\). We
+therefore write \(\Theta(\delta)\), \(K_0(\delta)\), and \(K_1(\delta)\).
+
+To compute these quantities, we rotate coordinates so that
+\[
+	x=(1,0),
+	\qquad
+	y=(\cos\delta,\sin\delta).
+\]
+If \(w=(Z_1,Z_2)\) with \(Z_1,Z_2\overset{\mathrm{iid}}{\sim}\mathcal N(0,1)\), then
+\[
+	u=Z_1,
+	\qquad
+	v=Z_1\cos\delta+Z_2\sin\delta.
+\]
+
+\begin{lemma}
+	\label{lem:app-K1}
+	For \(\delta\in[0,\pi]\),
+	\begin{equation}
+		K_1(\delta)=\mathbb P(u>0,v>0)=\frac{\pi-\delta}{2\pi}.
+		\label{eq:app-K1-explicit}
+	\end{equation}
+\end{lemma}
+
+\begin{proof}
+	Since \((u,v)\) is a centered bivariate Gaussian with correlation \(\cos\delta\), the
+	probability that both coordinates are positive is the standard Gaussian quadrant probability,
+	which equals \((\pi-\delta)/(2\pi)\).
+\end{proof}
+
+\begin{lemma}
+	\label{lem:app-K0}
+	For \(\delta\in[0,\pi]\),
+	\begin{equation}
+		K_0(\delta)=\mathbb E[\sigma(u)\sigma(v)]
+		=
+		\frac{1}{2\pi}\Bigl(\sin\delta+(\pi-\delta)\cos\delta\Bigr).
+		\label{eq:app-K0-explicit}
+	\end{equation}
+\end{lemma}
+
+\begin{proof}
+	This is the standard arc-cosine covariance formula for ReLU features in two dimensions.
+\end{proof}
+
+\begin{proof}[Proof of Proposition~\ref{prop:results-continuum-ntk}]
+	Using \eqref{eq:app-limit-kernel-general}, \eqref{eq:app-K1-explicit}, and
+	\eqref{eq:app-K0-explicit}, we obtain
+	\begin{align}
+		\Theta(\delta)
+		 & =
+		\frac{1}{2\pi}\Bigl(\sin\delta+(\pi-\delta)\cos\delta\Bigr)
+		+
+		\frac{1+\cos\delta}{2\pi}(\pi-\delta) \notag \\
+		 & =
+		\frac{1}{2\pi}
+		\Bigl(
+		\sin\delta+2(\pi-\delta)\cos\delta+(\pi-\delta)
+		\Bigr).
+		\label{eq:app-Theta-explicit}
+	\end{align}
+	This is exactly \eqref{eq:results-continuum-ntk}. The convolution form of the operator
+	follows from the fact that \(\Theta\) depends only on the angular difference.
+\end{proof}
+
+\section{Fourier coefficients of the limiting kernel}
+\label{sec:app-fourier-coefficients}
+
+Because the operator \(T\) is a convolution operator, it is diagonalized by the real Fourier
+basis. If \(\lambda_k\) denotes the eigenvalue associated with frequency \(k\), then
+\begin{equation}
+	\lambda_k
+	=
+	\frac{1}{\pi}\int_0^\pi \Theta(\delta)\cos(k\delta)\,d\delta,
+	\qquad
+	k\ge 0.
+	\label{eq:app-lambda-k}
+\end{equation}
+Substituting \eqref{eq:app-Theta-explicit} gives
+\[
+	\lambda_k
+	=
+	\frac{1}{2\pi^2}
+	\int_0^\pi
+	\Bigl(
+	\sin\delta+2(\pi-\delta)\cos\delta+(\pi-\delta)
+	\Bigr)\cos(k\delta)\,d\delta.
+\]
+
+We first record a basic integration lemma.
+
+\begin{lemma}
+	\label{lem:app-Im}
+	For every integer \(m\ge 1\),
+	\begin{equation}
+		I_m:=\int_0^\pi (\pi-\delta)\cos(m\delta)\,d\delta
+		=
+		\frac{1-(-1)^m}{m^2}.
+		\label{eq:app-Im}
+	\end{equation}
+\end{lemma}
+
+\begin{proof}
+	Integrating by parts gives
+	\[
+		I_m
+		=
+		\left[(\pi-\delta)\frac{\sin(m\delta)}{m}\right]_0^\pi
+		+
+		\frac1m\int_0^\pi \sin(m\delta)\,d\delta.
+	\]
+	The boundary term vanishes, and
+	\[
+		\frac1m\int_0^\pi \sin(m\delta)\,d\delta
+		=
+		\frac1m\left[-\frac{\cos(m\delta)}{m}\right]_0^\pi
+		=
+		\frac{1-(-1)^m}{m^2}.
+	\]
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:results-continuum-spectrum}]
+	For \(k\ge 2\), write
+	\[
+		\lambda_k=\frac{1}{2\pi^2}(A_k+B_k+C_k),
+	\]
+	where
+	\begin{align*}
+		A_k & :=\int_0^\pi \sin\delta\,\cos(k\delta)\,d\delta,            \\
+		B_k & :=\int_0^\pi 2(\pi-\delta)\cos\delta\cos(k\delta)\,d\delta, \\
+		C_k & :=\int_0^\pi (\pi-\delta)\cos(k\delta)\,d\delta.
+	\end{align*}
+
+	Using
+	\[
+		\sin\delta\cos(k\delta)
+		=
+		\frac12\bigl(\sin((k+1)\delta)-\sin((k-1)\delta)\bigr),
+	\]
+	we obtain
+	\[
+		A_k
+		=
+		\frac12\left(
+		\frac{1-(-1)^{k+1}}{k+1}
+		-
+		\frac{1-(-1)^{k-1}}{k-1}
+		\right).
+	\]
+	Using
+	\[
+		2\cos\delta\cos(k\delta)=\cos((k+1)\delta)+\cos((k-1)\delta),
+	\]
+	together with Lemma~\ref{lem:app-Im}, we obtain
+	\[
+		B_k
+		=
+		\frac{1-(-1)^{k+1}}{(k+1)^2}
+		+
+		\frac{1-(-1)^{k-1}}{(k-1)^2},
+		\qquad
+		C_k
+		=
+		\frac{1-(-1)^k}{k^2}.
+	\]
+
+	If \(k\ge 3\) is odd, then \(k\pm1\) are even, so \(A_k=B_k=0\), while
+	\(C_k=2/k^2\). Hence
+	\begin{equation}
+		\lambda_k=\frac{1}{\pi^2 k^2},
+		\qquad
+		k\ge 3 \text{ odd}.
+		\label{eq:app-lambda-odd}
+	\end{equation}
+
+	If \(k\ge 2\) is even, then \(k\pm1\) are odd, so \(C_k=0\), and
+	\[
+		A_k
+		=
+		-\frac{2}{k^2-1},
+		\qquad
+		B_k
+		=
+		\frac{4(k^2+1)}{(k^2-1)^2}.
+	\]
+	Therefore
+	\[
+		A_k+B_k
+		=
+		\frac{2(k^2+3)}{(k^2-1)^2},
+	\]
+	and so
+	\begin{equation}
+		\lambda_k
+		=
+		\frac{k^2+3}{\pi^2 (k^2-1)^2},
+		\qquad
+		k\ge 2 \text{ even}.
+		\label{eq:app-lambda-even}
+	\end{equation}
+
+	It remains to compute \(k=0\) and \(k=1\) directly. For \(k=0\),
+	\[
+		\lambda_0
+		=
+		\frac{1}{2\pi^2}
+		\left(
+		\int_0^\pi \sin\delta\,d\delta
+		+
+		2\int_0^\pi (\pi-\delta)\cos\delta\,d\delta
+		+
+		\int_0^\pi (\pi-\delta)\,d\delta
+		\right)
+		=
+		\frac14+\frac{3}{\pi^2}.
+	\]
+	For \(k=1\),
+	\[
+		\lambda_1
+		=
+		\frac{1}{2\pi^2}
+		\left(
+		\int_0^\pi \sin\delta\cos\delta\,d\delta
+		+
+		2\int_0^\pi (\pi-\delta)\cos^2\delta\,d\delta
+		+
+		\int_0^\pi (\pi-\delta)\cos\delta\,d\delta
+		\right)
+		=
+		\frac14+\frac{1}{\pi^2}.
+	\]
+	This proves \eqref{eq:results-lambda-0-1} and \eqref{eq:results-lambda-k}.
+\end{proof}
+
+\section{Effect of the bias contribution}
+\label{sec:app-bias-contribution}
+
+We now isolate the effect of the trainable hidden bias. From the NTK decomposition in
+\eqref{eq:app-ntk-decomposition}, the limiting kernel can be written as
+\[
+	\Theta(x,y)
+	=
+	K_0(x,y)
+	+
+	x^\top y\,K_1(x,y)
+	+
+	K_1(x,y).
+\]
+The first two terms come from differentiating with respect to the output weights and input weights.
+The last term comes from differentiating with respect to the hidden biases. Thus, if the trainable
+hidden-bias contribution is removed, the limiting kernel becomes
+\[
+	\Theta^{(\mathrm{nb})}(x,y)
+	=
+	K_0(x,y)+x^\top y\,K_1(x,y).
+\]
+On the circle, \(x^\top y=\cos\delta\), so by \eqref{eq:app-K0-explicit} and
+\eqref{eq:app-K1-explicit},
+\begin{align}
+	\Theta^{(\mathrm{nb})}(\delta)
+	 & =
+	\frac{1}{2\pi}
+	\Bigl(
+	\sin\delta+(\pi-\delta)\cos\delta
+	\Bigr)
+	+
+	\cos\delta\,\frac{\pi-\delta}{2\pi} \notag \\
+	 & =
+	\frac{1}{2\pi}
+	\Bigl(
+	\sin\delta+2(\pi-\delta)\cos\delta
+	\Bigr).
+	\label{eq:app-no-bias-kernel}
+\end{align}
+
+The Fourier eigenvalues of this no-bias kernel are
+\[
+	\lambda_k^{(\mathrm{nb})}
+	=
+	\frac{1}{\pi}
+	\int_0^\pi
+	\Theta^{(\mathrm{nb})}(\delta)\cos(k\delta)\,d\delta.
+\]
+Using \eqref{eq:app-no-bias-kernel}, this becomes
+\[
+	\lambda_k^{(\mathrm{nb})}
+	=
+	\frac{1}{2\pi^2}
+	\int_0^\pi
+	\Bigl(
+	\sin\delta+2(\pi-\delta)\cos\delta
+	\Bigr)
+	\cos(k\delta)\,d\delta.
+\]
+In the notation of the proof of Theorem~\ref{thm:results-continuum-spectrum},
+\[
+	\lambda_k^{(\mathrm{nb})}
+	=
+	\frac{1}{2\pi^2}(A_k+B_k),
+\]
+whereas the full eigenvalue is
+\[
+	\lambda_k
+	=
+	\frac{1}{2\pi^2}(A_k+B_k+C_k).
+\]
+Thus the term \(C_k\), which comes from
+\[
+	\frac{1}{2\pi}(\pi-\delta),
+\]
+is precisely the trainable-bias contribution.
+
+For \(k=0\), direct integration gives
+\[
+	\lambda_0^{(\mathrm{nb})}
+	=
+	\frac{1}{2\pi^2}
+	\left(
+	\int_0^\pi \sin\delta\,d\delta
+	+
+	2\int_0^\pi(\pi-\delta)\cos\delta\,d\delta
+	\right).
+\]
+Since
+\[
+	\int_0^\pi \sin\delta\,d\delta=2,
+	\qquad
+	\int_0^\pi(\pi-\delta)\cos\delta\,d\delta=2,
+\]
+we obtain
+\[
+	\lambda_0^{(\mathrm{nb})}
+	=
+	\frac{1}{2\pi^2}(2+4)
+	=
+	\frac{3}{\pi^2}.
+\]
+
+For \(k=1\),
+\[
+	\lambda_1^{(\mathrm{nb})}
+	=
+	\frac{1}{2\pi^2}
+	\left(
+	\int_0^\pi \sin\delta\cos\delta\,d\delta
+	+
+	2\int_0^\pi(\pi-\delta)\cos^2\delta\,d\delta
+	\right).
+\]
+The first integral is zero. For the second, using
+\[
+	\cos^2\delta=\frac{1+\cos(2\delta)}{2},
+\]
+we get
+\[
+	2\int_0^\pi(\pi-\delta)\cos^2\delta\,d\delta
+	=
+	\int_0^\pi(\pi-\delta)\,d\delta
+	+
+	\int_0^\pi(\pi-\delta)\cos(2\delta)\,d\delta.
+\]
+The second term is zero by Lemma~\ref{lem:app-Im}, since \(2\) is even. Hence
+\[
+	2\int_0^\pi(\pi-\delta)\cos^2\delta\,d\delta
+	=
+	\frac{\pi^2}{2},
+\]
+and therefore
+\[
+	\lambda_1^{(\mathrm{nb})}
+	=
+	\frac14.
+\]
+
+For \(k\ge 2\), we use the values of \(A_k\) and \(B_k\) computed in the proof of
+Theorem~\ref{thm:results-continuum-spectrum}. If \(k\ge 3\) is odd, then \(k-1\) and \(k+1\)
+are even, so
+\[
+	A_k=0,
+	\qquad
+	B_k=0.
+\]
+Therefore
+\begin{equation}
+	\lambda_k^{(\mathrm{nb})}=0,
+	\qquad
+	k\ge 3 \text{ odd}.
+	\label{eq:app-no-bias-odd}
+\end{equation}
+If \(k\ge 2\) is even, then
+\[
+	A_k=-\frac{2}{k^2-1},
+	\qquad
+	B_k=\frac{4(k^2+1)}{(k^2-1)^2}.
+\]
+Thus
+\[
+	A_k+B_k
+	=
+	\frac{2(k^2+3)}{(k^2-1)^2},
+\]
+and hence
+\begin{equation}
+	\lambda_k^{(\mathrm{nb})}
+	=
+	\frac{k^2+3}{\pi^2(k^2-1)^2},
+	\qquad
+	k\ge 2 \text{ even}.
+	\label{eq:app-no-bias-even}
+\end{equation}
+
+This proves Corollary~\ref{cor:results-bias-spectrum}. Comparing the no-bias eigenvalues with
+the full eigenvalues in Theorem~\ref{thm:results-continuum-spectrum}, the trainable-bias
+contribution is
+\[
+	\lambda_0-\lambda_0^{(\mathrm{nb})}
+	=
+	\frac14,
+	\qquad
+	\lambda_1-\lambda_1^{(\mathrm{nb})}
+	=
+	\frac{1}{\pi^2},
+\]
+while for \(k\ge 2\),
+\[
+	\lambda_k-\lambda_k^{(\mathrm{nb})}
+	=
+	\begin{cases}
+		0,                   & k\ge 2 \text{ even}, \\[0.8em]
+		\dfrac{1}{\pi^2k^2}, & k\ge 3 \text{ odd}.
+	\end{cases}
+\]
+Thus the bias term does not change the even frequencies \(k\ge 2\), but it is exactly what makes
+the odd frequencies \(k\ge 3\) visible in the fixed-kernel dynamics. The frequency \(k=1\) is
+exceptional: it already has eigenvalue \(1/4\) without the bias, and the bias adds the additional
+\(1/\pi^2\) contribution.
