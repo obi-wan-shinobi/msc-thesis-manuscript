@@ -20,18 +20,20 @@ underlying training and generalization in deep neural networks.
 
 Despite their practical success, the mechanisms governing the training dynamics
 and convergence behavior of neural networks remain only partially understood,
-even in highly simplified settings. From an optimization perspective, neural
-network training involves high-dimensional, non-convex objectives whose
+even in highly simplified settings \citep{jacot2018ntk, Mei2018meanfieldview,
+	chizat2018globalconvergencegradientdescent}. From an optimization perspective,
+neural network training involves high-dimensional, non-convex objectives whose
 geometry depends intricately on architectural choices, initialization, and
-optimization dynamics. Early analyses of neural network loss landscapes have
-highlighted the prevalence of saddle points and complex critical structures,
-underscoring the difficulty of directly characterizing training dynamics in
-parameter space \cite{choromanska2015losssurfacesmultilayernetworks}. While
-more recent theoretical work has made progress in analyzing overparameterized
-models under restrictive assumptions such as two-layer networks or specific
-scaling regimes these results do not yet provide a unified explanation of
-neural network training in general settings
-\cite{arora2019finegrainedanalysisoptimizationgeneralization}. More broadly,
+optimization dynamics \citep{bottou2018optimization}. Early analyses of neural
+network loss landscapes have highlighted the prevalence of saddle points and
+complex critical structures, underscoring the difficulty of directly
+characterizing training dynamics in parameter space
+\citep{choromanska2015losssurfacesmultilayernetworks}. While more recent
+theoretical work has made progress in analyzing overparameterized models under
+restrictive assumptions such as two-layer networks or specific scaling regimes
+these results do not yet provide a unified explanation of neural network
+training in general settings
+\citep{du2019gradient,arora2019finegrainedanalysisoptimizationgeneralization}. More broadly,
 this gap between empirical performance and theoretical understanding has
 motivated the study of neural networks through simplified models and asymptotic
 limits, where training dynamics can be analyzed more precisely.
@@ -59,18 +61,23 @@ remainder of the thesis.
 
 \section{Problem setup}
 
-\paragraph{The Statistical learning framework}
+\paragraph{The statistical learning framework}
 The fundamental objective in supervised learning is to identify a functional
 relationship between an input space $\mathcal{X} \subseteq \mathbb{R}^{d}$ and
-a target space $\mathcal{Y}$. We assume the existence of a joint probability distribution
-$\rho$ over  $\mathcal{X} \times \mathcal{Y}$. Ideally, one seeks a measurable function
-$f: \mathcal{X} \to \mathcal{Y}$, that minimizes the expected risk (or population risk):
+a target space $\mathcal{Y}$, for instance \(\mathcal Y=\mathbb R^n\) in
+regression or \(\mathcal Y=\{1,\dots,C\}\) in classification where $C$ denotes
+the number of classes. We
+assume the existence of a joint probability distribution $\rho$ over
+$\mathcal{X} \times \mathcal{Y}$. Ideally, one seeks a measurable function $f:
+	\mathcal{X} \to \mathcal{Y}$, that minimizes the expected risk (or population
+risk):
 \begin{equation}
 	\mathcal{L}_{\rho}(f) = \mathbb{E}_{\rho}\ell(f(x),y)
 	\label{eq:pop-risk}
 \end{equation}
 where $x \in \mathcal X$, $y \in \mathcal Y$ and $\ell: \mathcal{Y} \times \mathcal{Y} \to [0, \infty]$ is a loss function quantifying
 the discrepancy between the prediction and the true target.
+\citep{vapnik1999overview, shalev2014understanding}
 In practice, two fundamental constraints prevent the direct minimization of the
 equation \eqref{eq:pop-risk}. First, searching over the space of all possible
 measurable functions is computationally and analytically intractable, so we
@@ -78,7 +85,7 @@ usually restrict our search to a specific hypothesis class which is a family a
 functions $f_\theta$ parameterized by a vector $\theta \in \mathbb{R}^p$. Second, the
 underlying distribution $\rho$ is unknown; we only have access to a finite
 training dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ of $n$ samples drawn
-i.i.d from $\rho$.
+i.i.d from $\rho$, where \(x_i \in \mathcal X\) and \(y_i \in \mathcal Y\).
 
 \paragraph{Empirical risk minimization.}
 The second constraint leads us to the principle of
@@ -90,26 +97,26 @@ $\ell(\cdot,\cdot)$, ERM seeks parameters that minimize the empirical risk,
 	\arg\min_{\theta} \; \frac{1}{n} \sum_{i=1}^n \ell\!\left(f_\theta(x_i),\,
 	y_i\right).
 \end{equation}
-This formulation isolates the key ingredients that
-determine the behavior of learning algorithms: the function class induced by
-the parameterization $\theta \mapsto f_\theta$, the geometry of the loss
-landscape, and the optimization procedure used to minimize the empirical risk.
-In modern neural network training, the empirical risk is typically minimized
-using gradient-based methods, which induce a dynamical system in parameter
-space whose properties depend intricately on both the model architecture and
-the chosen loss function.
+This formulation isolates the key ingredients that determine the behavior of
+learning algorithms: the function class induced by the parameterization $\theta
+	\mapsto f_\theta$, the geometry of the loss landscape, and the optimization
+procedure used to minimize the empirical risk. In modern neural network
+training, the empirical risk is typically minimized using gradient-based
+methods \citep{bottou2018optimization}, which induce a dynamical system in
+parameter space whose properties depend intricately on both the model
+architecture and the chosen loss function.
 
 \paragraph{Linear models and gradient descent.}
-To build intuition, we first consider the case of linear models.
+To build intuition, we first consider the case of models that are linear in inputs and in parameters.
 We define a function $f_w(x): \mathbb{R}^d \to \mathbb{R}$, parameterized by $w \in \mathbb{R}^d$
 with the prescription $f_w(x) = x^\top w$. We specialize the loss function to the squared
 error, $\ell(f(x), y) =  \frac{1}{2}(f_w(x) - y)^2$.
 Let $X\in\mathbb{R}^{d\times n}$ denote the data
-matrix whose columns are $x_i$, and let $y\in\mathbb{R}^n$ denote the vector
+matrix whose columns are $x_i \in \mathcal X \subseteq \mathbb{R}^d$, and let $y\in\mathbb{R}^n$ denote the vector
 of targets. With slight abuse of notation, the ERM problem simplifies to a least-squares objective:
-\begin{equation}
+\begin{equation*}
 	\arg\min_w \; \mathcal{L}(w)= \frac{1}{2} \sum_{i=1}^{n}(f_w(x_i) - y_i)^2 = \frac{1}{2}\,\|X^\top w-y\|_2^2.
-\end{equation}
+\end{equation*}
 This objective is convex and differentiable, with gradient
 \begin{equation}
 	\nabla_w \mathcal{L}(w)=X(X^\top w-y)=XX^\top w - Xy.
@@ -118,16 +125,21 @@ At a stationary point $w^\star$, the gradient vanishes, yielding the equations
 \begin{equation}
 	XX^\top w^\star = Xy,
 \end{equation}
-which characterize the set of global minimizers of $\mathcal{L}$.\\
+which characterize the set of global minimizers of $\mathcal{L}$ owning to convexity.
 The structure of the minimizers depends on the rank of the empirical covariance
 operator $A := XX^\top$. If $A$ is positive definite (equivalently, if $X$ has
 full row rank), then the minimizer is unique and given by $w^\star = A^{-1}Xy$.
 In contrast, in the overparameterized regime where $\operatorname{rank}(X)<d$,
 the matrix $A$ is singular and the least-squares objective admits infinitely
-many global minimizers. In this case, the Moore--Penrose pseudoinverse can be
-used to approximate a solution. Since $A$ is symmetric, its pseudoinverse
-$A^{+}$ acts as the inverse on $\mathrm{range}(A)$ and annihilates $\ker(A)$,
-yielding the minimum-norm least-squares solution $w^\star = A^{+}Xy$.\\
+many global minimizers \citep{boyd2004convex, golub2013matrix}. Among these minimizers, the Moore--Penrose pseudoinverse
+selects the one with smallest Euclidean norm. Since $A$ is symmetric, its
+pseudoinverse $A^{+}$ acts as the inverse on $\mathrm{range}(A)$ and annihilates
+$\ker(A)$ \citep{penrose1955generalized, golub2013matrix}, yielding the minimum-norm least-squares solution
+\[
+	w^\star_{\min} = A^{+}Xy.
+\]
+Here minimum-norm means that \(w^\star_{\min}\) minimizes \(\|w\|_2\) among all
+global minimizers of \(\mathcal L\) \citep{gunasekar2018characterizing}.
 Gradient descent with step size $\eta>0$ takes the explicit form
 \begin{equation}
 	w_{t+1}=w_t-\eta \nabla_w \mathcal{L}(w_t)
@@ -187,7 +199,7 @@ converge more rapidly, while components in the null space of $XX^\top$ remain
 unchanged. In the overparameterized regime, where multiple \emph{interpolating
 	solutions} exist, i.e., solutions satisfying $X^\top w = y$, gradient descent from
 standard initializations converges to a particular interpolating solution,
-namely the minimum-norm solution. This illustrates how the optimization algorithm
+namely the minimum-norm solution \citep{boyd2004convex, golub2013matrix}. This illustrates how the optimization algorithm
 induces an implicit bias even in this simplest linear setting.
 
 This simple example already contains the basic spectral mechanism that will
@@ -199,9 +211,11 @@ covariance matrix \(XX^\top\), so they do not yet have to correspond to
 frequencies.
 
 \paragraph{Deep linear network.}
-Even in the absence of nonlinear activation functions, introducing an additional
-layer already leads to substantially more intricate training dynamics. Consider
-a two-layer linear network with scalar output,
+Even in the absence of nonlinear activation functions, introducing an
+additional layer changes the parameterization of the model, even though the
+resulting input-output map remains linear. This already leads to substantially
+more intricate training dynamics\citep{saxe2014exactsolutionsnonlineardynamics}. Consider a two-layer linear network with
+scalar output,
 \begin{equation}
 	f_{v,W}(x) := v^\top W x,
 \end{equation}
@@ -252,7 +266,7 @@ linear networks in an infinite-width limit, where the dynamics are described at
 the level of a measure-valued evolution. While no closed-form solution of the
 finite-dimensional ODE system is obtained, this framework establishes global
 well-posedness, convergence to global minimizers, and the emergence of implicit
-regularization effects induced by depth.
+regularization effects induced by depth \citep{chizat2022infinitewidthlimitdeeplinear}.
 
 \paragraph{Nonlinear networks.}
 The analysis of training dynamics becomes more involved once nonlinear
@@ -291,8 +305,7 @@ training dynamics can be studied in a mathematically tractable setting without
 discarding the phenomena one ultimately seeks to understand. The objective is
 not to provide a complete description of neural network training in full
 generality, but rather to identify a setting in which the dynamics can be
-analyzed explicitly while still retaining features that remain meaningful for
-finite networks and finite datasets.
+analyzed explicitly.
 
 This motivates the study of analytical regimes in which the dynamics become
 tractable. Although such regimes necessarily involve simplifications like
