@@ -304,6 +304,59 @@ networks. These works point to a limitation of the ideal fixed-kernel picture:
 it explains spectral bias cleanly when the kernel is fixed, but it does not by
 itself describe how the spectral structure changes when the kernel evolves.
 
+\subsection{Preliminary experiments across architectures}
+\label{subsec:preliminary-experiments}
+
+Before turning to the analysis, we ran preliminary experiments of our own to check
+whether the frequency-dependent ordering seen in the literature also appears in the
+architectures and finite-width, finite-data setting we care about here.
+
+\begin{figure}[!htbp]
+	\centering
+	\begin{subfigure}[t]{0.33\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/preliminary/mode_residuals_over_time_MLP_(1_layer).png}
+		\caption{Single-hidden-layer MLP.}
+		\label{fig:prelim-mlp-shallow}
+	\end{subfigure}\hfill
+	\begin{subfigure}[t]{0.33\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/preliminary/mode_residuals_over_time_MLP_(2_layers).png}
+		\caption{Two-layer MLP.}
+		\label{fig:prelim-mlp-deep}
+	\end{subfigure}\hfill
+	\begin{subfigure}[t]{0.33\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{images/preliminary/mode_residuals_over_time_attention_block.png}
+		\caption{Attention block.}
+		\label{fig:prelim-attention}
+	\end{subfigure}
+
+	\caption{Preliminary experiments across architectures trained at finite width on
+		finite data. Each panel shows the residual amplitude of four target modes,
+		\(\cos\gamma\), \(\cos 2\gamma\), \(\sin 3\gamma\), and \(\cos 4\gamma\),
+		against training step on a logarithmic scale. Across all three architectures
+		the lowest-frequency mode \(\cos\gamma\) is driven down first and fastest,
+		with the higher-frequency modes decaying later, though the ordering is not
+		strict and is least clean for the attention block. The sharp downward spikes
+		(for example \(\cos 2\gamma\) in the MLPs) are sign changes of the residual
+		coefficient, which appear as cusps on a logarithmic amplitude axis.}
+	\label{fig:preliminary-frequency-architectures}
+\end{figure}
+
+Figure~\ref{fig:preliminary-frequency-architectures} shows these experiments. In
+every case the lowest-frequency mode \(\cos\gamma\) collapses first, within the
+first few hundred steps, while the higher-frequency modes decay more slowly, so the
+broad low-frequency-first ordering holds across all three architectures. The
+ordering is not strict: in the MLPs \(\cos 2\gamma\) overtakes the higher modes and
+its coefficient passes through zero, and in the attention block the modes are more
+tangled and \(\cos 4\gamma\) eventually decays past the others. Frequency-dependent
+learning is therefore not specific to the one-hidden-layer setting, but the precise
+spectral picture depends on the operator induced by the architecture, the finite
+sample, and the finite-width kernel. This is what motivates the controlled analysis
+that follows, where the infinite-width reference operator is explicit and the
+effects of finite sampling and finite width can be separated.
+
 \begin{revblock}
 	\section{Research gap}\label{sec:research-gap}
 

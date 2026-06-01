@@ -1,0 +1,161 @@
+% ---------------------------------------------------------------------
+%  Notation
+%
+%  Suggested placement: in the frontmatter, after the preface and before
+%  the table of contents. In thesis.tex, add (inside \frontmatter):
+%
+%      \include{frontmatter/notation}
+%
+%  This uses only the longtable environment from the `longtable` package.
+%  Add \usepackage{longtable} to the preamble if it is not already loaded
+%  (amsmath/amssymb are already loaded in thesis.tex).
+% ---------------------------------------------------------------------
+
+\chapter*{Notation}
+\addcontentsline{toc}{chapter}{Notation}
+\markboth{Notation}{Notation}
+
+The following list summarizes the notation used throughout this thesis. Symbols
+are grouped by theme and, within each group, ordered roughly by first
+appearance. Page or equation references are given where a symbol is formally
+defined. Throughout, the circle angle is written $\theta$ in the introductory
+linear-model discussion (Chapter~\ref{cha:intro}) and $\varphi$ from the
+methodology onward (Chapters~\ref{cha:methodology}--\ref{cha:results}); the two
+denote the same angular coordinate on $S^1$.
+
+\vspace{1em}
+
+\begin{longtable}{p{0.26\textwidth} p{0.68\textwidth}}
+
+% ----------------------------------------------------------------
+\multicolumn{2}{l}{\textbf{Sets, spaces, and measures}}\\[0.3em]
+\endfirsthead
+\multicolumn{2}{l}{\small\itshape (Notation, continued)}\\[0.3em]
+\endhead
+
+$\mathbb{R},\ \mathbb{Z}$ & The real numbers and the integers. \\[0.4em]
+$\mathbb{R}^{d}$ & $d$-dimensional Euclidean space. \\[0.4em]
+$S^1$ & The unit circle, identified with the angular domain $\Omega=[0,2\pi)$ and embedded in $\mathbb{R}^2$ via $x(\varphi)=(\cos\varphi,\sin\varphi)$. \\[0.4em]
+$S^{d-1}$ & The unit sphere in $\mathbb{R}^d$ (the $(d-1)$-sphere). \\[0.4em]
+$\mathcal{X},\ \mathcal{Y}$ & Input space ($\mathcal{X}\subseteq\mathbb{R}^d$) and target space (e.g.\ $\mathcal{Y}=\mathbb{R}^n$ in regression, $\mathcal{Y}=\{1,\dots,C\}$ in classification). \\[0.4em]
+$\rho$ & Joint data distribution over $\mathcal{X}\times\mathcal{Y}$; also used for the uniform input distribution. \\[0.4em]
+$\mu$ & Uniform probability measure on $S^1$, $d\mu(\varphi)=d\varphi/(2\pi)$. \\[0.4em]
+$L^2(\mu)$ & Space of square-integrable functions on $S^1$ with respect to $\mu$, with inner product $\langle\cdot,\cdot\rangle_{L^2(\mu)}$. \\[0.4em]
+$\mathcal{H}$ & A reproducing kernel Hilbert space (RKHS). \\[0.4em]
+$\mathcal{H}_\theta$ & Tangent parameter space ($\mathbb{R}^p$ in finite dimension; its limit in the infinite-width case). \\[0.4em]
+$\Omega$ & The angular domain $[0,2\pi)$; in the mean-field discussion, the neuron parameter space $\mathbb{R}\times\mathbb{R}^d$. \\[0.4em]
+$\|\cdot\|_2,\ \|\cdot\|_F,\ \|\cdot\|_{\max}$ & Euclidean ($\ell^2$) norm, Frobenius norm, and entrywise max norm, respectively. \\[0.4em]
+$\langle\cdot,\cdot\rangle$ & Euclidean / Hilbert-space inner product. \\[0.4em]
+$\mathbb{E},\ \mathbb{P}$ & Expectation and probability. \\[0.4em]
+$\mathcal{N}(0,\sigma^2)$ & Gaussian distribution with mean $0$ and variance $\sigma^2$; $I_d$ denotes the $d\times d$ identity. \\[0.6em]
+
+% ----------------------------------------------------------------
+\multicolumn{2}{l}{\textbf{Network, data, and training}}\\[0.3em]
+$f(x;\theta),\ f_\theta$ & Neural network output at input $x$ with parameter vector $\theta$. \\[0.4em]
+$f_m(x;\theta)$ & One-hidden-layer ReLU network of width $m$ in NTK parameterization, $f_m(x;\theta)=\tfrac{1}{\sqrt{m}}\sum_{i=1}^m a_i\,\sigma(w_i^\top x+b_i)$. \\[0.4em]
+$\theta$ & Parameter vector, $\theta\in\mathbb{R}^p$; $\theta_0$ its value at initialization. \\[0.4em]
+$p$ & Number of network parameters. \\[0.4em]
+$m$ & Network width (number of hidden units); also $w$ as a width label in figures. \\[0.4em]
+$d$ & Input dimension; also the dimension $d=2K+1$ of the truncated Fourier block $\mathcal{H}_K$. \\[0.4em]
+$a_i,\ w_i,\ b_i$ & Output weight, input weight vector, and bias of hidden unit $i$; initialized $a_i\sim\mathcal{N}(0,1)$, $w_i\sim\mathcal{N}(0,I_2)$, $b_i(0)=0$. \\[0.4em]
+$v_\alpha,\ w_\alpha$ & Second-layer and first-layer parameters of neuron $\alpha$ in the generic two-layer network. \\[0.4em]
+$\sigma,\ \varphi(\cdot)$ & Activation function; $\sigma(t)=t_+=\max\{t,0\}$ is ReLU ($\varphi$ also denotes a generic activation, and elsewhere the circle angle). \\[0.4em]
+$W,\ v$ & Hidden-layer weight matrix and output-weight vector of a two-layer network. \\[0.4em]
+$\odot$ & Hadamard (elementwise) product. \\[0.4em]
+$\mathcal{D}=\{(x_i,y_i)\}_{i=1}^n$ & Training dataset of $n$ i.i.d.\ samples. \\[0.4em]
+$n$ & Number of training samples / sampled points. \\[0.4em]
+$X$ & Data matrix ($X\in\mathbb{R}^{d\times n}$, columns $x_i$). \\[0.4em]
+$y$ & Vector / function of targets. \\[0.4em]
+$\ell(\cdot,\cdot)$ & Loss function. \\[0.4em]
+$\mathcal{L},\ L$ & Empirical (least-squares) risk; $\mathcal{L}_\rho$ denotes the population risk. \\[0.4em]
+$\eta$ & Gradient-descent step size / learning rate. \\[0.4em]
+$t,\ k$ (subscript) & Training time / iteration index. \\[0.4em]
+$\nabla_\theta$ & Gradient with respect to $\theta$; $\dot{(\cdot)}$ denotes time derivative under gradient flow. \\[0.4em]
+$\theta^\star,\ w^\star,\ f^\star$ & Minimizers / fixed points of the relevant objective. \\[0.4em]
+$A^{+},\ A^{\ast}$ & Moore--Penrose pseudoinverse and adjoint of an operator/matrix $A$. \\[0.4em]
+$\mathrm{range}(\cdot),\ \ker(\cdot)$ & Range (column space) and kernel (null space) of an operator. \\[0.4em]
+$\lambda_{\max}(\cdot)$ & Largest eigenvalue of a matrix. \\[0.6em]
+
+% ----------------------------------------------------------------
+\multicolumn{2}{l}{\textbf{Neural Tangent Kernel and operators}}\\[0.3em]
+$\phi(x),\ \Phi_t(x)$ & Tangent feature map $\nabla_\theta f(x;\theta_0)$ (and its time-$t$ version). \\[0.4em]
+$\Theta_0(x,x')$ & Neural Tangent Kernel at initialization, $\nabla_\theta f(x;\theta_0)^\top\nabla_\theta f(x';\theta_0)$. \\[0.4em]
+$\Theta_t,\ \Theta_t^{(m)}$ & NTK at training time $t$ (the empirical, width-$m$ kernel). \\[0.4em]
+$\Theta_0^{(m)}$ & Finite-width empirical NTK at initialization. \\[0.4em]
+$\bar\Theta,\ \Theta$ & Limiting (infinite-width) deterministic NTK; also written as the Gram matrix $\bar\Theta=(\bar\Theta(x_i,x_j))_{i,j}$. \\[0.4em]
+$\Theta(\delta)$ & Limiting NTK on $S^1$ as a function of the angular distance $\delta=d(\varphi,\psi)\in[0,\pi]$. \\[0.4em]
+$\Theta^{(\mathrm{nb})}$ & Limiting NTK with the trainable hidden-bias contribution removed. \\[0.4em]
+$\Theta^{(r)},\ \psi_r$ & One-neuron kernel contribution and one-neuron tangent feature of neuron $r$. \\[0.4em]
+$J_0$ & Jacobian of network outputs w.r.t.\ parameters at initialization; $\bar\Theta=J_0 J_0^\ast$. \\[0.4em]
+$T_{\bar\Theta},\ T,\ T_\infty$ & Integral operator on $L^2(\mu)$ induced by the limiting kernel; $T_\infty=\lim_{m\to\infty}T_0^{(m)}$. \\[0.4em]
+$T_t^{(m)},\ T_0^{(m)}$ & Empirical tangent integral operator at time $t$ and at initialization (frozen operator). \\[0.4em]
+$T^{(r)}$ & One-neuron integral operator; $T_0^{(m)}=\tfrac1m\sum_{r=1}^m T^{(r)}$. \\[0.4em]
+$T_p$ & Density-weighted integral operator for a non-uniform input density $p(\theta)$. \\[0.4em]
+$\kappa$ & The $2\pi$-periodic kernel profile with $\bar\Theta(\theta,\theta')=\kappa(\theta-\theta')$; also a uniform kernel bound and (in the conditioning discussion) a matrix condition number. \\[0.4em]
+$r_t,\ r$ & Residual $f_t-y$ (function or vector). \\[0.6em]
+
+% ----------------------------------------------------------------
+\multicolumn{2}{l}{\textbf{Fourier basis, spectrum, and subspaces}}\\[0.3em]
+$\theta,\ \varphi,\ \gamma$ & Angular coordinate on $S^1$; $\gamma$ is used as the angle variable in target functions. \\[0.4em]
+$\phi_q(\theta)=e^{iq\theta}$ & Complex Fourier mode of frequency $q\in\mathbb{Z}$. \\[0.4em]
+$\phi_0,\ \phi_{k,c},\ \phi_{k,s}$ & Real Fourier basis of $L^2(\mu)$: $\phi_0=1$, $\phi_{k,c}=\sqrt{2}\cos(k\varphi)$, $\phi_{k,s}=\sqrt{2}\sin(k\varphi)$. \\[0.4em]
+$\psi_j$ & Generic orthonormal eigenfunction of an integral operator. \\[0.4em]
+$k,\ q$ & Fourier frequency index; $k(p)$ is the frequency of basis function $\phi_p$. \\[0.4em]
+$K$ & Frequency cutoff defining the retained low-frequency block. \\[0.4em]
+$\mathcal{H}_K$ & Truncated Fourier subspace $\operatorname{span}\{\phi_0,\phi_{k,c},\phi_{k,s}:1\le k\le K\}$, of dimension $d=2K+1$. \\[0.4em]
+$\mathcal{F}_k$ & Frequency-$k$ subspace: $\mathcal{F}_0=\operatorname{span}\{\phi_0\}$, $\mathcal{F}_k=\operatorname{span}\{\phi_{k,c},\phi_{k,s}\}$ for $k\ge1$. \\[0.4em]
+$d_k$ & Dimension of $\mathcal{F}_k$: $d_0=1$, $d_k=2$ for $k\ge1$. \\[0.4em]
+$\lambda_q,\ \lambda_k$ & Fourier eigenvalue of $T$ at frequency $q$ (resp.\ $k$); $\lambda_p:=\lambda_{k(p)}$. \\[0.4em]
+$\lambda_k^{(\mathrm{nb})}$ & Fourier eigenvalue of the no-bias kernel $\Theta^{(\mathrm{nb})}$. \\[0.4em]
+$\Lambda$ & Diagonal matrix of eigenvalues $\operatorname{diag}(\lambda_p)$; in the linear model, $A=Q\Lambda Q^\top$. \\[0.4em]
+$\Lambda_K$ & Continuum reference block $P_K T_\infty P_K=\operatorname{diag}(\lambda_0,\lambda_1,\lambda_1,\dots,\lambda_K,\lambda_K)$. \\[0.4em]
+$\alpha_p(t)$ & Amplitude of the residual along Fourier mode $\phi_p$; decays as $e^{-\lambda_p t}\alpha_p(0)$. \\[0.4em]
+$a_j(t)$ & Coefficient of the residual along eigenfunction $\psi_j$ in the continuum operator analysis. \\[0.6em]
+
+% ----------------------------------------------------------------
+\multicolumn{2}{l}{\textbf{Finite-sample objects}}\\[0.3em]
+$\varphi_1,\dots,\varphi_n$ & I.i.d.\ angles sampled uniformly on $[0,2\pi)$. \\[0.4em]
+$\Phi$ & Sampled Fourier feature matrix, $\Phi\in\mathbb{R}^{n\times d}$, $\Phi_{i,p}=\phi_p(\varphi_i)$; $\Phi_p$ its $p$-th column. \\[0.4em]
+$A$ & Normalized sampled kernel matrix, $A_{ij}=\tfrac1n\Theta(\varphi_i-\varphi_j)$. \\[0.4em]
+$G$ & Sampled Fourier Gram matrix, $G=\tfrac1n\Phi^\top\Phi$. \\[0.4em]
+$H$ & Compressed operator matrix, $H=\tfrac1n\Phi^\top A\Phi$; $\mathbb{E}[H]=\Lambda^{(n)}$. \\[0.4em]
+$\lambda_p^{(n)}$ & Finite-sample corrected Fourier eigenvalue, $(1-\tfrac1n)\lambda_p+\tfrac{\Theta(0)}{n}$. \\[0.4em]
+$\Lambda^{(n)}$ & Diagonal matrix $\operatorname{diag}(\lambda_p^{(n)})$ of corrected eigenvalues. \\[0.4em]
+$C,\ C_n^{(K)}$ & Coefficient-level restricted operator $G^{-1}H$ on the retained block; compared against $\Lambda^{(n)}$. \\[0.4em]
+$P_{\mathrm{th}},\ P_{\mathrm{emp}}$ & Theory and empirical Fourier-block preconditioners. \\[0.4em]
+$B_{\mathrm{base}},\ B_{\mathrm{th}},\ B_{\mathrm{emp}}$ & Baseline, theory-preconditioned, and empirically preconditioned sampled operators. \\[0.4em]
+$\tau$ & Ridge-regularization parameter for ill-conditioned inverses. \\[0.4em]
+$u$ & Unit roundoff (machine precision); the floor $\kappa u$ sets the achievable relative accuracy. \\[0.4em]
+$\widehat{r}(t)$ & Sampled residual vector. \\[0.4em]
+$\mathbf{1}$ & All-ones vector in $\mathbb{R}^d$. \\[0.6em]
+
+% ----------------------------------------------------------------
+\multicolumn{2}{l}{\textbf{Finite-width objects and diagnostics}}\\[0.3em]
+$B_m^{(K)}$ & Frozen finite-width tangent block on $\mathcal{H}_K$, $P_K T_0^{(m)} P_K$; $\mathbb{E}[B_m^{(K)}]=\Lambda_K$. \\[0.4em]
+$C_t^{(K)}$ & Evolving tangent block on $\mathcal{H}_K$, $P_K T_t^{(m)} P_K$; $C_0^{(K)}=B_m^{(K)}$. \\[0.4em]
+$L_t^{(K)}$ & High-to-low frequency coupling (leakage) operator, $P_K T_t^{(m)}(I-P_K)$. \\[0.4em]
+$a_t,\ b_t$ & Low- and high-frequency residual components, $a_t=P_K r_t$, $b_t=(I-P_K)r_t$. \\[0.4em]
+$\xi_{r,pq}$ & One-neuron matrix entry $\langle\phi_p, T^{(r)}\phi_q\rangle$. \\[0.4em]
+$P_K$ & Orthogonal projection $L^2(\mu)\to\mathcal{H}_K$. \\[0.4em]
+$P_k,\ U_k$ & Orthogonal projector onto the grid representation of $\mathcal{F}_k$, $P_k=U_kU_k^\top$, with $U_k$ an orthonormal basis. \\[0.4em]
+$\widehat{\mathcal{F}}_k(t),\ \widehat P_k(t),\ \widehat U_k(t)$ & Matched empirical eigenspace of the tangent operator, its projector and orthonormal basis. \\[0.4em]
+$v_j(t)$ & Orthonormal eigenvectors of the grid-discretized tangent operator. \\[0.4em]
+$N,\ \theta_j$ & Number of uniform grid points and grid angles $\theta_j=2\pi j/N$, $j=0,\dots,N-1$. \\[0.4em]
+$\varepsilon_{k,F}^{(m)}(t)$ & Projector error $\|\widehat P_k(t)-P_k\|_F$ for frequency $k$ (frozen value at $t=0$ written $\varepsilon_{k,F}^{(m)}$). \\[0.4em]
+$\theta_{k,i}(t)$ & $i$-th principal angle between $\widehat{\mathcal{F}}_k(t)$ and $\mathcal{F}_k$; $\cos\theta_{k,i}=s_i(U_k^\top\widehat U_k)$. \\[0.4em]
+$s_i(\cdot)$ & $i$-th largest singular value. \\[0.4em]
+$s_k^{\mathrm{cos}}(t)$ & Subspace cosine similarity, root-mean-square of the principal-angle cosines for frequency $k$. \\[0.4em]
+$\mu_{\mathcal{F}_k}(t)$ & Average spectral strength inside Fourier block $\mathcal{F}_k$, $\tfrac{1}{d_k}\operatorname{tr}(P_k T_t^{(m)} P_k)$. \\[0.4em]
+$\mu_{\le K}(t)$ & Cumulative low-frequency spectral strength over the retained block. \\[0.4em]
+$\mu_m,\ \mu_t,\ \delta_{\theta_\alpha}$ & Empirical neuron measure, its limit, and the Dirac mass at $\theta_\alpha$ (mean-field discussion). \\[0.6em]
+
+% ----------------------------------------------------------------
+\multicolumn{2}{l}{\textbf{Targets and miscellaneous}}\\[0.3em]
+$f_{\mathrm{orig}},\ f_{\mathrm{eq}},\ f_{\mathrm{rev}}$ & Original, equal-amplitude, and reversed-amplitude target functions used in the amplitude-variant experiments. \\[0.4em]
+$A_i,\ k_i,\ \phi_i$ & Amplitude, frequency, and phase of the $i$-th sinusoid in a synthetic Fourier-regression target. \\[0.4em]
+$c$ & Universal constant in the finite-width concentration bound (illustrative value $c=0.2$). \\[0.4em]
+$\delta$ & Failure probability in high-probability bounds; also the angular distance $d(\varphi,\psi)$ on $S^1$. \\[0.4em]
+$\varepsilon$ & Deviation level in concentration inequalities. \\[0.4em]
+$R,\ R_\alpha$ & Rotation matrix on $\mathbb{R}^2$ (rotation by angle $\alpha$). \\
+
+\end{longtable}

@@ -8,6 +8,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{longtable}
 
 % \newtheorem{definition}{Definition}
 \theoremstyle{plain}
@@ -55,12 +56,12 @@
 \usepackage[round]{natbib}
 
 % Add for highlighting changes
-\newenvironment{revblock}{\begingroup\color{blue}}{\endgroup}
-\newcommand{\rev}[1]{{\color{blue}#1}}
+% \newenvironment{revblock}{\begingroup\color{blue}}{\endgroup}
+% \newcommand{\rev}[1]{{\color{blue}#1}}
 
 % Change the above to this to remove highlighting
-% \newenvironment{revblock}{}{}
-% \newcommand{\rev}[1]{#1}
+\newenvironment{revblock}{}{}
+\newcommand{\rev}[1]{#1}
 
 % Ensure that urls longer than the page width are broken up
 % Based on the answer of StackOverflow user "xamde":
@@ -106,22 +107,16 @@
 
 % A copyright notice and maybe something about the cover picture
 % Put in comments to get the default copyright notice
-\colophon{\noindent
-  \copyright{} \the\year \: \theauthor. \emph{Note that this notice is for demonstration
-  purposes and that the \LaTeX{} style and document source are free to
-  use as basis for your MSc thesis.} \\[1em] 
-  Cover picture: A ``random'' maze generated in postscript.
-}
+\colophon{\noindent\copyright{} \the\year{} \theauthor. All rights reserved.}
 
 % thesis committee:
-\chair{Dr. D. M. J. Tax, Faculty EEMCS, TU Delft}
-\supervisor{Dr. A. Heinlein, Faculty EEMCS, TU Delft}
-\dailysupervisor{Dr. A. Heinlein, Faculty EEMCS, TU Delft}
+\chair{Prof. Dr. D. M. J. Tax, PRB Group, Faculty EEMCS, TU Delft}
+\supervisor{Prof. Dr. A. Heinlein, DIAM, Faculty EEMCS, TU Delft}
 % \supervisor{Dr. F. Bartolucci, Faculty EEMCS, TU Delft}
 % The following two are optional for LaTeX (current university
 % regulations state that at least one of them should be assigned)
 % \externalsupervisor{Drs. E.X. Ternal, Some Company}
-\committeemember{Dr. A. Papapanteleon, Faculty EEMCS, TU Delft}
+\committeemember{Prof. Dr. A. Papapanteleon, DIAM, Faculty EEMCS, TU Delft}
 
 
 \setcounter{tocdepth}{1}
@@ -131,10 +126,10 @@
 \begin{document}
 \frontmatter
 \thispagestyle{empty}
-\maketitle                                      % for the cover page
+% \maketitle                                      % for the cover page
 \makeformaltitlepages{\input{frontmatter/abstract}}         % for formal title pages with all info
 
-\include{frontmatter/preface}
+\include{frontmatter/preface} \include{frontmatter/notation}
 
 \cleardoublepage\tableofcontents
 % \cleardoublepage\listoffigures
@@ -146,10 +141,7 @@
 \include{chapters/methodology}
 \include{chapters/results}
 \include{chapters/discussion_conclusion_and_futurework}
-% \include{chapters/conclusions_and_future_work}
-% \include{chapters/discussion_and_conclusion}
-% \include{chapters/preliminary_experiments}
-% \include{chapters/conclusions_and_future_work}
+\include{chapters/use_of_generative_ai}
 
 \bibliographystyle{apalike}
 \bibliography{bibliography/thesis}

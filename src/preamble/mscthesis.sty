@@ -49,7 +49,6 @@
 
 \def\chair#1{\gdef\@chair{#1}}
 \def\supervisor#1{\gdef\@supervisor{#1}}
-\def\dailysupervisor#1{\gdef\@dailysupervisor{#1}}
 \def\externalsupervisor#1{\gdef\@externalsupervisor{#1}\external@supervisortrue}
 \def\committeemember#1{\gdef\@committeemember{#1}\committee@membertrue}
 
@@ -179,7 +178,6 @@
 	Thesis Committee:                          \\\\
 	Advisor:            & \@chair              \\
 	Supervisor:         & \@supervisor         \\
-	Daily Supervisor:   & \@dailysupervisor    \\
 	\ifexternal@supervisor
 	Company supervisor: & \@externalsupervisor \\
 	\fi

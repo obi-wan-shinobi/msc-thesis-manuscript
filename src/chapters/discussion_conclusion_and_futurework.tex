@@ -1,305 +1,309 @@
 \chapter{Discussion and conclusion}
 \label{cha:discussion-conclusion}
 
-On the circle \(S^1\), functions can be decomposed into sine and cosine waves, i.e. the Fourier basis.
-This makes the circle a useful setting for studying spectral bias. Low
-frequencies describe slowly varying structure, while high frequencies describe
-more oscillatory structure. The question is whether the training dynamics treat
-these components differently, and whether this distinction remains meaningful
-after moving away from the ideal infinite-width and infinite-data setting.
+On the circle $S^1$, functions can be decomposed into sine and cosine waves,
+i.e., the Fourier basis. This makes the circle a useful setting for studying
+spectral bias. Low frequencies describe slowly varying structure, while high
+frequencies describe more oscillatory structure. The question is whether the
+training dynamics treat these components differently, and whether this
+distinction remains meaningful after moving away from the ideal infinite-width
+and infinite-data setting.
 
-In the continuum infinite-width reference model, the answer is explicit. The
-limiting NTK is rotation-invariant, so the associated operator is diagonal in
-the Fourier basis. Each Fourier component of the residual evolves independently:
+In the continuum infinite-width limit, the NTK is exactly rotation-invariant,
+meaning its associated operator is perfectly diagonalized by the Fourier basis.
+Consequently, each Fourier component of the residual evolves independently:
 \begin{equation}
 	\alpha_p(t)
 	=
 	\exp(-\lambda_p t)\alpha_p(0),
 	\label{eq:discussion-continuum-mode-decay}
 \end{equation}
-where \(\alpha_p(t)\) is the residual coefficient of the \(p\)-th Fourier basis
-function, and \(\lambda_p\) is the corresponding kernel eigenvalue. For the
-ReLU NTK studied here, the low-frequency eigenvalues are larger, so the
-low-frequency residual components decay faster. This gives the fixed-kernel
-spectral-bias mechanism in this setting
+where $\alpha_p(t)$ is the residual coefficient of the $p$-th Fourier basis
+function, and $\lambda_p$ is the corresponding kernel eigenvalue. For the ReLU
+NTK studied here, the low-frequency eigenvalues are larger, dictating that
+low-frequency residual components decay strictly faster. This constitutes the
+baseline spectral-bias mechanism
 \citep{jacot2018ntk,lee2020wide,rahaman2019spectralbiasneuralnetworks,
 	basri2019convergence,bietti2019inductivebiasneuraltangent,
 	cao2020understandingspectralbiasdeep}.
 
-The continuum calculation also shows the importance of including a trainable hidden bias in the
-network. With the hidden-bias contribution, odd frequencies \(k\ge 3\) have
-nonzero eigenvalues. Without this contribution, those frequencies are null
-directions of the fixed-kernel dynamics. Thus, the architecture itself
+The continuum calculation also shows the importance of including a trainable
+bias in the hidden layer of the network. With the hidden-bias contribution, odd frequencies
+$k\ge 3$ have nonzero eigenvalues. Without this contribution, those frequencies
+are null directions of the fixed-kernel dynamics. Thus, the architecture itself
 affects whether some frequencies are learned at all by the fixed-kernel
 operator.
 
-\section{RQ1: Finite sampling}
-\label{sec:discussion-finite-sampling}
+Restricting to \(\mathcal H_K\) lets us ask how much of the idealized Fourier
+description holds once the continuum measure and infinite width are replaced by
+finite ones. The frozen and sampled cases turn out to be controlled perturbations
+of the continuum picture; the more interesting departure is the evolving kernel at
+small width, which does not merely approximate the fixed-kernel dynamics but
+reshapes them in a way that strengthens the low-frequency bias.
 
-The first research question asked what happens when the uniform continuum
-measure on \(S^1\) is replaced by finitely many sampled input points.
+\section{Answers to the Research Questions}
+\label{sec:discussion-answers}
 
-Exact Fourier-wise learning is lost after sampling. The sampled sine and cosine
-vectors are not exactly orthonormal, and they are not exact eigenvectors of the
-sampled NTK operator. However, on any fixed low-frequency block
-\begin{equation}
-	\mathcal H_K
-	=
-	\operatorname{span}\{1,\cos(\varphi),\sin(\varphi),\ldots,
-	\cos(K\varphi),\sin(K\varphi)\},
-	\label{eq:discussion-low-frequency-block}
-\end{equation}
-this error decreases as the number of samples increases. At fixed confidence,
-the typical finite-sample error is of order \(n^{-1/2}\), up to logarithmic
-factors.
+The overarching inquiry of this thesis asked to what extent the Fourier
+decomposition of the infinite-width NTK on \(S^1\) persists under finite-sample
+and finite-width perturbations. We find that the idealized description survives
+as a controlled approximation for frozen and sampled networks on low-frequency
+blocks, with an error that decreases in the sample size and width. When the
+kernel is allowed to evolve, this description becomes incomplete: in our
+experiments, training improves the loss mainly by reweighting spectral strength
+toward low frequencies rather than by bringing the eigenspaces into closer
+alignment with the Fourier modes, and the alignment can even degrade. The
+sub-questions are answered as follows.
 
-This means that the Fourier picture survives as an approximation, not as an
-exact statement. The finite-sample corrected eigenvalues describe the dominant
-early-time dynamics of the retained Fourier components. Later in training, some
-components have already become very small. At that point, the remaining
-finite-sample error can become visible relative to the component being plotted.
-This explains why the empirical curves can deviate from the ideal prediction at
-late times without contradicting the finite-sample theory.
+\paragraph{Finite-sample perturbation (RQ1).}
+Replacing the uniform continuum measure on \(S^1\) with \(n\) i.i.d.\ samples
+destroys exact Fourier diagonalization. On the low-frequency subspace
+\(\mathcal{H}_K\), however, the Fourier structure persists approximately: the
+sampled operator deviates from the diagonal Fourier prediction by an error of
+order \(O(n^{-1/2})\) on this block, up to logarithmic factors. The frequency
+components therefore no longer evolve independently, but the corrected
+finite-sample eigenvalues (Proposition~\ref{prop:results-expectation-H}) still
+govern the dominant early-time decay of the retained components. As the results
+chapter showed, deviations from this prediction can become visible at later
+times, once some components have already decayed.
 
-The preconditioning experiment supports the same interpretation. If the
-different decay rates are mainly caused by the Fourier eigenvalues, then
-rescaling by those eigenvalues should remove much of the separation between the
-retained components. This is what is observed. The experiment therefore acts as
-a check that the rate separation is mostly explained by the predicted spectrum,
-rather than by an unrelated numerical artifact.
+\paragraph{Finite-width perturbation (RQ2).}
+The effect of finite width depends on whether the tangent kernel is held fixed
+or allowed to evolve. With the kernel frozen at initialization---so that
+training reduces to kernel regression on the initial tangent features---finite
+width acts as a controlled random perturbation of the continuum operator. On
+\(\mathcal{H}_K\), the frozen finite-width block concentrates around the
+infinite-width Fourier block at the \(O(m^{-1/2})\) rate. When the network is
+trained fully, the kernel evolves during training. At small widths, this
+evolution reweights the operator toward larger eigenvalues on the low-frequency
+blocks, so the effective per-frequency learning rates change during training
+beyond what the initial spectrum predicts. This advantage diminishes with
+width, where the frozen kernel is already close to the continuum baseline.
 
-The answer to the first research question is therefore that finite sampling does
-not preserve exact Fourier diagonalization, but it preserves it approximately on
-fixed low-frequency blocks. The approximation improves with sample size, and it
-is strong enough to explain the leading residual dynamics seen in the
-experiments.
+\section{The Robustness of the Fixed-Kernel Approximation}
+\label{sec:discussion-robustness}
 
-\section{RQ2: Finite width}
-\label{sec:discussion-finite-width}
+The infinite-width NTK is sometimes treated as a purely asymptotic object whose
+relevance to networks of finite width and finite data is unclear, and recent
+work has examined finite-width corrections and limitations of the kernel
+picture \citep{haninNica2019finite,bordelon2023dynamicsfinitewidthkernel,
+	vyas2022limitationsntkunderstandinggeneralization}. The frozen-kernel results
+in this thesis speak to a narrower question. On a fixed low-frequency block
+\(\mathcal{H}_K\), and with the tangent kernel held fixed, both finite sampling
+and finite width perturb the continuum Fourier operator in a controlled way:
+the deviation concentrates around the continuum block and decreases at the
+\(O(n^{-1/2})\) and \(O(m^{-1/2})\) rates. Within this restricted setting, the
+low-frequency spectral structure that underlies spectral bias is not an artifact
+of the infinite limit but survives as an approximation whose error we can bound.
 
-The second research question asked what happens when the network has finite
-width. There are two distinct cases. In the frozen-kernel case, the tangent
-kernel is sampled at initialization and then kept fixed. In the evolving-kernel
-case, the tangent kernel changes during training.
-
-For the frozen tangent kernel, finite width behaves like a random perturbation
-of the infinite-width operator. On the fixed low-frequency space
-\(\mathcal H_K\), the projected finite-width operator concentrates around the
-continuum operator at rate \(m^{-1/2}\), up to logarithmic factors. The
-eigenspace experiments show the same effect geometrically: as width increases,
-the finite-width eigenspaces become better aligned with the corresponding
-Fourier frequency subspaces.
-
-The approximation is not equally stable for every frequency. Low frequencies
-have larger eigenvalues, so a small perturbation has less relative effect on
-their dynamics. Higher frequencies have smaller eigenvalues and smaller gaps
-between nearby eigenvalues, so the same perturbation can be more visible. This
-matches the broader spectral-bias picture: high-frequency components are learned
-later and are more sensitive to details of the model and data distribution
+The computed continuum eigenvalues decrease quickly with frequency. From
+Theorem~\ref{thm:results-continuum-spectrum}, \(\lambda_k = O(k^{-2})\), and
+numerically the first few are \(\lambda_0 \approx 0.55\), \(\lambda_1 \approx
+0.35\), \(\lambda_2 \approx 0.079\), \(\lambda_3 \approx 0.011\), with the
+higher frequencies smaller still. This sets the scale against which the
+finite-sample and finite-width perturbations must be read: the bounds control an
+absolute error on \(\mathcal H_K\), so a given perturbation leaves a mode's
+dynamics intact only if it is small compared to that mode's eigenvalue. The large
+low-frequency eigenvalues should therefore tolerate more sampling or width noise
+than the small high-frequency ones. For the lowest frequencies we can be
+reasonably confident that the continuum prediction still describes the dynamics
+at modest sample size or width. At high frequency the eigenvalues are small and
+close in size, and the alignment is poor enough that we cannot tell whether an
+empirical mode is still following its own eigenvalue or picking up contributions
+from neighbouring frequencies. We have not tested this magnitude argument as such,
+but it is consistent with the frozen alignment experiments, where low frequencies
+are well aligned at small width and higher frequencies need larger widths, and
+with the broader finding that high-frequency components are learned later and are
+more sensitive to model and data distributions
 \citep{rahaman2019spectralbiasneuralnetworks,basri2019convergence,
 	basri2020frequencybiasneuralnetworks}.
 
-The evolving-kernel case is different. Here the fixed-kernel explanation is no
-longer complete, because the operator itself changes during training. The
-results in this part are empirical rather than theorem-level statements.
+\section{Kernel Evolution and the Limits of Fixed Dynamics}
+\label{sec:discussion-kernel-evolution}
 
-At small widths, allowing the kernel to evolve improves the final loss. At
-larger widths, this advantage becomes smaller and eventually disappears. The
-measurements suggest that the improvement is not caused by better alignment with
-the Fourier subspaces. Several higher-frequency subspaces become less aligned
-during training. Instead, the main visible change is that the evolving kernel
-increases the average operator strength in the lowest Fourier blocks, especially
-\(k=0\) and \(k=1\), with a smaller increase for \(k=2\). This agrees with the
-residual plots, where the strongest improvements occur in low and intermediate
-target components.
+Once the kernel evolves, the fixed-kernel description no longer accounts for the
+full dynamics, and our networks sit between the lazy regime, where the tangent
+kernel barely moves, and feature learning, where it moves substantially
+\citep{chizat2019lazytraining,Mei2018meanfieldview,
+	chizat2018globalconvergencegradientdescent}. The evolving kernel helps where it
+moves: it improves on the frozen kernel in exactly the small-width range where
+the low-frequency block drifts most
+(Figure~\ref{fig:results-evolving-block-drift}).
 
-The amplitude-variant experiments make this interpretation less dependent on
-the particular target used in the main experiment. The same low-frequency
-strength increase appears when all active non-constant modes have equal
-amplitudes, and also when larger amplitudes are assigned to higher frequencies.
-This suggests that the effect is not simply caused by the original target having
-larger low-frequency coefficients.
+The improvement does not come from better Fourier alignment, which often degrades
+at higher frequencies, but from added spectral strength in the lowest blocks, and
+the amplitude variants show this is not just tracking where the target places its
+mass. Read alongside the fixed-kernel picture, this looks like a second-order
+form of the same bias: gradient descent not only learns low frequencies faster
+under a fixed spectrum, it also moves the kernel to strengthen those frequencies
+further. We have shown this as a correlation with lower loss, not as its
+established cause.
 
-The answer to the second research question is therefore split. For frozen finite
-width, the continuum Fourier picture remains approximately valid when the width
-is large. For evolving finite width, the Fourier subspaces remain useful as
-diagnostics, but the fixed-kernel picture no longer fully explains the dynamics.
-Training can reshape the tangent kernel, and this can change the effective
-learning rates of different frequency components.
+Why the added strength favours \(k=0\) and \(k=1\) is where the architecture and choice of
+input parameterisation suggests an explanation. With inputs \(x(\varphi)=(\cos\varphi,\sin\varphi)\),
+the pre-activation of hidden neuron \(j\) is
+\begin{equation}
+	w_j^\top x(\varphi) + b_j
+	= w_{j_1}\cos\varphi + w_{j_2}\sin\varphi + b_j
+	= \|w_j\|\cos(\varphi-\psi_j) + b_j .
+	\label{eq:discussion-preactivation-freq-one}
+\end{equation}
+Frequencies \(k=0\) and \(k=1\)
+are therefore present in the parameterisation itself, through the bias and the
+input embedding, while the higher harmonics (including the relatively
+well-aligned \(k=2\)) appear only indirectly, once the ReLU acts on this
+frequency-one pre-activation. The network may then strengthen and keep aligned
+exactly the directions it represents most directly, since these need the least
+movement to amplify.
 
-\section{Main conclusion}
-\label{sec:discussion-main-conclusion}
+This is testable with the present machinery. A target with no constant or
+frequency-one component would separate the two readings: if the strength increase
+still concentrates on \(k=0\) and \(k=1\), the parameterisation account is
+favoured; if it follows the lowest frequency present in the target, then gradient
+descent is instead amplifying wherever the residual is largest.
+These observations come from a single architecture on \(S^1\) and do not
+separate cause from correlation. What they show is that at small width, training
+reshapes the kernel in a low-frequency-favouring direction that the fixed-kernel
+theory does not capture, with the parameterisation a likely source. A formal
+account is left to future work.
 
-The main research question asked whether the continuum infinite-width Fourier
-description survives under finite sampling and finite width.
-
-For finite sampling, it survives approximately on fixed low-frequency blocks.
-The sampled operator is not exactly diagonal in the Fourier basis, but the error
-decreases with the number of samples, and the corrected eigenvalues explain the
-dominant early-time residual dynamics.
-
-For frozen finite width, it also survives approximately. The finite-width
-operator is random at initialization, but its projection onto \(\mathcal H_K\)
-concentrates around the continuum operator as the width increases.
-
-For evolving finite width, the Fourier description changes role. It is no
-longer a complete dynamical explanation, because the kernel is not fixed. It is
-instead a useful coordinate system for measuring how training changes the
-operator. In the experiments here, the most important change is an increase in
-low-frequency operator strength at small width.
-
-Thus, finite sampling and frozen finite width behave like controlled
-perturbations of the ideal NTK model on fixed low-frequency blocks. Kernel
-evolution adds a separate effect: training can modify the operator itself, and
-this can make the finite-width network behave differently from its frozen
-kernel approximation.
-
-\section{Limitations}
-\label{sec:discussion-limitations}
-
-The concentration results are fixed-block results. They control a prescribed
-low-frequency space \(\mathcal H_K\) with fixed \(K\). They do not give a
-uniform statement over all Fourier modes, and they are not designed to remain
-sharp when \(K\) grows with \(n\) or \(m\). This matters because higher
-frequencies have smaller eigenvalues and narrower eigengaps. Controlling more
-frequencies would require more accurate operator approximations.
-
-The bounds are also conservative. The proofs use entrywise concentration and
-union bounds over the retained block. These arguments are enough to prove the
-correct decreasing trends, but they discard matrix structure and variance
-information. This explains why the theoretical bounds are much larger than the
-observed numerical errors. Sharper estimates would likely require direct
-operator-norm bounds, variance-sensitive concentration, or tools for U- and
-V-statistics.
-
-The finite-sample theory explains the leading behaviour of the sampled
-fixed-kernel dynamics, but it does not give a sharp time-uniform description of
-every residual component. Once a component has decayed close to zero, small
-operator errors can dominate the plotted quantity. The current bounds explain
-why such deviations should occur, but they do not predict the exact level of
-each late-time deviation.
-
-The finite-width theorem controls the frozen tangent kernel at initialization.
-It does not control the evolving tangent kernel during training. The
-evolving-kernel experiments show a consistent pattern, but they do not establish
-a theorem for the time-dependent operator. A rigorous explanation would need to
-control how the tangent kernel moves and how this movement interacts with the
-current residual.
-
-The alignment diagnostics also have a limited interpretation. Projector errors
-and principal angles measure how close empirical eigenspaces are to Fourier
-subspaces, but they do not by themselves determine the loss dynamics. Loss decay
-depends on how the current operator acts on the current residual. This is why
-worse Fourier alignment can coexist with lower loss when the evolving kernel
-also increases operator strength in important directions.
-
-Finally, the thesis does not prove a joint theorem combining finite sampling,
-finite width, and training time. The finite-sample and frozen finite-width
-analyses isolate separate perturbations of the continuum operator. Actual finite
-training runs contain sampling error, finite-width randomness, and kernel
-evolution at the same time.
-
-\section{Beyond the uniform circle setting}
+\section{Beyond the Uniform Circle Setting}
 \label{sec:discussion-beyond-uniform-circle}
 
-The Fourier basis is the right reference in this thesis because the domain is
-the circle and the input distribution is uniform. These assumptions make the
-limiting kernel rotation-invariant, so the associated operator is diagonalized
-by sine and cosine functions.
+On the uniform circle two things line up: the limiting NTK we derived depends
+only on the angle between two points, and the uniform distribution treats every
+angle the same. When both hold, the kernel acts as a convolution, and the Fourier
+modes are its eigenfunctions, each scaled by its own eigenvalue. Both pieces
+matter, the kernel's rotation-invariance and the uniformity of the distribution.
 
-For non-uniform input densities, the Fourier basis should not be expected to
-remain the exact reference. The relevant operator is weighted by the input
-density, and its eigenfunctions need not be global Fourier modes. In that case,
-spectral bias should be understood more generally as a preference for the
-leading eigenfunctions of the kernel operator induced by the architecture and
-the data distribution
-\citep{basri2020frequencybiasneuralnetworks,
-	bowman2022spectralbiasoutsidetraining}. These eigenfunctions may correspond
-to smooth variation along the data distribution, rather than low frequency in
-the usual Fourier sense.
+A non-uniform input density removes the second piece. As shown in
+Section~\ref{subsec:uniform-nonuniform}, the operator is then no longer a
+convolution, and the Fourier modes need not be its eigenfunctions. The components
+learned first are the leading eigenfunctions of this density-weighted operator
+rather than the lowest Fourier frequencies, and
+\citet{basri2020frequencybiasneuralnetworks} show that learning also speeds up
+where inputs are more concentrated. Spectral bias persists as a preference for
+the leading eigenfunctions of the operator, but these need not be the familiar
+low frequencies \citep{basri2020frequencybiasneuralnetworks,
+	bowman2022spectralbiasoutsidetraining}.
 
-For other domains, the same idea applies. On higher-dimensional spheres, the
-analogues of Fourier modes are spherical harmonics. On less symmetric domains,
-there may be no closed-form eigensystem. The operator viewpoint still applies,
-but the preferred directions may be much harder to describe explicitly.
+A more realistic input distribution makes the change starker. Real inputs are
+not confined to a circle but spread through the input space, and the standard
+model of this is a Gaussian on \(\mathbb{R}^d\). The kernel is then no longer a
+convolution, and its eigenfunctions are not Fourier modes but Hermite
+polynomials, the Gaussian counterpart of sines and cosines
+\citep{mei2022generalization}. These form a family of increasing degree, with
+degree playing the role frequency did: low-degree polynomials are simple and
+slowly varying, a constant, then a line, then a parabola, and the coarse,
+low-degree shape of the target is learned first
+\citep{cao2020understandingspectralbiasdeep}. We expect the spectral-bias
+mechanism to be unchanged, since eigenvalue size sets the decay rates
+regardless of the basis. Our proofs, though, would not transfer directly. They
+assume a bounded kernel and use Hoeffding, Bernstein, and McDiarmid
+inequalities, all of which rely on bounded or controlled-tail summands,
+available to us because the circle is compact. A Gaussian measure has unbounded
+support, so neither the boundedness nor these inequalities apply directly, and
+the bounds would have to be re-derived with tools suited to unbounded inputs.
 
-Changing the activation function would also change the kernel spectrum. With an
-isotropic initialization on the uniform circle, activations such as sigmoid or
-tanh may still produce rotation-invariant kernels, so the Fourier basis may
-remain an eigenbasis. However, the eigenvalues would change. A smoother
-activation can produce a smoother kernel, which may make high-frequency
-eigenvalues decay faster. Polynomial activations can behave differently again,
-because they may only activate finitely many harmonic components. Thus spectral
-bias is not independent of the activation. It depends on the spectrum of the
-kernel generated by the architecture, parameterization, and data distribution.
+We do not expect a smooth activation such as sigmoid or \(\tanh\) to take us
+outside the framework used here. The Fourier basis is the eigenbasis because the
+operator is a convolution, and the derivation in
+Appendix~\ref{app:continuum-kernel} shows this follows from the Gaussian
+distribution of the parameters rather than from the activation being ReLU. For any
+pointwise activation the NTK still depends only on the angle between two inputs, so
+the Fourier modes remain its eigenfunctions and the same concentration
+inequalities and eigenspace diagnostics should apply. What changes is the
+eigenvalues. ReLU is continuous but not differentiable at the origin, and this non-smoothness
+is what limits the eigenvalues to a polynomial decay rate; our derivation gives
+\(\lambda_k = O(k^{-2})\) in our setting. \citet{bietti2019inductivebiasneuraltangent}
+trace this polynomial decay to the non-smooth part of the ReLU kernel, and
+\citet{murray2023characterizing} show more generally that smoother activations
+have faster-decaying NTK spectra. An activation without this non-differentiability,
+such as sigmoid or \(\tanh\), would therefore give faster-decaying eigenvalues and
+sharpen the bias toward low frequencies. The
+fixed-kernel analysis therefore carries over with only the spectrum recomputed.
+We are less sure about the evolving-kernel results. These depend on how the kernel
+moves during training, which we did not analyse for other activations and would
+not expect to behave the same way, so we leave that case open.
 
-The role of bias terms may also change. In the ReLU model studied here, the
-trainable hidden bias supplies nonzero eigenvalues to odd modes \(k\ge 3\).
-For another activation or parameterization, the same odd-even structure need not
-hold. The broader point is that architecture can affect not only the speed of
-learning different components, but also which components are visible to the
-fixed-kernel dynamics.
+\section{Limitations and Future Directions}
+\label{sec:discussion-limitations}
 
-Moving away from the NTK parameterization would change the interpretation even
-more. The fixed-kernel limit is tied to the NTK scaling. In feature-learning or
-mean-field regimes, the representation can move substantially during training,
-so a fixed initial kernel cannot be expected to describe the full dynamics
-\citep{Mei2018meanfieldview,chizat2018globalconvergencegradientdescent}. In
-such regimes, the natural object is no longer only the spectrum at
-initialization, but the evolution of the operator or of the parameter
-distribution during training.
+The concentration results are fixed-block results. They control the prescribed
+low-frequency space \(\mathcal H_K\) for fixed \(K\), so they do not give a
+uniform statement over all Fourier modes, nor are they designed to stay sharp
+when \(K\) grows with samples (\(n\)) or width (\(m\)). This matters because higher frequencies have
+smaller eigenvalues that sit closer together, where the same perturbation has more
+effect. The proofs also use entrywise concentration and union bounds, which
+capture the correct decreasing trends but discard matrix structure and variance
+information, so the bounds are conservative in absolute magnitude. Sharpening them
+with operator-norm bounds \citep[e.g.,][]{tropp2015introduction},
+variance-sensitive concentration, or tools for U- and V-statistics
+\citep{serfling2009approximation} would bring them closer to the observed errors.
 
-\section{Future work}
-\label{sec:discussion-future-work}
+The finite-sample theory explains the leading behaviour of the sampled
+fixed-kernel dynamics but does not give a sharp time-uniform description of every
+component. Once a component has decayed close to zero, small operator errors can
+dominate what is plotted, so the late-time deviations we observe are expected but
+not quantified per mode.
 
-The most direct next step is to develop theory for the evolving finite-width
-tangent kernel. The experiments in this thesis compare frozen and evolving
-dynamics, but the evolving-kernel analysis remains empirical. A natural goal is
-to control the time-dependent low-frequency block, its drift from
-initialization, and its effect on the residual dynamics.
+The largest gap is the evolving kernel. The finite-width theorem controls the
+frozen tangent kernel at initialization but not the kernel as it changes during
+training, and our results for that regime are entirely empirical. The fixed-kernel
+limit is also tied to NTK scaling: in feature-learning or mean-field regimes the
+representation moves substantially during training, and a fixed initial spectrum
+cannot describe the dynamics \citep{Mei2018meanfieldview,
+	chizat2018globalconvergencegradientdescent}. Controlling how the low-frequency
+block drifts from initialization, and what that drift does to the residual
+dynamics, is the most direct next step.
 
-A second direction is to prove a joint result for finite sampling, finite width,
-and training time. This would better match actual training runs, where all three
-effects occur together.
+The alignment diagnostics measure how close the empirical eigenspaces are to the
+Fourier subspaces, but alignment is not the same as loss: a well-aligned block
+can still be learned slowly if its eigenvalue is small, so these diagnostics
+describe the geometry of the operator rather than the convergence directly.
 
-A third direction is to sharpen the concentration bounds. The current proofs are
-sufficient to show decreasing error with \(n\) and \(m\), but they are not
-numerically sharp. Direct operator-norm concentration, variance-sensitive
-estimates, or concentration inequalities for U- and V-statistics may give bounds
-closer to the observed errors.
+A full description of practical training would need finite sampling, finite width,
+and training time treated together, which this work does not attempt. Our results
+cover the first two with the kernel frozen; the training-time effect is only
+studied empirically, and it is not simply additional noise, since at small width
+the kernel drift changes the dynamics in a structured, low-frequency-favouring
+way. Combining all three is the broadest open problem left here.
 
-A fourth direction is to study the alignment diagnostics more directly. The
-projector-error and principal-angle plots suggest that different Fourier
-subspaces have different finite-width stability. A more detailed analysis could
-measure which Fourier blocks are most strongly mixed by the finite-width
-operator and how this depends on eigenvalues and eigengaps.
+The analysis also points to a concrete intervention. The fixed-kernel dynamics are
+a linear system whose per-mode convergence rate is set by the kernel eigenvalues,
+and preconditioning is the natural way to flatten that spectrum: rescaling each
+Fourier mode by its inverse eigenvalue clusters the effective rates and removes the
+frequency-dependent slowdown, as the theory preconditioner does in
+Section~\ref{sec:results-preconditioned-sampled-dynamics}. This is available to us
+because the operator is known in closed form and diagonalised by a fixed basis, so
+the preconditioner can be applied directly to the residual in function space.
 
-Finally, the analysis should be extended beyond the uniform circle. Non-uniform
-densities, higher-dimensional domains, other activations, and different
-parameterizations all change the relevant kernel operator and its spectrum.
-Studying these cases would clarify which conclusions are special to the explicit
-Fourier model on \(S^1\), and which reflect a broader mechanism behind spectral
-bias.
+A finite-width trained network does not meet either condition. The operator that
+sets the rates is the tangent kernel, which has no closed form at finite width and
+drifts during training, and gradient descent acts on the parameters rather than on
+the function values, so the correction would have to be applied to the
+parameter-space gradient through this same evolving, implicitly known kernel.
+Preconditioning the rates in that setting, with an operator that is neither fixed
+nor explicitly available, is the real difficulty and is left to future work.
 
 \section{Conclusion}
 \label{sec:discussion-final-conclusion}
 
-This thesis studied spectral bias in a setting where the ideal training dynamics
-can be written explicitly. On the uniform circle, the infinite-width NTK is
-diagonal in the Fourier basis. Each frequency has its own learning rate, and low
-frequencies are learned faster because they correspond to larger kernel
-eigenvalues.
+This thesis studied spectral bias in a setting where the ideal dynamics can be
+written down explicitly. On the uniform circle the infinite-width NTK is diagonal
+in the Fourier basis, each frequency has its own learning rate, and low
+frequencies are learned faster because their eigenvalues are larger.
 
-The results show that this picture is stable under finite sampling and frozen
-finite width, as long as one works on a fixed low-frequency block. In both
-cases, the ideal Fourier operator is perturbed, but the perturbation decreases
-with sample size or width. The evolving finite-width experiments show where the
-fixed-kernel explanation stops being complete. When the kernel moves during
-training, the Fourier basis remains useful for measurement, but the dynamics are
-also shaped by how the operator itself changes.
+This picture survives finite sampling and frozen finite width on the fixed
+low-frequency block: the ideal operator is perturbed, but the perturbation
+decreases with sample size and width at the \(O(n^{-1/2})\) and \(O(m^{-1/2})\)
+rates. The evolving finite-width experiments mark where the fixed-kernel account
+stops. Once the kernel moves during training, the Fourier basis remains useful for
+measurement, but the dynamics are also shaped by how the operator itself changes,
+and at small width that change reinforces the low-frequency bias rather than
+following it passively.
 
-The final picture is therefore simple. The Fourier basis is exact in the
-continuum reference model. It remains approximately valid for finite sampling
-and frozen finite width. For evolving finite width, it becomes a diagnostic for
-understanding how training reshapes the kernel. Turning this last observation
-into a theorem is the main open problem left by this work.
+The Fourier basis is therefore exact in the continuum model, approximately valid on
+the low-frequency block under finite sampling and frozen finite width, and a
+measurement tool for the evolving kernel. Turning that last regime into theory is
+the main problem left open by this work.

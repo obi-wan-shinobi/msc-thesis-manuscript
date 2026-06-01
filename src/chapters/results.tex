@@ -616,9 +616,6 @@ the empirical preconditioner giving the flattest curves.
 	\label{fig:results-preconditioned-mode-decay}
 \end{figure}
 
-\subsection{Function-space fit}
-\label{subsec:results-preconditioned-function-fit}
-
 Figure~\ref{fig:results-preconditioned-probe-fit} compares the final prediction
 on a dense probe grid. The baseline fit leaves a visible residual, while both
 preconditioned flows more closely match the target.
@@ -640,8 +637,8 @@ preconditioned flows more closely match the target.
 Figure~\ref{fig:results-theory-precond-spectrum} shows the spectrum obtained
 after applying the theory preconditioner to the sampled Fourier block. At the
 coefficient level, the empirical block is \(C=G^{-1}H\). The empirical
-preconditioner would invert this block directly, giving \(C^{-1}C=I_d\), so all
-eigenvalues would be equal to \(1\). The theory preconditioner instead rescales
+preconditioner would invert this block directly, giving \(C_{\mathrm{emp}}^{-1}C=I_d\),
+so all eigenvalues would be equal to \(1\). The theory preconditioner instead rescales
 by the predicted diagonal eigenvalues \(\Lambda^{(n)}\). Thus it is exact only
 when \(C=\Lambda^{(n)}\). The figure shows that, as \(n\) increases, the
 theory-preconditioned spectrum moves closer to the ideal value \(1\). This is
@@ -716,7 +713,117 @@ corrects the sample-dependent mixing in \(C_n^{(K)}\). The decreasing gap
 between the two preconditioners as \(n\) increases is consistent with the
 finite-sample result \(C_n^{(K)}\approx \Lambda^{(n)}\).
 
-This connects the experiment to existing work on modifying NTK training
+\subsection{Conditioning and the numerical floor}
+\label{subsec:results-preconditioned-conditioning}
+
+The preconditioned curves flatten at a level set by the numerical conditioning of
+the problem. The condition number \(\kappa\) of a matrix measures how much it
+amplifies relative errors when used to solve a linear system: a large \(\kappa\)
+means small input errors can produce large errors in the solution, while
+\(\kappa\) close to \(1\) means errors are barely amplified. The relevant matrix
+here is the retained Fourier block. Before preconditioning this is \(C=G^{-1}H\),
+the block whose deviation from \(\Lambda^{(n)}\) we have been tracking; after the
+theory preconditioner it becomes \(C_{\mathrm{th}}=(\Lambda^{(n)})^{-1}C\), which
+the preconditioner aims to bring close to the identity.
+
+Table~\ref{tab:results-conditioning} reports both. The uncorrected block \(C\)
+has condition number around \(330\) across sample sizes. This stays roughly
+constant because it reflects the conditioning of the continuum block that \(C\)
+converges to, set largely by the spread of the retained eigenvalues
+\(\lambda_0,\dots,\lambda_K\), the largest of which is a few hundred times the
+smallest. This spread does not depend on \(n\), so only the small finite-sample
+correction makes \(\kappa(C)\) drift slightly as \(n\) grows. After the theory
+preconditioner, \(\kappa(C_{\mathrm{th}})\) drops toward \(1\) as \(n\) grows,
+which is the conditioning counterpart of \(C_n^{(K)}\to\Lambda^{(n)}\): as the
+sampled block approaches the diagonal prediction, applying the inverse of that
+diagonal prediction leaves an operator close to the identity. We omit the
+empirical preconditioner, since it inverts the block exactly,
+\(C_{\mathrm{emp}}^{-1}C=I_d\), giving \(\kappa=1\) by construction.
+
+\begin{table}[!htbp]
+	\centering
+	\caption{Conditioning of the retained Fourier block and the resulting
+		finite-precision floors, over \(10\) runs. \(\kappa(C)\) is the condition
+		number of the uncorrected sampled block, \(\kappa(C_{\mathrm{th}})\) the
+		condition number after the theory preconditioner is applied.
+		The last two columns give the relative-accuracy floor
+		\(\kappa u\), the condition number times the unit roundoff \(u\), at single
+		and double precision.}
+	\label{tab:results-conditioning}
+	\begin{tabular}{rrrrr}
+		\toprule
+		\(n\)               & \(\kappa(C)\)       & \(\kappa(C_{\mathrm{th}})\) &
+		\(\kappa u\) (fp32) & \(\kappa u\) (fp64)                                                                              \\
+		\midrule
+		1024                & 340.8               & 2.273                       & \(2.7\times10^{-7}\) & \(5.0\times10^{-16}\) \\
+		2048                & 333.4               & 1.644                       & \(1.9\times10^{-7}\) & \(3.6\times10^{-16}\) \\
+		4096                & 329.5               & 1.364                       & \(1.6\times10^{-7}\) & \(3.0\times10^{-16}\) \\
+		8192                & 328.6               & 1.220                       & \(1.4\times10^{-7}\) & \(2.7\times10^{-16}\) \\
+		16384               & 327.1               & 1.142                       & \(1.4\times10^{-7}\) & \(2.5\times10^{-16}\) \\
+		32768               & 325.7               & 1.099                       & \(1.3\times10^{-7}\) & \(2.4\times10^{-16}\) \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Why conditioning sets the floor is visible in
+Figure~\ref{fig:results-precision-comparison}, which repeats the experiment in
+single and double precision. In finite-precision arithmetic, every operation
+introduces a relative error of size \(u\), the unit roundoff (\(u\approx10^{-7}\)
+in single precision, \(10^{-16}\) in double). Solving with a matrix of condition
+number \(\kappa\) amplifies these errors, so the relative accuracy of the result
+cannot be driven below about \(\kappa u\) \citep{trefethen2022numerical}. Because
+the theory preconditioner makes \(\kappa(C_{\mathrm{th}})\) close to \(1\), this
+floor is essentially \(u\) itself, and the curves plateau there. Moving from fp32
+to fp64 lowers \(u\) by nine orders of magnitude and lowers the plateaus
+correspondingly, which confirms the floor is numerical.
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=\textwidth]{images/finite_sample_results/mode_decay_fp32_vs_fp64_three_panel_mean_std_n4096.png}
+	\caption{Mode decay at \(n=4096\) in single (solid) and double (dashed)
+		precision, for the baseline, theory-preconditioned, and empirically
+		preconditioned dynamics. The preconditioned plateaus drop by several orders of
+		magnitude from fp32 to fp64, identifying them as a finite-precision floor.}
+	\label{fig:results-precision-comparison}
+\end{figure}
+
+\subsection{Targets with out-of-block frequencies}
+\label{subsec:results-preconditioned-out-of-block}
+
+The experiments so far kept all active target frequencies inside the retained
+block. Figure~\ref{fig:results-precond-out-of-block} repeats the comparison with
+a target that also contains frequencies outside the block, \(\sin(10\gamma)\) and
+\(\cos(12\gamma)\). The preconditioner is still built only on the retained block,
+so it accelerates the in-block modes as before but leaves the out-of-block modes
+near their initial amplitude.
+
+The in-block modes also plateau higher than in
+Figure~\ref{fig:results-preconditioned-mode-decay}. This floor is not numerical:
+the single- and double-precision curves reach nearly the same plateaus, so
+roundoff is ruled out. We expect the cause to be coupling from the out-of-block
+components. The sampled Fourier modes are only approximate eigenvectors of the
+sampled operator, so the uncorrected modes at \(k=10\) and \(k=12\) can feed back
+into the retained coordinates, and the in-block residuals would then settle at a
+level set by this coupling. We have not isolated this mechanism directly, but it
+is consistent with the modes being only approximate eigenvectors and with the
+precision comparison ruling out roundoff.
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=\textwidth]{images/finite_sample_results/out_of_block_all_mode_decay_three_panel_mean_std_n4096.png}
+	\caption{Preconditioned sampled dynamics with target frequencies outside the
+		retained block, \(\sin(10\gamma)\) and \(\cos(12\gamma)\), at \(n=4096\) over
+		\(10\) runs. The preconditioner accelerates the in-block modes but leaves the
+		out-of-block modes near their initial amplitude. The in-block plateaus are
+		higher than when all target modes lie inside the block, reflecting coupling
+		from the uncorrected out-of-block components.}
+	\label{fig:results-precond-out-of-block}
+\end{figure}
+
+\subsection{Discussion}
+\label{subsec:results-preconditioned-discussion}
+
+The preconditioning results connect to existing work on modifying NTK training
 dynamics by changing the effective kernel spectrum. In particular,
 \citet{geifman2024controlling} use preconditioned gradient descent to alter the
 trajectory of wide-network training by modifying the spectrum of the associated
@@ -1443,88 +1550,41 @@ produces the weakest increase. In particular, the reversed-amplitude target
 still produces a larger low-frequency strength increase than the original
 target, despite putting larger amplitudes on higher-frequency modes.
 
-\section{Summary of results} \label{sec:results-summary} This chapter started
-from the ideal infinite-width, infinite-data setting and then tested how the
-picture changes when the assumptions are made more realistic. Throughout the
-finite-sample and finite-width results, the main comparisons are made on the
-retained low-frequency subspace
-\[ \mathcal H_K = \operatorname{span}
-	\{1,\cos\varphi,\sin\varphi,\ldots,\cos(K\varphi),\sin(K\varphi)\}.
-\]
-Thus, \(\mathcal H_K\) contains the constant mode and the first \(K\) Fourier
-frequencies.
+\section{Summary of results}
+\label{sec:results-summary}
 
-\subsection*{Ideal continuum setting}
-In the ideal setting on \(S^1\), we derived the limiting NTK and its
-eigenvalues. Because the kernel is rotation-invariant, its eigenfunctions are the
-Fourier basis functions, and each component of the target aligned with these basis functions,
-i.e. the Fourier modes,
-evolves independently under the limiting NTK dynamics. The eigenvalues
-determine the learning rates of the different frequencies: lower-frequency
-components have larger eigenvalues and therefore decay faster. This gives the
-baseline spectral-bias picture used throughout the chapter. The calculation
-also shows that having a trainable bias in the network matters. With the bias contribution,
-odd modes \(k\ge 3\) have nonzero eigenvalues; without it, these modes do not
-appear in the NTK dynamics.
+This chapter tested how the idealized infinite-width, infinite-data spectral
+bias picture changes under realistic constraints in a controlled fashion.
+Throughout these analyses, the primary comparisons are made on the retained
+low-frequency subspace $\mathcal{H}_K$, which contains the constant mode and
+the first $K$ non-zero Fourier frequencies.
 
-\subsection*{Finite sampling}
+The core findings are:
 
-We then studied what happens with finitely many sampled points. In this
-setting, the Fourier basis functions are only observed through their values on
-the sampled points. As a result, the sampled Fourier vectors are no longer
-exactly orthonormal, and they are no longer exact eigenvectors of the sampled
-NTK operator. However, we proved concentration bounds showing that, on a fixed
-low-frequency subspace, the sampled problem remains close to the ideal Fourier
-prediction. With fixed confidence, the
-typical error introduced by \(n\) samples is of order \(O(n^{-\frac{1}{2}})\), up to logarithmic factors.
-In plain terms, the sampled Fourier basis is almost orthonormal,
-and the sampled operator acts almost like the predicted diagonal Fourier
-operator. The residual experiments show the consequence for training:
-the corrected finite-sample eigenvalues predict the early decay of the Fourier
-components, while later deviations appear once the error introduced by finite-sampling becomes
-visible relative to components that have already become small. The
-preconditioning experiment supports the same interpretation, since rescaling by
-the predicted eigenvalues removes most of the rate separation between retained
-modes.
+\begin{itemize}
+	\item \textbf{Ideal continuum setting:} Under the limiting NTK, each
+	      Fourier component evolves independently. Lower frequencies possess larger
+	      eigenvalues and decay faster. Crucially, the architecture dictates the
+	      spectrum: odd modes $k \ge 3$ only receive non-zero eigenvalues if the
+	      network includes a trainable hidden bias.
 
-\subsection*{Frozen finite width}
+	\item \textbf{Finite sampling:} Replacing the continuous measure with $n$
+	      discrete samples destroys exact Fourier diagonalization. However, on
+	      $\mathcal{H}_K$, the sampled operator deviates from the ideal Fourier
+	      prediction by an error of just $O(n^{-1/2})$ (with fixed confidence, up to
+	      logarithmic factors). The corrected finite-sample eigenvalues (see
+	      ~\ref{prop:results-expectation-H}) accurately predict the dominant
+	      early-time residual decay.
 
-Next, we studied finite-width networks with the NTK frozen at initialization.
-Here the randomness comes from the finite number of hidden neurons. We proved a
-second concentration result showing that, on a fixed Fourier subspace, the
-finite-width tangent operator, with \(m\) neurons, concentrates around the
-infinite-width operator as the width increases at the rate
-\(O(m^{-\frac{1}{2}})\). The empirical plots show the same trend
-geometrically: at larger width, the eigenspaces of the finite-width operator
-become better aligned with the corresponding Fourier frequency subspaces. Thus
-finite width does not destroy the ideal Fourier picture at initialization; it
-introduces a random perturbation whose size decreases with width.
+	\item \textbf{Frozen finite width:} When fixing a finite-width ($m$)
+	      tangent kernel at initialization, it acts as a random perturbation of the
+	      continuum operator. On $\mathcal{H}_K$, the projected finite-width operator
+	      concentrates around the infinite-width baseline at a rate of $O(m^{-1/2})$.
 
-\subsection*{Evolving finite width}
-
-Finally, we allowed the finite-width tangent kernel to evolve during training.
-This part is empirical. The effect depends strongly on width. At small widths,
-the evolving kernel reaches a lower loss than the frozen kernel and increases
-operator strength in the lowest Fourier blocks. This improvement does not seem to be
-caused by better alignment with the Fourier subspaces, since several higher-frequency
-subspaces become less aligned with the respective Fourier subspaces during training.
-At larger widths, the frozen kernel is already closer to the ideal infinite-width baseline,
-the measured kernel movement is smaller, and the advantage of kernel evolution disappears.
-
-The amplitude-variant experiments check whether the increase in operator strength on the
-low frequencies is only caused by the original target assigning larger amplitudes to
-low-frequency modes. It is not. The increase persists when all active
-non-constant modes have equal amplitudes, and also when larger amplitudes are
-assigned to higher frequencies.
-
-\subsection*{Takeaway}
-
-Overall, the results show that the ideal fixed-kernel Fourier picture remains a
-useful guide after finite sampling and frozen finite width, provided we
-restrict attention to the first \(K\) frequencies. Both effects behave like
-controlled perturbations of the ideal model. The evolving-kernel experiments
-show where this picture becomes incomplete and training can change the tangent
-operator itself. In these experiments the most visible change is an
-increase in low-frequency operator strength. The next chapter interprets these
-findings in terms of the research questions, limitations, and implications for
-spectral bias beyond the frozen NTK approximation.
+	\item \textbf{Evolving finite width:} Allowing the kernel to train
+	      empirically breaks the fixed-kernel assumption. At small widths, training
+	      alters the operator to actively increase low-frequency spectral strength
+	      (particularly for $k=0$ and $k=1$). This advantage diminishes at larger
+	      widths, where the frozen initialization is already tightly concentrated
+	      around the ideal baseline.
+\end{itemize}

@@ -1,9 +1,9 @@
 \chapter{Methodology}\label{cha:methodology}
 
 This chapter defines the operators, projections, and diagnostics used throughout
-the thesis. The goal is to make clear what each object measures and how it is
-used in the finite-sample and finite-width experiments. Detailed derivations are
-given in the appendices
+the thesis, and states what each object measures and how it enters the
+finite-sample and finite-width experiments. Detailed derivations are given in the
+appendices.
 
 \section{Mathematical setting}
 
@@ -43,20 +43,6 @@ initialized according to
 \end{equation}
 independently across \(i=1,\dots,m\). The bias parameters are initialized at zero but remain
 trainable throughout.
-
-The analysis is organized around three related operators:
-
-\begin{enumerate}
-	\item the infinite-width limiting tangent operator \(T_\infty\),
-	\item the finite-width frozen operator \(T_0^{(m)}\) at initialization,
-	\item the exact time-dependent finite-width operator \(T_t^{(m)}\) during training.
-\end{enumerate}
-
-The limiting operator \(T_\infty\) provides the continuum Fourier reference model. The
-finite-sample analysis asks how this structure is affected by replacing the measure \(\mu\)
-with finitely many sampled points. The finite-width analysis asks how the operator generated
-by finitely many neurons differs from the infinite-width reference, both in the frozen and in
-the evolving regimes.
 
 \subsection{Least-squares loss and residual dynamics}
 \label{subsec:least-squares-loss-and-residual-dynamics}
@@ -107,9 +93,9 @@ Consequently, the loss evolves as
 	-\langle r_t,T_t^{(m)}r_t\rangle_{L^2(\mu)}.
 	\label{eq:method-loss-decay-identity}
 \end{equation}
-This identity is useful for interpreting the evolving-kernel experiments: loss
-decay depends not only on the eigenspaces of \(T_t^{(m)}\), but also on how
-strongly the operator acts on the directions where the residual has mass.
+Loss decay therefore depends not only on the eigenspaces of \(T_t^{(m)}\), but
+also on how strongly the operator acts on the directions where the residual has
+mass.
 
 This equation contains both the frozen and evolving regimes. In the frozen regime,
 \(T_t^{(m)}\) is replaced by its initial value
@@ -181,7 +167,7 @@ Let
 	P_K:L^2(\mu)\to \mathcal{H}_K
 	\label{eq:method-projection-PK}
 \end{equation}
-denote the orthogonal projection.
+denote the orthogonal projection onto $\mathcal H_K$.
 
 The truncation to \(\mathcal{H}_K\) is used throughout the thesis to reduce the continuum problem to a
 finite-dimensional low-frequency block that can be compared across the continuum, sampled,
@@ -210,7 +196,7 @@ To study the sampled operator on \(\mathcal{H}_K\), we introduce the feature mat
 	1\leq i\leq n,\quad 1\leq p\leq d,
 	\label{eq:method-feature-matrix}
 \end{equation}
-and the normalized sampled kernel matrix
+and the normalized sampled kernel matrix \(A\) with
 \begin{equation}
 	A_{ij}=\frac{1}{n}\Theta(\varphi_i-\varphi_j).
 	\label{eq:method-empirical-operator}
@@ -234,30 +220,32 @@ whose entries are the finite-sample corrected Fourier eigenvalues defined in
 Chapter~\ref{cha:results}.
 
 \subsection{Quantities to be controlled}
-
-The finite-sample analysis is based on three comparisons:
+The finite-sample analysis controls how far three sampled quantities deviate from
+the values they would take if the sampled Fourier structure were exact. Each is
+written as the difference between the sampled quantity and its ideal value:
 \begin{equation}
-	G-I_d,
+	\underbrace{G-I_d}_{\text{basis vs.\ orthonormal}},
 	\qquad
-	H-\Lambda^{(n)},
+	\underbrace{H-\Lambda^{(n)}}_{\text{operator vs.\ diagonal}},
 	\qquad
-	A\Phi-\Phi\Lambda^{(n)}.
+	\underbrace{A\Phi-\Phi\Lambda^{(n)}}_{\text{modes vs.\ eigenvectors}}.
 	\label{eq:method-finite-sample-objects}
 \end{equation}
-The first comparison measures how far the sampled Fourier basis is from being
-orthonormal. The second measures how far the sampled operator is from the
-diagonal Fourier prediction on \(\mathcal H_K\). The third measures how far the
-sampled Fourier modes are from being eigenvectors of the sampled operator.
-Together, these are the quantities needed to answer Q1.
+The first is small when the sampled Fourier basis is close to orthonormal, so its
+Gram matrix \(G\) is close to the identity. The second is small when the sampled
+operator restricted to \(\mathcal H_K\), represented by \(H\), is close to the
+diagonal finite-sample prediction \(\Lambda^{(n)}\). The third is small when the
+sampled Fourier modes are close to being eigenvectors of the sampled operator,
+i.e.\ applying the operator \(A\) to the modes \(\Phi\) reproduces them scaled by
+the predicted eigenvalues. Together these are the quantities needed to answer Q1.
 
 \section{Fourier-block preconditioning methodology}
 \label{sec:method-preconditioning}
 
-The finite-sample analysis gives a diagonal reference for the sampled operator
-on a fixed Fourier block. We use this reference to define a diagnostic
-preconditioning experiment. The goal is to test whether the predicted Fourier
-eigenvalues explain the observed rate separation between retained Fourier
-modes.
+The finite-sample analysis gives a diagonal reference for the sampled operator on
+a fixed Fourier block. We use it to define a preconditioning experiment that tests
+whether the predicted Fourier eigenvalues explain the observed rate separation
+between retained Fourier modes.
 
 Fix a retained Fourier block
 \[
@@ -378,10 +366,6 @@ residuals
 \]
 we compare the gradient-flow dynamics
 \begin{equation}
-	\frac{d f_t}{dt}
-	=
-	- B r_t,
-	\qquad
 	\frac{d r_t}{dt}
 	=
 	- B r_t,
@@ -414,20 +398,22 @@ while
 	\Phi z.
 	\label{eq:method-empirical-preconditioned-block-action}
 \end{align}
-Thus the empirical preconditioner exactly flattens the observed retained block,
-provided \(C_n^{(K)}\) is invertible. The theory preconditioner does the same
-only when the observed block is close to the diagonal prediction
-\(\Lambda^{(n)}\).
+Thus on the retained block the empirical preconditioner reduces the action to the
+identity: every retained Fourier mode is driven at the same rate, so the
+frequency-dependent rate separation is removed, provided \(C_n^{(K)}\) is
+invertible. The theory preconditioner achieves this only insofar as the observed
+block \(C_n^{(K)}\) is close to the diagonal prediction \(\Lambda^{(n)}\); from
+\eqref{eq:method-theory-preconditioned-block-action}, it leaves the residual
+factor \((\Lambda^{(n)})^{-1}C_n^{(K)}\), which equals the identity exactly when
+\(C_n^{(K)}=\Lambda^{(n)}\).
 
 In the numerical experiments, ill-conditioned inverses are replaced by small
-ridge-regularized inverses when needed, for example
-\((\Lambda^{(n)}+\tau I)^{-1}\) or \((C_n^{(K)}+\tau I)^{-1}\) with
-\(\tau>0\). The purpose of this comparison is diagnostic. If
-\(B_{\mathrm{th}}\) and \(B_{\mathrm{emp}}\) behave similarly, then the predicted
-Fourier eigenvalues explain most of the rate differences on the retained block.
-If \(B_{\mathrm{emp}}\) is noticeably better, then the sampled points introduce
-mixing between retained Fourier modes that is not captured by the diagonal
-prediction alone.
+ridge-regularized inverses when needed, for example \((\Lambda^{(n)}+\tau I)^{-1}\)
+or \((C_n^{(K)}+\tau I)^{-1}\) with \(\tau>0\). If \(B_{\mathrm{th}}\) and
+\(B_{\mathrm{emp}}\) behave similarly, the predicted Fourier eigenvalues explain
+most of the rate differences on the retained block; if \(B_{\mathrm{emp}}\) is
+noticeably better, the sampled points introduce mixing between retained Fourier
+modes that the diagonal prediction does not capture.
 
 \section{Finite-width frozen-kernel methodology}
 
@@ -509,39 +495,45 @@ Equivalently,
 	\xi_{r,pq}:=\langle \phi_p,T^{(r)}\phi_q\rangle,
 	\label{eq:method-finite-width-entry-average}
 \end{equation}
-so that \(B_m^{(K)}\) is an empirical average of i.i.d.\ one-neuron matrices. This is the
-basic structural fact underlying the finite-width frozen concentration theorem.
+so that \(B_m^{(K)}\) is an empirical average of \(m\) i.i.d.\ one-neuron
+matrices. Because the entries are averages of independent terms, they concentrate
+around their mean as \(m\) grows, which is what the finite-width frozen
+concentration result in the next chapter exploits.
 
 \subsection{Fourier-plane alignment diagnostics}
 \label{subsec:method-projector-error}
 
 The continuum operator is diagonal in the Fourier basis. For each frequency
 \(k\ge 1\), the cosine and sine modes have the same continuum eigenvalue
-\(\lambda_k\). The relevant object is therefore the two-dimensional frequency
-subspace
+\(\lambda_k\). Because \(\phi_{k,c}\) and \(\phi_{k,s}\) share the eigenvalue
+\(\lambda_k\), the continuum operator does not single out either one; only the
+plane they span is determined. The object to compare against is therefore this
+two-dimensional frequency subspace,
 \[
 	\mathcal F_k
 	:=
 	\operatorname{span}\{\phi_{k,c},\phi_{k,s}\},
 	\qquad k\ge 1,
 \]
-rather than a particular cosine-sine basis inside this subspace. For the
-constant mode, we set
+For the constant mode, we set
 \[
 	\mathcal F_0:=\operatorname{span}\{\phi_0\}.
 \]
-Thus \(d_0=1\) and \(d_k=2\) for \(k\ge 1\).
+Thus, the dimensionality \(d_0=1\) and \(d_k=2\) for \(k\ge 1\).
 
 We use subspace-alignment diagnostics to compare these reference Fourier
 subspaces with matched eigenspaces of the finite-width tangent operator. In the
 frozen case this operator is \(T_0^{(m)}\). In the evolving case it is the
 time-dependent operator \(T_t^{(m)}\).
 
-In the numerical implementation, functions are represented on a uniform grid
+The operator is defined on the continuum \(S^1\), but it cannot be eigen-decomposed
+in closed form at finite width, so for the numerical diagnostics we discretise it
+onto a uniform grid of \(N\) points,
 \[
-	\theta_j=\frac{2\pi j}{N},
-	\qquad j=0,\dots,N-1.
+	\theta_j=\frac{2\pi j}{N},\qquad j=0,\dots,N-1,
 \]
+and carry out the eigendecomposition and subspace comparisons on this grid.
+
 All vectors and matrices in this diagnostic are therefore finite-dimensional
 representations of continuum functions on this grid.
 
@@ -553,17 +545,19 @@ projector
 	\label{eq:method-fourier-projector}
 \end{equation}
 
-At each training time \(t\), we compute an eigendecomposition of the grid
-representation of the tangent operator. We then build a matched empirical
-subspace \(\widehat{\mathcal F}_k(t)\) of dimension \(d_k\) by selecting the
-\(d_k\) empirical eigenvectors with largest overlap with \(\mathcal F_k\). If
-\(v_j(t)\) is an empirical eigenvector at time \(t\), its overlap with
-\(\mathcal F_k\) is measured by
+At each training time \(t\), we eigendecompose the grid representation of the
+tangent operator, an \(N\times N\) symmetric matrix, and write its orthonormal
+eigenvectors as \(v_1(t),\dots,v_N(t)\). For each eigenvector \(v_j(t)\), the
+quantity
 \[
-	\|U_k^\top v_j(t)\|_2^2.
+	\|U_k^\top v_j(t)\|_2^2 \in [0,1]
 \]
-If \(\widehat U_k(t)\in\mathbb R^{N\times d_k}\) is an orthonormal basis of the
-selected empirical subspace \(\widehat{\mathcal F}_k(t)\), define
+is the squared length of its projection onto \(\mathcal F_k\): it is \(1\) when
+\(v_j(t)\) lies entirely in \(\mathcal F_k\) and \(0\) when it is orthogonal to
+it. We build the matched empirical subspace \(\widehat{\mathcal F}_k(t)\) by taking
+the \(d_k\) eigenvectors with the largest such values, the ones lying closest to
+\(\mathcal F_k\). If \(\widehat U_k(t)\in\mathbb R^{N\times d_k}\) is an
+orthonormal basis of \(\widehat{\mathcal F}_k(t)\), define
 \begin{equation}
 	\widehat P_k(t)
 	:=
@@ -578,10 +572,13 @@ The projection error is
 	\|\widehat P_k(t)-P_k\|_F .
 	\label{eq:method-projector-errors}
 \end{equation}
-This quantity measures how far the matched eigenspace of the finite-width
-operator is from the reference Fourier subspace. It is invariant to sign changes
-of eigenvectors and to rotations of the basis inside a two-dimensional Fourier
-plane. For the frozen operator, we write
+The projectors \(P_k\) and \(\widehat P_k(t)\) depend only on the subspaces, not
+on the bases chosen for them, so this distance is invariant to sign changes of
+eigenvectors and to rotations of the cosine-sine basis inside a two-dimensional
+Fourier plane, neither of which should count as a mismatch. It therefore measures
+the geometric distance between the matched eigenspace and the reference Fourier
+subspace, and \eqref{eq:method-projector-angle-identity} below expresses it
+through the principal angles. For the frozen operator, we write
 \[
 	\varepsilon_{k,F}^{(m)}:=\varepsilon_{k,F}^{(m)}(0).
 \]
@@ -603,7 +600,9 @@ by
 	\qquad i=1,\dots,d_k,
 	\label{eq:method-principal-angles}
 \end{equation}
-where the singular values are ordered from largest to smallest.
+where \(s_i(\cdot)\) is the \(i\)-th largest singular value, so the cosines of the
+principal angles are the singular values of \(U_k^\top\widehat U_k(t)\) ordered
+from largest to smallest.
 
 For \(k=0\), there is one principal angle because both spaces are
 one-dimensional. For \(k\ge 1\), there are two principal angles because both
@@ -630,7 +629,8 @@ subspaces with a single score per frequency. The score lies between \(0\) and
 when the matched empirical subspace is the same as the reference Fourier
 subspace.
 
-The projection distance and the principal angles are related by
+The projection distance and the principal angles are related by the standard
+projector identity \citep{bjorck1973numerical}
 \begin{equation}
 	\|\widehat P_k(t)-P_k\|_F^2
 	=
@@ -645,12 +645,14 @@ the same alignment.
 \label{sec:finite-width-evolving-kernel-methodology}
 \subsection{Projected evolving operator}
 
-To study the actual training dynamics, we retain the time dependence of the empirical tangent
-operator \(T_t^{(m)}\). Its low-frequency block is
+To study the actual training dynamics, we retain the time dependence of the
+empirical tangent operator \(T_t^{(m)}\). Its block on the same retained
+subspace \(\mathcal H_K\), the frequencies up to \(K\) used throughout, is
 \begin{equation}
 	C_t^{(K)}:=P_KT_t^{(m)}P_K.
 	\label{eq:method-evolving-block}
 \end{equation}
+
 In the ordered Fourier basis of \(\mathcal H_K\), this block has entries
 \begin{equation}
 	(C_t^{(K)})_{pq}
@@ -802,12 +804,14 @@ are exact eigenfunctions and the eigenvalues determine the residual decay rates.
 
 Second, the finite-sample analysis studies what changes when the continuum
 measure is replaced by finitely many sampled points. The main objects are the
-sampled Fourier Gram matrix \(G\), the matrix \(H\) describing the action of the
-sampled operator on the retained Fourier basis, and the difference
-\(A\Phi-\Phi\Lambda^{(n)}\) between the sampled operator action and the diagonal
-Fourier prediction. These objects are used to answer Q1. The preconditioning
-experiment is a diagnostic for the same question: it tests whether the predicted
-Fourier eigenvalues explain the observed rate separation on the retained block.
+sampled Fourier Gram matrix \(G\), the matrix \(H\) describing the action of
+the sampled operator on the retained Fourier basis, and the difference
+\(A\Phi-\Phi\Lambda^{(n)}\) between the sampled operator action and the
+diagonal Fourier prediction. These objects are used to answer Q1. The rate
+separation between modes comes from the spread of eigenvalues, so rescaling
+each mode by its predicted eigenvalue should cancel it; the preconditioning
+experiment uses this to test how much of the separation the eigenvalues
+explain.
 
 Third, the finite-width analysis studies what changes when the infinite-width
 operator is replaced by the tangent operator of a finite-width network. The
