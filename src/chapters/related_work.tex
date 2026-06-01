@@ -211,7 +211,7 @@ frequencies in a more stable manner \citep{rahaman2019spectralbiasneuralnetworks
 The question studied by \citet{basri2020frequencybiasneuralnetworks} is what
 happens when the input distribution is no longer uniform. If inputs are
 distributed according to a density \(p(\theta)\) on \(S^1\), then the relevant
-operator as described in equation~\ref{eq:bg-convolution-operator} becomes
+operator as described in equation~\eqref{eq:bg-convolution-operator} becomes
 \[
 	(T_{p}g)(\theta)
 	:=
@@ -304,7 +304,7 @@ networks. These works point to a limitation of the ideal fixed-kernel picture:
 it explains spectral bias cleanly when the kernel is fixed, but it does not by
 itself describe how the spectral structure changes when the kernel evolves.
 
-\subsection{Preliminary experiments across architectures}
+\section{Preliminary experiments across architectures}
 \label{subsec:preliminary-experiments}
 
 Before turning to the analysis, we ran preliminary experiments of our own to check
@@ -335,12 +335,7 @@ architectures and finite-width, finite-data setting we care about here.
 	\caption{Preliminary experiments across architectures trained at finite width on
 		finite data. Each panel shows the residual amplitude of four target modes,
 		\(\cos\gamma\), \(\cos 2\gamma\), \(\sin 3\gamma\), and \(\cos 4\gamma\),
-		against training step on a logarithmic scale. Across all three architectures
-		the lowest-frequency mode \(\cos\gamma\) is driven down first and fastest,
-		with the higher-frequency modes decaying later, though the ordering is not
-		strict and is least clean for the attention block. The sharp downward spikes
-		(for example \(\cos 2\gamma\) in the MLPs) are sign changes of the residual
-		coefficient, which appear as cusps on a logarithmic amplitude axis.}
+		against training step on a logarithmic scale.}
 	\label{fig:preliminary-frequency-architectures}
 \end{figure}
 
@@ -402,7 +397,7 @@ effects of finite sampling and finite width can be separated.
 	small, when gaps between eigenvalues are narrow (e.g. in higher frequencies),
 	or when the kernel evolves during training.
 
-	\section{Research Questions}
+	\section{Research questions}
 
 	This thesis studies spectral bias on \(S^1\) by comparing the residual dynamics induced by the
 	continuum infinite-width NTK operator with those induced by its finite-sample and finite-

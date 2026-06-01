@@ -1,4 +1,4 @@
-\chapter{Discussion and conclusion}
+\chapter{Discussion and Conclusion}
 \label{cha:discussion-conclusion}
 
 On the circle $S^1$, functions can be decomposed into sine and cosine waves,
@@ -217,7 +217,7 @@ eigenvalues. ReLU is continuous but not differentiable at the origin, and this n
 is what limits the eigenvalues to a polynomial decay rate; our derivation gives
 \(\lambda_k = O(k^{-2})\) in our setting. \citet{bietti2019inductivebiasneuraltangent}
 trace this polynomial decay to the non-smooth part of the ReLU kernel, and
-\citet{murray2023characterizing} show more generally that smoother activations
+\citet{murray2023characterizingspectrumntkpower} show more generally that smoother activations
 have faster-decaying NTK spectra. An activation without this non-differentiability,
 such as sigmoid or \(\tanh\), would therefore give faster-decaying eigenvalues and
 sharpen the bias toward low frequencies. The
@@ -285,6 +285,47 @@ the function values, so the correction would have to be applied to the
 parameter-space gradient through this same evolving, implicitly known kernel.
 Preconditioning the rates in that setting, with an operator that is neither fixed
 nor explicitly available, is the real difficulty and is left to future work.
+
+\section{Reflection}
+\label{sec:discussion-reflection}
+
+This thesis sits within the broader line of work that tries to replace empirical
+intuition about deep learning with analysable mathematical models. The Neural
+Tangent Kernel is one of the most useful instruments in that line: it turns a
+non-convex training problem into a linear one whose behaviour can be
+characterised exactly. The value of the present work is as a controlled case
+study of where that reduction holds and where it stops: the fixed kernel is a
+useful baseline, but not a full account of training once the network learns
+features.
+
+\paragraph{Implications, applicability, and stakeholders.}
+Spectral bias has practical consequences wherever neural networks represent
+functions with fine detail, through the same NTK spectrum studied here.
+\citet{wang2022whenpinnsfail} trace the failure of physics-informed neural
+networks to fit high-frequency parts of a PDE solution to a gap in the
+convergence rates of the different loss terms, and correct it by rescaling the
+dynamics with the kernel eigenvalues; the same eigenvalue-based correction used
+by the preconditioner in
+Section~\ref{sec:results-preconditioned-sampled-dynamics}. In computer vision and
+graphics, \citet{tancik2020fourierfeatures} and \citet{sitzmann2020siren} show
+that coordinate-based networks (networks that map a raw input coordinate, such as a
+pixel location or a 3D point, directly to the signal value) blur fine
+detail for the same reason, and that
+Fourier-feature mappings and periodic activations fix this by reshaping the
+effective kernel spectrum so high frequencies are no longer suppressed. The
+mechanism this thesis analyses on the circle is the one these methods modify in
+practice.
+
+These methods are built and used by scientific-machine-learning practitioners
+working on physical simulation, by people building implicit neural
+representations for images, shapes, and audio, and by researchers designing ways
+to counteract spectral bias.
+Knowing why and when a network learns some components before others makes its
+behavior more predictable, which matters when these models inform downstream
+decisions. This work does not bear directly on the safety, fairness, or societal
+deployment of machine-learning systems, but we hope it adds to the understanding of one
+specific mechanism. However, a result on the uniform circle is still far from a
+guarantee about a deployed model.
 
 \section{Conclusion}
 \label{sec:discussion-final-conclusion}

@@ -10,7 +10,7 @@ description of \citet{jacot2018ntk}, together with the
 arc-cosine formulas for ReLU Gaussian averages \citep{cho2009kernel}. Related spectral
 calculations for ReLU NTKs on the sphere appear in
 \citet{basri2019convergence,bietti2019inductivebiasneuraltangent,cao2020understandingspectralbiasdeep}. The derivation in the
-assumptions used here is deferred to Appendix~\ref{app:continuum-kernel}.
+assumptions used here is given in Appendix~\ref{app:continuum-kernel}.
 
 \begin{proposition}[Limiting NTK on \(S^1\)]
 	\label{prop:results-continuum-ntk}
@@ -84,6 +84,8 @@ introduced in \eqref{eq:method-fourier-basis-phi0}--\eqref{eq:method-fourier-bas
 	these eigenvalues.
 \end{theorem}
 
+The detailed derivation is provided in Appendix~\ref{sec:app-fourier-coefficients}.
+
 The eigenvalues decrease with frequency. Both even and odd modes satisfy
 \(\lambda_k=O(k^{-2})\) for large \(k\), so higher-frequency residual
 components decay more slowly under fixed-kernel gradient flow. This gives the
@@ -126,6 +128,8 @@ continuum spectral-bias baseline used in the rest of the chapter.
 	\(k\ge 3\). Thus the odd modes \(k\ge 3\) are absent from the no-bias fixed-kernel
 	dynamics but present in the model studied here.
 \end{corollary}
+
+The detailed derivation is provided in Appendix~\ref{sec:app-bias-contribution}.
 
 The trainable hidden bias affects the nullspace of the continuum operator.
 Corollary~\ref{cor:results-bias-spectrum} shows that, without the bias
@@ -247,6 +251,8 @@ function \(\phi_p\), and write
 	\end{equation}
 \end{proposition}
 
+The detailed proof is provided in Appendix~\ref{sec:app-expected-H}.
+
 The finite-sample eigenvalue \(\lambda_p^{(n)}\) differs from the continuum
 value \(\lambda_p\) by a term of order \(\frac{\Theta(0)}{n}\). This correction
 shrinks with \(n\), so the sampled eigenvalues approach the continuum values as
@@ -284,6 +290,9 @@ appear in the methodology chapter.
 		\label{eq:results-APhi-concentration}
 	\end{equation}
 \end{theorem}
+
+The detailed proofs of the three bounds are provided in
+Appendix~\ref{app:finite-sample-proofs}.
 
 Combining the preceding concentration bounds gives a single high-probability
 event on which all three finite-sample quantities are controlled at once.
@@ -600,7 +609,7 @@ in the residual plots.
 
 Figure~\ref{fig:results-preconditioned-mode-decay} shows the
 residual amplitudes for the baseline, theory-preconditioned, and empirically
-preconditioned dynamics. The baseline dynamics shows separated decay rates
+preconditioned dynamics. The baseline dynamics show separated decay rates
 across retained modes. Both preconditioned dynamics reduce this separation, with
 the empirical preconditioner giving the flattest curves.
 
@@ -909,6 +918,8 @@ controlled perturbation of the continuum Fourier block.
 		\label{eq:results-finite-width-rate}
 	\end{equation}
 \end{theorem}
+
+The detailed proof is provided in Appendix~\ref{app:finite-width-frozen-proofs}.
 
 Theorem~\ref{thm:results-finite-width-frozen-concentration} shows that, on a
 fixed truncated Fourier subspace, the frozen finite-width tangent block is a
@@ -1351,11 +1362,11 @@ three recurring trends. First, the mode-wise residual plots show that the early
 training dynamics still largely follows the frequency ordering: lower-frequency
 components decay before higher-frequency components. Kernel evolution does not
 remove this ordering, but changes the relative decay rates within the retained
-target modes. At widths \(128\) and \(256\), the evolving dynamics gives
+target modes. At widths \(128\) and \(256\), the evolving dynamics give
 smaller final residuals for several low and intermediate modes, including the
 constant mode, \(\cos(\varphi)\), \(\sin(2\varphi)\), \(\cos(3\varphi)\), and
 \(\cos(4\varphi)\). At width \(512\), this advantage is less uniform. At width
-\(1024\), the frozen dynamics is better on several components with the largest
+\(1024\), the frozen dynamics are better on several components with the largest
 remaining residual amplitudes, including \(\cos(3\varphi)\),
 \(\cos(4\varphi)\), \(\sin(5\varphi)\), and \(\sin(6\varphi)\). Since the
 least-squares objective is quadratic in the residual, these larger remaining
@@ -1426,7 +1437,7 @@ training dynamics closer to the linearized dynamics around initialization and
 the tangent kernel changes less during training
 \citep{jacot2018ntk,lee2020wide,chizat2019lazytraining}. In the present
 experiments, this also explains why the difference between frozen and evolving
-dynamics is most visible at small width.
+dynamics are most visible at small width.
 
 \subsection{Effect of target amplitudes on spectral strength}
 \label{subsec:results-evolving-amplitude-variants}

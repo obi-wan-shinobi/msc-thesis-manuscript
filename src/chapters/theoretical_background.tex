@@ -109,11 +109,6 @@ $f_t := (f_t(x_1),\dots,f_t(x_n))^T \in \mathbb{R}^n$, in vector form, the dynam
 	f_{t+1} = f_t - \eta\,\Theta_t (f_t - y).
 	\label{eq:ntk-vector-dynamics}
 \end{equation}
-where $
-	\bar\Theta
-	=
-	\bigl(\bar\Theta(x_i,x_j)\bigr)_{i,j=1}^n
-	\in \mathbb{R}^{n\times n}$ is the kernel gram matrix.
 In general, $\Theta_t$ evolves during training, reflecting changes in the
 network’s tangent features.
 
@@ -125,17 +120,19 @@ To make the NTK explicit, consider a two-layer network of width $m$,
 	=
 	\frac{1}{\sqrt{m}}
 	\sum_{\alpha=1}^m
-	v_\alpha\,\varphi(w_\alpha^\top x),
+	v_\alpha\,\varphi(w_\alpha^\top x + b_\alpha),
 	\qquad
-	v_\alpha \in \mathbb{R}, \quad w_\alpha, x \in \mathbb{R}^d.
+	v_\alpha, b_\alpha \in \mathbb{R}, \quad w_\alpha, x \in \mathbb{R}^d.
 	\label{eq:1hl-network}
 \end{equation}
-Each neuron is parameterized by $\theta_\alpha = (v_\alpha,w_\alpha)$ and
+Each neuron is parameterized by $\theta_\alpha = (v_\alpha,w_\alpha,b_\alpha)$ and
 randomly initialized as
 \[
 	v_\alpha \sim \mathcal{N}(0,\sigma_v^2),
 	\qquad
 	w_\alpha \sim \mathcal{N}\!\left(0,\sigma_w^2I_d\right),
+	\qquad
+	b_\alpha \sim \mathcal{N}(0,\sigma_b^2),
 \]
 independently across $\alpha = 1,\dots,m$. $\varphi: \mathbb{R} \to \mathbb{R}$ is a non-linear activation function.
 
@@ -143,22 +140,24 @@ independently across $\alpha = 1,\dots,m$. $\varphi: \mathbb{R} \to \mathbb{R}$ 
 By direct computation,
 \begin{align}
 	\nabla_{v_\alpha} f(x)
-	 & = \frac{1}{\sqrt{m}}\varphi(w_\alpha^\top x),                 \\
+	 & = \frac{1}{\sqrt{m}}\varphi(w_\alpha^\top x + b_\alpha),                 \\
 	\nabla_{w_\alpha} f(x)
-	 & = \frac{1}{\sqrt{m}}\,v_\alpha\,\varphi'(w_\alpha^\top x)\,x.
+	 & = \frac{1}{\sqrt{m}}\,v_\alpha\,\varphi'(w_\alpha^\top x + b_\alpha)\,x, \\
+	\nabla_{b_\alpha} f(x)
+	 & = \frac{1}{\sqrt{m}}\,v_\alpha\,\varphi'(w_\alpha^\top x + b_\alpha).
 \end{align}
 Substituting into the definition of the NTK yields the empirical kernel
 \begin{equation}
 	\Theta_0^{(m)}(x,x')
 	=
 	\frac{1}{m}\sum_{\alpha=1}^m
-	\varphi(w_\alpha^\top x)\,\varphi(w_\alpha^\top x')
+	\varphi(w_\alpha^\top x + b_\alpha)\,\varphi(w_\alpha^\top x' + b_\alpha)
 	+
 	\frac{1}{m}\sum_{\alpha=1}^m
 	v_\alpha^2\,
-	\varphi'(w_\alpha^\top x)\,
-	\varphi'(w_\alpha^\top x')\,
-	x^\top x'.
+	\varphi'(w_\alpha^\top x + b_\alpha)\,
+	\varphi'(w_\alpha^\top x' + b_\alpha)\,
+	\bigl(x^\top x' + 1\bigr).
 	\label{eq:ntk-1hl-finite}
 \end{equation}
 
@@ -175,10 +174,10 @@ where the limiting NTK is deterministic and given by
 \begin{equation}
 	\bar\Theta(x,x')
 	=
-	\mathbb{E}_{w}\!\big[\varphi(w^\top x)\,\varphi(w^\top x')\big]
+	\mathbb{E}_{w,b}\!\big[\varphi(w^\top x + b)\,\varphi(w^\top x' + b)\big]
 	+
-	\sigma_v^2\,x^\top x'\,
-	\mathbb{E}_{w}\!\big[\varphi'(w^\top x)\,\varphi'(w^\top x')\big].
+	\sigma_v^2\,\bigl(x^\top x' + 1\bigr)\,
+	\mathbb{E}_{w,b}\!\big[\varphi'(w^\top x + b)\,\varphi'(w^\top x' + b)\big].
 	\label{eq:ntk-1hl-infinite}
 \end{equation}
 This argument extends to deep fully connected networks, where both the forward
@@ -213,7 +212,7 @@ determined by the corresponding eigenvalues.
 \paragraph{NTK dynamics, solution structure, and implicit bias}
 
 In the constant-kernel (infinite-width) regime, the NTK prediction dynamics
-reduce to a linear iteration in prediction space. Eq \ref{eq:ntk-constant-kernel},
+reduce to a linear iteration in prediction space. Equation~\eqref{eq:ntk-constant-kernel},
 admits fixed points $f^\star$ satisfying
 \begin{equation}
 	\bar\Theta\,(f^\star - y) = 0.

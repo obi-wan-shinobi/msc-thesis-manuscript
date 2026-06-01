@@ -6,8 +6,8 @@ language processing. In vision, deep convolutional and residual architectures
 have led to dramatic improvements on large-scale benchmarks, establishing deep
 learning as the dominant paradigm for visual recognition tasks
 \citep{krizhevsky2012imagenet, he2016deep}. Similarly, in natural language
-processing, attention-based architectures introduces by
-\citet{vaswani2023attentionneed} such as Transformers have enabled substantial
+processing, attention-based Transformer architectures introduced by
+\citet{vaswani2023attentionneed} have enabled substantial
 advances in sequence modeling and representation learning, and now form the
 foundation of modern large-scale language models. Over the past decade, this
 empirical progress has been accompanied by a steady increase in model size,
@@ -85,7 +85,7 @@ usually restrict our search to a specific hypothesis class which is a family a
 functions $f_\theta$ parameterized by a vector $\theta \in \mathbb{R}^p$. Second, the
 underlying distribution $\rho$ is unknown; we only have access to a finite
 training dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ of $n$ samples drawn
-i.i.d from $\rho$, where \(x_i \in \mathcal X\) and \(y_i \in \mathcal Y\).
+i.i.d. from $\rho$, where \(x_i \in \mathcal X\) and \(y_i \in \mathcal Y\).
 
 \paragraph{Empirical risk minimization.}
 The second constraint leads us to the principle of
@@ -125,7 +125,7 @@ At a stationary point $w^\star$, the gradient vanishes, yielding the equations
 \begin{equation}
 	XX^\top w^\star = Xy,
 \end{equation}
-which characterize the set of global minimizers of $\mathcal{L}$ owning to convexity.
+which characterize the set of global minimizers of $\mathcal{L}$ owing to convexity.
 The structure of the minimizers depends on the rank of the empirical covariance
 operator $A := XX^\top$. If $A$ is positive definite (equivalently, if $X$ has
 full row rank), then the minimizer is unique and given by $w^\star = A^{-1}Xy$.
@@ -214,7 +214,7 @@ frequencies.
 Even in the absence of nonlinear activation functions, introducing an
 additional layer changes the parameterization of the model, even though the
 resulting input-output map remains linear. This already leads to substantially
-more intricate training dynamics\citep{saxe2014exactsolutionsnonlineardynamics}. Consider a two-layer linear network with
+more intricate training dynamics~\citep{saxe2014exactsolutionsnonlineardynamics}. Consider a two-layer linear network with
 scalar output,
 \begin{equation}
 	f_{v,W}(x) := v^\top W x,
@@ -299,7 +299,7 @@ focuses on simplified regimes in which an operator governing the dynamics can be
 made explicit, allowing the connection between its spectrum and the observed
 learning behavior to be analyzed more precisely.
 
-\section{Thesis motivation.}
+\section{Thesis motivation}
 At a high level, this thesis is motivated by the question of how these networks'
 training dynamics can be studied in a mathematically tractable setting without
 discarding the phenomena one ultimately seeks to understand. The objective is

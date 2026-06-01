@@ -35,20 +35,23 @@
 % modes are the ones the input embedding and bias represent most directly. A formal
 % theory of this evolving-kernel regime remains the main problem left open.
 
-This thesis studies spectral bias, the tendency of gradient-based training to
-learn low-frequency components of a target before high-frequency ones, in a
-setting simple enough to analyse explicitly: regression on the unit circle with a
-shallow ReLU network. In the infinite-width limit the residual dynamics
+In this thesis, we study spectral bias, the tendency of gradient-based training to
+learn the low-frequency part of a target before its high-frequency part. We work
+in a setting simple enough to analyse explicitly: regression on the unit circle
+with a shallow ReLU network. In the infinite-width limit, the residual dynamics
 are governed by the neural tangent kernel. Under the uniform measure on the
-circle this kernel depends only on the angle between two points, so the operator
-is a convolution and the Fourier modes are its eigenfunctions, each decaying at a
-rate set by its eigenvalue, with low frequencies learned faster. Working on a
-fixed low-frequency subspace, we prove that this picture survives finite sampling
-and frozen finite width: the operator stays close to the continuum Fourier
-prediction, with error of order \(O(n^{-1/2})\) in the sample size and
-\(O(m^{-1/2})\) in the width. The description breaks only once the kernel evolves
-during training, where, empirically, the evolving kernel at small width reaches a
-lower loss by strengthening the lowest-frequency components rather than by
-aligning more closely with the Fourier basis, reinforcing the low-frequency bias
-rather than merely approximating the fixed-kernel dynamics. A formal theory of
-this evolving-kernel regime remains the main open problem.
+circle this kernel depends only on the angle between two points, so the
+associated operator is a convolution and the Fourier modes are its
+eigenfunctions, each decaying at a rate set by its eigenvalue, and the lower the
+frequency, the larger the eigenvalue, so low frequencies are learned first.
+
+Away from this idealised limit the picture degrades only gradually. On a fixed
+low-frequency subspace, both finite sampling and frozen finite width keep the
+operator close to the continuum Fourier prediction, with error of order
+\(O(n^{-1/2})\) in the sample size \(n\) and \(O(m^{-1/2})\) in the width \(m\).
+The description breaks only once the kernel is allowed to evolve during training.
+At small width the evolving kernel reaches a lower loss by strengthening its
+lowest-frequency components, even as its alignment with the Fourier basis fails
+to improve. This reinforces the low-frequency bias rather than approximating the
+fixed-kernel dynamics. A formal theory of this evolving-kernel regime remains the
+main open problem.
