@@ -102,12 +102,12 @@
 % }
 
 % Optional (postscript) cover picture. Put this in comments when not needed.
-\coverpicture{\includegraphics[width=13cm]{../img/maze.pdf}}
+\coverpicture{\makebox[\textwidth]{\includegraphics[width=0.92\textwidth, trim=40 109 38 48, clip]{../img/cover}}}
 
 
 % A copyright notice and maybe something about the cover picture
 % Put in comments to get the default copyright notice
-\colophon{\noindent\copyright{} \the\year{} \theauthor. All rights reserved.}
+\colophon{\noindent\copyright{} \the\year{} \theauthor. All rights reserved. Cover illustration generated with OpenAI's ChatGPT image-generation tool and subsequently edited manually by the author. }
 
 % thesis committee:
 \chair{Prof. Dr. D. M. J. Tax, PRB Group, Faculty EEMCS, TU Delft}
@@ -126,10 +126,10 @@
 \begin{document}
 \frontmatter
 \thispagestyle{empty}
-% \maketitle                                      % for the cover page
+\maketitle                                      % for the cover page
 \makeformaltitlepages{\input{frontmatter/abstract}}         % for formal title pages with all info
 
-\include{frontmatter/preface} \include{frontmatter/notation}
+\include{frontmatter/acknowledgements} \include{frontmatter/notation}
 
 \cleardoublepage\tableofcontents
 % \cleardoublepage\listoffigures
