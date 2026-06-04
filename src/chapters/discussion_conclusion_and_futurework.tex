@@ -41,7 +41,7 @@ of the continuum picture; the more interesting departure is the evolving kernel 
 small width, which does not merely approximate the fixed-kernel dynamics but
 reshapes them in a way that strengthens the low-frequency bias.
 
-\section{Answers to the Research Questions}
+\section{Answers to the research questions}
 \label{sec:discussion-answers}
 
 The overarching inquiry of this thesis asked to what extent the Fourier
@@ -55,7 +55,7 @@ toward low frequencies rather than by bringing the eigenspaces into closer
 alignment with the Fourier modes, and the alignment can even degrade. The
 sub-questions are answered as follows.
 
-\paragraph{Finite-sample perturbation (Q1).}
+\paragraph{Finite-sample perturbation (RQ1).}
 Replacing the uniform continuum measure on \(S^1\) with \(n\) i.i.d.\ samples
 destroys exact Fourier diagonalization. On the low-frequency subspace
 \(\mathcal{H}_K\), however, the Fourier structure persists approximately: the
@@ -67,7 +67,7 @@ govern the dominant early-time decay of the retained components. As the results
 chapter showed, deviations from this prediction can become visible at later
 times, once some components have already decayed.
 
-\paragraph{Finite-width perturbation (Q2).}
+\paragraph{Finite-width perturbation (RQ2).}
 The effect of finite width depends on whether the tangent kernel is held fixed
 or allowed to evolve. With the kernel frozen at initialization---so that
 training reduces to kernel regression on the initial tangent features---finite
@@ -80,7 +80,7 @@ blocks, so the effective per-frequency learning rates change during training
 beyond what the initial spectrum predicts. This advantage diminishes with
 width, where the frozen kernel is already close to the continuum baseline.
 
-\section{The Robustness of the Fixed-Kernel Approximation}
+\section{The robustness of the fixed-kernel approximation}
 \label{sec:discussion-robustness}
 
 The infinite-width NTK is sometimes treated as a purely asymptotic object whose
@@ -118,7 +118,7 @@ more sensitive to model and data distributions
 \citep{rahaman2019spectralbiasneuralnetworks,basri2019convergence,
 	basri2020frequencybiasneuralnetworks}.
 
-\section{Kernel Evolution and the Limits of Fixed Dynamics}
+\section{Kernel evolution and the limits of fixed dynamics}
 \label{sec:discussion-kernel-evolution}
 
 Once the kernel evolves, the fixed-kernel description no longer accounts for the
@@ -167,7 +167,7 @@ reshapes the kernel in a low-frequency-favouring direction that the fixed-kernel
 theory does not capture, with the parameterisation a likely source. A formal
 account is left to future work.
 
-\section{Beyond the Uniform Circle Setting}
+\section{Beyond the uniform circle setting}
 \label{sec:discussion-beyond-uniform-circle}
 
 On the uniform circle two things line up: the limiting NTK we derived depends
@@ -226,7 +226,7 @@ We are less sure about the evolving-kernel results. These depend on how the kern
 moves during training, which we did not analyse for other activations and would
 not expect to behave the same way, so we leave that case open.
 
-\section{Limitations and Future Directions}
+\section{Limitations and future directions}
 \label{sec:discussion-limitations}
 
 The concentration results are fixed-block results. They control the prescribed
@@ -257,17 +257,17 @@ cannot describe the dynamics \citep{Mei2018meanfieldview,
 block drifts from initialization, and what that drift does to the residual
 dynamics, is the most direct next step.
 
-The alignment diagnostics measure how close the empirical eigenspaces are to the
-Fourier subspaces, but alignment is not the same as loss: a well-aligned block
-can still be learned slowly if its eigenvalue is small, so these diagnostics
-describe the geometry of the operator rather than the convergence directly.
-
-A full description of practical training would need finite sampling, finite width,
-and training time treated together, which this work does not attempt. Our results
-cover the first two with the kernel frozen; the training-time effect is only
-studied empirically, and it is not simply additional noise, since at small width
-the kernel drift changes the dynamics in a structured, low-frequency-favouring
-way. Combining all three is the broadest open problem left here.
+The alignment diagnostics measure how close the empirical eigenspaces are to
+the Fourier subspaces, but alignment is not the same as loss: a well-aligned
+block can still be learned slowly if its eigenvalue is small, so these
+diagnostics describe the geometry of the operator rather than the convergence
+directly. A full description of practical training would need finite sampling,
+finite width, and training time treated together, which this work does not
+attempt. Our results cover the first two with the kernel frozen; the
+training-time effect is only studied empirically, and it is not simply
+additional noise, since at small width the kernel drift changes the dynamics in
+a structured, low-frequency-favouring way. Combining all three is the broadest
+open problem left.
 
 The analysis also points to a concrete intervention. The fixed-kernel dynamics are
 a linear system whose per-mode convergence rate is set by the kernel eigenvalues,
