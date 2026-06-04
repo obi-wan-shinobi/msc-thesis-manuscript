@@ -55,7 +55,7 @@ toward low frequencies rather than by bringing the eigenspaces into closer
 alignment with the Fourier modes, and the alignment can even degrade. The
 sub-questions are answered as follows.
 
-\paragraph{Finite-sample perturbation (RQ1).}
+\paragraph{Finite-sample perturbation (Q1).}
 Replacing the uniform continuum measure on \(S^1\) with \(n\) i.i.d.\ samples
 destroys exact Fourier diagonalization. On the low-frequency subspace
 \(\mathcal{H}_K\), however, the Fourier structure persists approximately: the
@@ -67,7 +67,7 @@ govern the dominant early-time decay of the retained components. As the results
 chapter showed, deviations from this prediction can become visible at later
 times, once some components have already decayed.
 
-\paragraph{Finite-width perturbation (RQ2).}
+\paragraph{Finite-width perturbation (Q2).}
 The effect of finite width depends on whether the tangent kernel is held fixed
 or allowed to evolve. With the kernel frozen at initialization---so that
 training reduces to kernel regression on the initial tangent features---finite
@@ -304,8 +304,8 @@ functions with fine detail, through the same NTK spectrum studied here.
 \citet{wang2022whenpinnsfail} trace the failure of physics-informed neural
 networks to fit high-frequency parts of a PDE solution to a gap in the
 convergence rates of the different loss terms, and correct it by rescaling the
-dynamics with the kernel eigenvalues; the same eigenvalue-based correction used
-by the preconditioner in
+dynamics with the kernel eigenvalues. This is the same eigenvalue-based correction
+used by the preconditioner in
 Section~\ref{sec:results-preconditioned-sampled-dynamics}. In computer vision and
 graphics, \citet{tancik2020fourierfeatures} and \citet{sitzmann2020siren} show
 that coordinate-based networks (networks that map a raw input coordinate, such as a

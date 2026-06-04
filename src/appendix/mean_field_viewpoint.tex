@@ -17,7 +17,7 @@ This appendix records the corresponding derivation for a two-layer network. The
 purpose is to keep the comparison available without interrupting the main line
 of the thesis.
 
-\section{\label{app:mf-overview}Overview and relation to the NTK viewpoint}
+\section{Overview and relation to the NTK viewpoint}\label{app:mf-overview}
 
 Consider a two-layer network with the mean-field scaling
 \begin{equation}
@@ -72,9 +72,9 @@ on \(S^1\). The mean-field viewpoint instead describes the evolution of a
 probability measure over parameters, so it does not give a single fixed
 Fourier-diagonal operator in the same way.
 
-\section{\label{app:mf-detailed}Detailed derivation of the mean-field representation}
+\section{Detailed derivation of the mean-field representation}\label{app:mf-detailed}
 
-\subsection{\label{app:mf-empirical-measure}Parameter space and empirical measure}
+\subsection{Parameter space and empirical measure}\label{app:mf-empirical-measure}
 
 Let $\Omega := \mathbb{R} \times \mathbb{R}^d$
 denote the parameter space, and let $\mathcal{F}$ be its Borel $\sigma$-algebra.
@@ -152,7 +152,7 @@ Then
 \end{equation}
 recovering the finite-width network.
 
-\subsection{\label{app:mf-weak-convergence}Initialization and weak convergence}
+\subsection{Initialization and weak convergence}\label{app:mf-weak-convergence}
 
 Assume that the parameters $\{\theta_\alpha(0)\}_{\alpha=1}^m$ are initialized
 i.i.d.\ according to a probability measure $\mu_0$ on $\Omega$.
@@ -189,7 +189,7 @@ $v_0 \sim \mathcal{N}(0,I_m)\; W_0 \sim \mathcal{N}(0, I_m \otimes I_d)$, the
 limiting initial measure $\mu_0 = \mathcal{N}(0, I_{d+1})$ is a Gaussian
 measure on a $d+1$-dimensional space.
 
-\subsection{\label{app:mf-particle-dynamics}Training dynamics and evolution of the empirical measure}
+\subsection{Training dynamics and evolution of the empirical measure}\label{app:mf-particle-dynamics}
 
 Let $X=(x_1,\dots,x_n)\in\mathbb R^{d\times n}$ and
 $y=(y_1,\ldots,y_n)\in\mathbb R^n$ denote the training set, and consider the
@@ -271,7 +271,7 @@ Then the gradient-flow dynamics can be written compactly as
 In particular, each particle interacts with the rest of the system only through the
 current empirical measure $\mu_{m,t}$ (via $f_{\mu_{m,t}}(X)$).
 
-\subsection{\label{app:mf-continuity-equation}Continuity equation and push-forward formulation}
+\subsection{Continuity equation and push-forward formulation}\label{app:mf-continuity-equation}
 
 Equivalently, $\mu_{m,t}$ solves the continuity equation
 \begin{equation}
@@ -327,7 +327,7 @@ $h_x(\theta):=v\,\varphi(w^\top x)$ and writing
 	\int_\Omega v\,\varphi(w^\top x)\,d\bigl((\Phi_t)_*\mu_{m,0}\bigr)(v,w).
 \]
 
-\section{\label{app:mf-comparison-ntk}Comparison with the NTK scaling}
+\section{Comparison with the NTK scaling}\label{app:mf-comparison-ntk}
 
 The distinction between the mean-field and NTK viewpoints can also be seen from
 the tangent kernel. Recall that, in the NTK parameterization used in the main
